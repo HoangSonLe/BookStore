@@ -1,0 +1,22 @@
+﻿<!-- header-area-start -->
+@await Html.PartialAsync("_MyHeader")
+<!-- header-area-end -->
+<!-- breadcrumbs-area-start -->
+@await Html.PartialAsync("_Breadcrumbs")
+<!-- breadcrumbs-area-end -->
+<!-- entry-header-area-start -->
+<div class="entry-header-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="entry-header-title">
+                    <h2>Cart</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- entry-header-area-end -->
+<!-- cart-main-area-start -->
+@await Html.PartialAsync("CartDetail")
+<!-- cart-main-area-end -->

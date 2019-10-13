@@ -2,7 +2,36 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<!-- header-area-start -->
+@await Html.PartialAsync("_MyHeader")
+<!-- header-area-end -->
+<!-- banner-area-start -->
+@await Html.PartialAsync("Banner1")
+<!-- banner-area-end -->
+<!-- slider-area-start -->
+@await Html.PartialAsync("Slider")
+<!-- slider-area-end -->
+<!-- product-area-start -->
+@await Html.PartialAsync("ProductList")
+<!-- product-area-end -->
+<!-- banner-area-start -->
+@await Html.PartialAsync("Banner2")
+<!-- banner-area-end -->
+<!-- bestseller-area-start -->
+@await Html.PartialAsync("BestSeller")
+<!-- bestseller-area-end -->
+<!-- new-book-area-start -->
+@await Html.PartialAsync("NewBook")
+<!-- new-book-area-start -->
+<!-- banner-static-area-start -->
+@await Html.PartialAsync("Banner3")
+<!-- banner-static-area-end -->
+<!-- most-product-area-start -->
+@await Html.PartialAsync("MostProduct")
+<!-- most-product-area-end -->
+<!-- testimonial-area-start -->
+@await Html.PartialAsync("Testimonial")
+<!-- testimonial-area-end -->
+<!-- social-group-area-start -->
+@await Html.PartialAsync("SocialGroup")
+<!-- social-group-area-end -->
