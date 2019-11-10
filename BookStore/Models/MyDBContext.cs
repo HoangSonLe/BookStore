@@ -47,7 +47,7 @@ namespace BookStore.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.HasAnnotation("ProductVersion", "2.2.6-servicing-10079");
+            modelBuilder.HasAnnotation("ProductVersion", "2.2.4-servicing-10062");
 
             modelBuilder.Entity<About>(entity =>
             {
@@ -345,6 +345,8 @@ namespace BookStore.Models
 
                 entity.Property(e => e.PublisherId).HasColumnName("PublisherID");
 
+                entity.Property(e => e.Status).HasDefaultValueSql("((1))");
+
                 entity.Property(e => e.Unit).HasMaxLength(50);
 
                 entity.Property(e => e.UrlFriendly)
@@ -374,6 +376,8 @@ namespace BookStore.Models
                 entity.Property(e => e.Name).HasMaxLength(250);
 
                 entity.Property(e => e.ParentId).HasColumnName("ParentID");
+
+                entity.Property(e => e.Status).HasDefaultValueSql("((1))");
 
                 entity.Property(e => e.UrlFriendly).HasMaxLength(250);
 

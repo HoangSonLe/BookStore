@@ -1,19 +1,18 @@
 ﻿@model BookStore.Models.ProductCategory
-<link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
-<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 <form id="CreateOrEdit" asp-route-id="@Model.CategoryId" asp-action="CreateOrEdit" method="post" asp-controller="ProductCategory" enctype="multipart/form-data">
     <div class="modal-body" id="modalBody">
         <div class="form-group">
             <label>Category Name</label>
-            <input type="text" class="form-control inputName" asp-for="Name" placeholder="Nhập tên">
+            <input type="hidden" class="form-control inputName" asp-for="CategoryId">
+            <input type="text" class="form-control inputName" asp-for="Name" value="@Model.Name" placeholder="Nhập tên">
         </div>
         <div class="form-group">
             <label>Url Friendly</label>
-            <input type="text" class="form-control inputUrl" asp-for="UrlFriendly" readonly placeholder="Url Friendly">
+            <input type="text" class="form-control inputUrl" name="UrlFriendly" asp-for="UrlFriendly" readonly placeholder="Url Friendly">
         </div>
         <div class="form-group">
             <label>Parent Category</label>
-            <select class="form-control">
+            <select class="form-control" asp-for="ParentId">
                 @foreach (var p in ViewBag.category)
                 {
                     if (Model.ParentId != null && Model.ParentId == p.ParentId)
@@ -31,12 +30,12 @@
             <label class="form-check-label">Trạng thái hiển thị  </label>
             @{
                 string tmp = "";
-                if (Model.Status == 1)
+                if (Model.Status == true)
                 {
                     tmp = "checked";
                 }
             }
-            <input type="checkbox" @tmp data-toggle="toggle">
+            <input name="Status" type="checkbox" @tmp value="true">
         </div>
     </div>
     <div class="modal-footer">
@@ -59,26 +58,21 @@
                 return false;
             }
         });
-        //$('.btnSubmit').click(function (e) {
-        //    e.preventDefault();
-        //    var id = $(this).data("id");
-        //    var data = $("#CreateOrEdit").serialize();
-        //    var dataForm = new FormData($('#CreateOrEdit').get(0));
-        //    console.log(dataForm);
-        //    $.ajax({
-        //        url: "/Admin/ProductCategory/CreateOrEdit",
-        //        type:"POST",
-        //        data: {
-        //            id: id,
-        //            data: data
-        //        },
-        //        success: function () {
+        $('.btnSubmit').click(function (e) {
+            e.preventDefault();
+            debugger;
+            var productCategory = $("#CreateOrEdit").serialize();
+            $.ajax({
+                url: "/Admin/ProductCategory/CreateOrEdit",
+                type: "POST",
+                data: productCategory,
+                success: function () {
 
-        //        },
-        //        error: function () {
+                },
+                error: function () {
 
-        //        }
-        //    });
-        //});
+                }
+            });
+        });
     })
 </script>

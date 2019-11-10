@@ -89,65 +89,67 @@
     </div>
 </div>
 
-<script>
-    $("#sendFeedback").click(function () {
-        var name    = $("input[name='name']").val();
-        var phone    = $("input[name='phone']").val();
-        var email   = $("input[name='email']").val();
-        var subject = $("input[name='subject']").val();
-        var radioCheckReply = $('#radioCheckReply').is(':checked') ? 1:0 ;
-        var message = $("textarea[name='message']").val();
+@section Scripts{
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+    <script>
+        $("#sendFeedback").click(function () {
+            var name = $("input[name='name']").val();
+            var phone = $("input[name='phone']").val();
+            var email = $("input[name='email']").val();
+            var subject = $("input[name='subject']").val();
+            var radioCheckReply = $('#radioCheckReply').is(':checked') ? 1 : 0;
+            var message = $("textarea[name='message']").val();
 
-        if (!checkNull(name, email, subject, message)) {
-            $.ajax({
-                url: "/Contact",
-                type: "POST",
-                data: {
-                    name : name,
-                    email: email,
-                    subject: subject,
-                    message: message,
-                    phone: phone,
-                    radioCheckReply: radioCheckReply
-                },
-                success: function(data){
-                    Swal.fire({
-                        type: 'success',
-                        title: 'Your work has been saved',
-                        title: 'Thành công!',
-                        text: 'Phản hồi của bạn đã được gửi thành công!',
-                        showConfirmButton: false,
-                        timer: 2000
-                    });
-                    $("input[name='name']").val("");
-                    $("input[name='email']").val("");
-                    $("input[name='subject']").val("");
-                    $("input[name='phone']").val("");
-                    $("textarea[name='message']").val("");
-                },
-                error: function(msg){
-                    Swal.fire({
-                        title: 'Đã xảy ra lỗi vui lòng thử lại sau',
-                    });
-                }
-            })
-        } else {
-            var tmp = "";
-            if (!name) tmp += "Name ";
-            if (!email) tmp += "Email ";
-            if (!subject) tmp += "Subject ";
-            if (!message) tmp += "Message";
-            Swal.fire({
-                type: "warning",
-                title: 'Vui lòng nhập đầy đủ thông tin ' + tmp
+            if (!checkNull(name, email, subject, message)) {
+                $.ajax({
+                    url: "/Contact",
+                    type: "POST",
+                    data: {
+                        name: name,
+                        email: email,
+                        subject: subject,
+                        message: message,
+                        phone: phone,
+                        radioCheckReply: radioCheckReply
+                    },
+                    success: function (data) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Thành công!',
+                            text: 'Phản hồi của bạn đã được gửi thành công!',
+                            showConfirmButton: false,
+                            timer: 2000
+                        });
+                        $("input[name='name']").val("");
+                        $("input[name='email']").val("");
+                        $("input[name='subject']").val("");
+                        $("input[name='phone']").val("");
+                        $("textarea[name='message']").val("");
+                    },
+                    error: function (msg) {
+                        Swal.fire({
+                            title: 'Đã xảy ra lỗi vui lòng thử lại sau',
+                        });
+                    }
+                })
+            } else {
+                var tmp = "";
+                if (!name) tmp += "Name ";
+                if (!email) tmp += "Email ";
+                if (!subject) tmp += "Subject ";
+                if (!message) tmp += "Message";
+                Swal.fire({
+                    type: "warning",
+                    title: 'Vui lòng nhập đầy đủ thông tin ' + tmp
 
-            })
+                })
+            }
+        });
+
+        function checkNull(a, b, c, d) {
+            if (!a || !b || !c || !d) return true;
+            return false;
         }
-    });
-
-    function checkNull(a, b, c, d){
-        if (!a || !b || !c || !d) return true;
-        return false;
-    }
 
     </script>
+}

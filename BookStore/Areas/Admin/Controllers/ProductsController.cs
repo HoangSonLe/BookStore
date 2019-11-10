@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace BookStore.Areas.Admin.Controllers
 {
-    [Area("Admin"),Authorize]
+    [Area("Admin")]
     [Authorize(AuthenticationSchemes = "Admin")]
     public class ProductsController : Controller
     {
@@ -25,7 +25,6 @@ namespace BookStore.Areas.Admin.Controllers
         public async Task<IActionResult> Index()
         {
             var myDBContext = _context.Product.Include(p => p.Category).Include(p => p.Publisher);
-            ViewBag.Title = "Product";
             return View(await myDBContext.ToListAsync());
         }
 
@@ -62,7 +61,7 @@ namespace BookStore.Areas.Admin.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ProductId,ProductName,Unit,UrlFriendly,Description,Price,PromotionPrice,IncludeVat,Quantity,CategoryId,PublisherId,Discount,Status,ViewCounts")] Product product)
+        public async Task<IActionResult> Create([Bind("ProductId,ProductName,Unit,UrlFriendly,Description,Price,PromotionPrice,IncludeVat,Quantity,CategoryId,PublisherId,Discount,ViewCounts,Status")] Product product)
         {
             if (ModelState.IsValid)
             {
@@ -98,7 +97,7 @@ namespace BookStore.Areas.Admin.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ProductId,ProductName,Unit,UrlFriendly,Description,Price,PromotionPrice,IncludeVat,Quantity,CategoryId,PublisherId,Discount,Status,ViewCounts")] Product product)
+        public async Task<IActionResult> Edit(int id, [Bind("ProductId,ProductName,Unit,UrlFriendly,Description,Price,PromotionPrice,IncludeVat,Quantity,CategoryId,PublisherId,Discount,ViewCounts,Status")] Product product)
         {
             if (id != product.ProductId)
             {

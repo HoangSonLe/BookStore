@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AutoMapper;
 using BookStore.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,11 +10,9 @@ namespace BookStore.Controllers
     public class ContactController : Controller
     {
         private readonly MyDBContext _ctx;
-        private readonly IMapper _mapper;
-        public ContactController(MyDBContext myDBContext, IMapper mapper)
+        public ContactController(MyDBContext myDBContext)
         {
             _ctx = myDBContext;
-            _mapper = mapper;
         }
         public IActionResult Index()
         {

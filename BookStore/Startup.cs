@@ -2,11 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
+using BookStore.Models;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -30,8 +34,25 @@ namespace BookStore
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
-
-
+            services.AddAuthentication(o =>
+                    {
+                        o.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    })
+                    .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, o =>
+                    {
+                        o.LoginPath = "/Login/Index";
+                        o.AccessDeniedPath = "/Login/Access";
+                        o.LogoutPath = "/Login/Logout";
+                    })
+                    .AddCookie("Admin", o =>
+                    {
+                        o.LoginPath = "/Admin/Login/Index";
+                        o.AccessDeniedPath = "/Admin/Login/Access";
+                        o.LogoutPath = "/Admin/Login/Logout";
+                    });
+            services.AddDbContext<MyDBContext>(option => option.UseSqlServer(Configuration.GetConnectionString("MyDb")));
+            services.AddAutoMapper(typeof(Startup));
+            services.AddSession();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
@@ -48,7 +69,7 @@ namespace BookStore
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-
+            app.UseSession();
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
@@ -59,6 +80,14 @@ namespace BookStore
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+            app.UseMvc(routes =>
+            {
+                routes.MapRoute(
+                  name: "Admin",
+                  template: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
+                );
+            });
+
         }
     }
 }

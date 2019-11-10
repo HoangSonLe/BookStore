@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AutoMapper;
 using BookStore.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -40,7 +39,7 @@ namespace BookStore.Areas.Admin.Controllers
             return PartialView("CreateOrEdit",productCategory);
         }
         [HttpPost]
-        public IActionResult CreateOrEdit(int? id, IFormFile data)
+        public IActionResult CreateOrEdit(ProductCategory productCategory)
         {
             return Ok();
         }

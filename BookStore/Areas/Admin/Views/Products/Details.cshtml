@@ -33,7 +33,7 @@
                 <label class="col-sm-7 col-form-label"><b>Tình Trạng: </b></label>
                 <div class="col-sm-5">
                     @{
-                        var status = Model.Status == 1 ? "Active" : "No Active";
+                        var status = Model.Status == true ? "Active" : "No Active";
                     }
                     <input type="text" readonly="" class="form-control-plaintext" value="@status">
                 </div>

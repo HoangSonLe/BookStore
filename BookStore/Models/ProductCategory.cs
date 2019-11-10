@@ -15,7 +15,7 @@ namespace BookStore.Models
         public string Name { get; set; }
         public string UrlFriendly { get; set; }
         public int? ParentId { get; set; }
-        public int? Status { get; set; }
+        public bool? Status { get; set; }
 
         public virtual ProductCategory Parent { get; set; }
         public virtual ICollection<ProductCategory> InverseParent { get; set; }
