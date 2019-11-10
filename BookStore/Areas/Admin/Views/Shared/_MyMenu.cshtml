@@ -1,0 +1,104 @@
+﻿        <!-- BEGIN Sidebar -->
+<div id="sidebar" class="navbar-collapse collapse">
+    <!-- BEGIN Navlist -->
+    <ul class="nav nav-list">
+        <!-- BEGIN Search Form -->
+        <li>
+            <form target="#" method="GET" class="search-form">
+                <span class="search-pan">
+                    <button type="submit">
+                        <i class="fa fa-search"></i>
+                    </button>
+                    <input type="text" name="search" placeholder="Search ..." autocomplete="off" />
+                </span>
+            </form>
+        </li>
+        <!-- END Search Form -->
+        <li class="active">
+            <a asp-controller="Home" asp-action="Index">
+                <i class="fa fa-dashboard"></i>
+                <span>Dashboard</span>
+            </a>
+        </li>
+        <li>
+            <a href="#" class="dropdown-toggle">
+                <i class="fa fa-desktop"></i>
+                <span>UI Client</span>
+                <b class="arrow fa fa-angle-right"></b>
+            </a>
+            <!-- BEGIN Submenu -->
+            <ul class="submenu">
+                <li><a href="ui_general.html">Menu</a></li>
+                <li><a href="ui_button.html">Slider</a></li>
+                <li><a href="ui_tabs.html">WebPage</a></li>
+                <li><a href="ui_slider.html">Slider</a></li>
+                <li><a href="ui_slider.html">Contact</a></li>
+                <li><a href="ui_slider.html">About</a></li>
+            </ul>
+            <!-- END Submenu -->
+        </li>
+        <li>
+            <a href="#" class="dropdown-toggle">
+                <i class="fa fa-group"></i>
+                <span>Staff</span>
+                <b class="arrow fa fa-angle-right"></b>
+            </a>
+            <!-- BEGIN Submenu -->
+            <ul class="submenu">
+                <li><a href="form_layout.html">Department</a></li>
+                <li><a href="form_layout.html">Employee</a></li>
+                <li><a href="form_component.html">Permission</a></li>
+                <li><a href="form_wizard.html">Division</a></li>
+            </ul>
+            <!-- END Submenu -->
+        </li>
+        <li>
+            <a href="#" class="dropdown-toggle">
+                <i class="fa fa-user-md"></i>
+                <span>Client</span>
+                <b class="arrow fa fa-angle-right"></b>
+            </a>
+            <!-- BEGIN Submenu -->
+            <ul class="submenu">
+                <li><a href="table_basic.html">Customer</a></li>
+                <li><a href="table_basic.html">Order</a></li>
+                <li><a href="table_advance.html">FeedBack</a></li>
+                <li><a href="table_dynamic.html">Comment</a></li>
+            </ul>
+            <!-- END Submenu -->
+        </li>
+        <li>
+            <a href="#" class="dropdown-toggle">
+                <i class="fa fa-globe"></i>
+                <span>Data Product</span>
+                <b class="arrow fa fa-angle-right"></b>
+            </a>
+            <!-- BEGIN Submenu -->
+            <ul class="submenu">
+                <li><a asp-controller="Products" asp-action="Index">Product</a></li>
+                <li><a asp-controller="ProductCategory" asp-action="Index">Product Category</a></li>
+                <li><a href="map_vector.html">Publisher</a></li>
+            </ul>
+            <!-- END Submenu -->
+        </li>
+        <li>
+            <a href="calendar.html">
+                <i class="fa fa-calendar"></i>
+                <span>Calendar</span>
+            </a>
+        </li>
+        <li>
+            <a href="gallery.html">
+                <i class="fa fa-bar-chart-o"></i>
+                <span>Statistic</span>
+            </a>
+        </li>
+    </ul>
+    <!-- END Navlist -->
+    <!-- BEGIN Sidebar Collapse Button -->
+    <div id="sidebar-collapse" class="visible-lg">
+        <i class="fa fa-angle-double-left"></i>
+    </div>
+    <!-- END Sidebar Collapse Button -->
+</div>
+<!-- END Sidebar -->
