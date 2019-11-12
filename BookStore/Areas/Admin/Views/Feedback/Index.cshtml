@@ -1,8 +1,8 @@
-﻿@model IEnumerable<ProductCategory>
-<!-- BEGIN Main Content -->
+﻿@model IEnumerable<Feedback>
+
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">
 
-<div class="row">
+<div class="row bodyContent">
     <div class="col-md-12">
         <div class="box">
             <div class="box-title">
@@ -34,48 +34,54 @@
                     <table class="table table-advance" id="tablePublishers">
                         <thead>
                             <tr>
-                                <th>Category ID</th>
+                                <th>ID</th>
                                 <th>Name</th>
-                                <th>Url Friendly</th>
-                                <th>Parent Category</th>
-                                <th class="text-center">Status</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Context Subject</th>
+                                <th>Context Message</th>
+                                <th>Created Date</th>
+                                <th class="text-center">Reply</th>
                                 <th class="text-center">Action</th>
                             </tr>
                         </thead>
-                        <tbody class="bodyContent">
+                        <tbody id="content">
                             @foreach (var p in Model)
                             {
+                                string subject = p.ContextSubject;
+                                string message = p.ContextMessage;
+                                if (p.ContextSubject.Length > 20)
+                                {
+                                    subject = subject.Substring(0, 20) + "...";
+                                }
+                                if (p.ContextMessage.Length > 25)
+                                {
+                                    message = message.Substring(0, 25) + "...";
+                                }
+
                                 <tr class="table-flag-blue">
-                                    <td><b>@p.CategoryId</b></td>
+                                    <td><b>@p.FeedbackId</b></td>
                                     <td>@p.Name</td>
-                                    <td>@p.UrlFriendly</td>
-                                    @if (p.ParentId.HasValue)
+                                    <td>@p.Email</td>
+                                    <td>@p.Phone</td>
+                                    <td>@subject</td>
+                                    <td>@message</td>
+                                    <td>@p.CreatedDate</td>
+
+
+                                    @if (p.Reply == true)
                                     {
-                                        @foreach (var o in Model)
-                                        {
-                                            if (p.ParentId == o.CategoryId)
-                                            {
-                                                <td class="text-center">@o.Name</td>
-                                            }
-                                        }
+                                        <td class="text-center"><input name="Status" type="checkbox" checked disabled></td>
                                     }
                                     else
                                     {
-                                        <td class="text-center">Không có.</td>
-                                    }
-                                    @if (p.Status == true)
-                                    {
-                                        <td class="text-center"><span class="label label-success">Hoạt động</span></td>
-                                    }
-                                    else
-                                    {
-                                        <td class="text-center"><span class="label label-warning">Không hoạt động</span></td>
+                                        <td class="text-center"><input name="Status" type="checkbox" disabled></td>
                                     }
                                     <td class="text-center">
                                         <div class="btn-group">
                                             <p>
-                                                <button class="btn btn-primary btnEdit" data-id="@p.CategoryId" data-target="#modalDetail" data-toggle="modal"><i class="fa fa-edit"></i> Edit</button>
-                                                <button class="btn btn-danger btnDelete" data-id="@p.CategoryId" data-name="@p.Name"><i class="fa fa-trash-o"></i> Delete</button>
+                                                <button class="btn btn-primary btnEdit" data-id="@p.FeedbackId" data-target="#modalDetail" data-toggle="modal"><i class="fa fa-edit"></i> Edit</button>
+                                                <button class="btn btn-danger btnDelete" data-id="@p.FeedbackId" data-name="@p.Name"><i class="fa fa-trash-o"></i> Delete</button>
                                             </p>
                                         </div>
                                     </td>
@@ -108,19 +114,6 @@
 @section Scripts{
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.js"></script>
     <script type="text/javascript" src="~/Admin/assets/data-tables/bootstrap3/dataTables.bootstrap.js"></script>
-    <script src="~/Admin/js/ProductCategory.js"></script>
-    @*<script>
-            $(function () {
-                $.ajax({
-                    url: "/Admin/ProductCategory/GetCategoriesList",
-                    type: "GET",
-                    success: function (response) {
-                        console.log(response);
-                    },
-                    error: function (response) {
-                        console.log("error");
-                    }
-                });
-            });
-        </script>*@
+    <script src="~/Admin/js/Feedback.js"></script>
 }
+
