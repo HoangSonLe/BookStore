@@ -69,7 +69,7 @@
                                     <div class="btn-group">
                                         <p>
                                             <button class="btn btn-magenta btnDetail" data-id="@p.ProductId" data-target="#modalDetail" data-toggle="modal"><i class="fa fa-eye"></i> Detail</button>
-                                            <button class="btn btn-primary btnEdit" data-id="@p.ProductId" data-target="#modalDetail" data-toggle="modal"><i class="fa fa-edit"></i> Edit</button>
+                                            <a class="btn btn-primary" asp-controller="Products" asp-action="Edit" asp-route-id="@p.ProductId"><i class="fa fa-edit"></i> Edit</a>
                                             <button class="btn btn-danger btnDelete" data-id="@p.ProductId" data-name="@p.ProductName"><i class="fa fa-trash-o"></i> Delete</button>
                                         </p>
                                     </div>
@@ -85,8 +85,8 @@
 </div>
 <!-- END Main Content -->
 <!-- Modal -->
-<div class="modal fade" id="modalDetail" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+<div class="modal fade bd-example-modal-lg" id="modalDetail" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Thông tin</h5>

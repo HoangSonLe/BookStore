@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BookStore.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using System.IO;
 
 namespace BookStore.Areas.Admin.Controllers
 {
@@ -39,6 +41,7 @@ namespace BookStore.Areas.Admin.Controllers
             var product = await _context.Product
                 .Include(p => p.Category)
                 .Include(p => p.Publisher)
+                .Include(p => p.ProductImages)
                 .FirstOrDefaultAsync(m => m.ProductId == id);
             if (product == null)
             {
@@ -82,13 +85,16 @@ namespace BookStore.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Product.FindAsync(id);
+            var product = await _context.Product.Include(m => m.ProductImages).AsNoTracking().SingleOrDefaultAsync(p=> p.ProductId == id);
             if (product == null)
             {
                 return NotFound();
             }
-            ViewData["CategoryId"] = new SelectList(_context.ProductCategory, "CategoryId", "CategoryId", product.CategoryId);
+            ViewBag.ProductImages = _context.ProductImages.Where(p => p.ProductId == id).ToList();
+            //ViewData["CategoryId"] = new SelectList(_context.ProductCategory, "CategoryId", "Name", product.CategoryId);
+            ViewData["CategoryId"] = new SelectList(_context.ProductCategory, "CategoryId", "Name", product.CategoryId);
             ViewData["PublisherId"] = new SelectList(_context.Publishers, "PublisherId", "PublisherName", product.PublisherId);
+            //ViewData["ProductImages"] = new SelectList(_context.ProductImages, "ProductId", "ProductImage", product.ProductId);
             return View(product);
         }
 
@@ -97,7 +103,7 @@ namespace BookStore.Areas.Admin.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ProductId,ProductName,Unit,UrlFriendly,Description,Price,PromotionPrice,IncludeVat,Quantity,CategoryId,PublisherId,Discount,ViewCounts,Status")] Product product)
+        public async Task<IActionResult> Edit(int id, [Bind("ProductId,ProductName,Unit,UrlFriendly,Description,Price,PromotionPrice,IncludeVat,Quantity,CategoryId,PublisherId,Discount,ViewCounts,Status")] Product product, List<IFormFile> fFiles)
         {
             if (id != product.ProductId)
             {
@@ -108,6 +114,24 @@ namespace BookStore.Areas.Admin.Controllers
             {
                 try
                 {
+                    //if (fFiles == null || fFiles.Count == 0)
+                    //    return Content("files not selected");
+                    foreach (var myFile in fFiles)
+                    {
+                        string fileName = $"{DateTime.Now.Ticks}{myFile.FileName}";
+                        string fullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Image", fileName);
+
+                        using (var file = new FileStream(fullPath, FileMode.Create))
+                        {
+                            myFile.CopyTo(file);
+                            var productImages = new ProductImages()
+                            {
+                                ProductId = id,
+                                ProductImage = fileName
+                            };
+                            _context.ProductImages.Add(productImages);
+                        }
+                    }
                     _context.Update(product);
                     await _context.SaveChangesAsync();
                 }
