@@ -1,17 +1,21 @@
-﻿<div class="row">
+﻿@model IEnumerable<BookStore.Models.Employee>
+<!-- BEGIN Main Content -->
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">
+
+<div class="row">
     <div class="col-md-12">
         <div class="box">
             <div class="box-title">
-                <h3><i class="fa fa-table"></i> Advance Table</h3>
+                <h3><i class="fa fa-table"></i>Table Employee</h3>
                 <div class="box-tool">
                     <a data-action="collapse" href="#"><i class="fa fa-chevron-up"></i></a>
                     <a data-action="close" href="#"><i class="fa fa-times"></i></a>
                 </div>
             </div>
             <div class="box-content">
-                <div class="btn-toolbar pull-right">
+                <div class="btn-toolbar pull-right clearfix">
                     <div class="btn-group">
-                        <a class="btn btn-circle show-tooltip" title="Add new record" href="#"><i class="fa fa-plus"></i></a>
+                        <a class="btn btn-circle show-tooltip" asp-action="Add" title="Add new record"><i class="fa fa-plus"></i></a>
                         <a class="btn btn-circle show-tooltip" title="Edit selected" href="#"><i class="fa fa-edit"></i></a>
                         <a class="btn btn-circle show-tooltip" title="Delete selected" href="#"><i class="fa fa-trash-o"></i></a>
                     </div>
@@ -25,62 +29,67 @@
                     </div>
                 </div>
                 <br /><br />
-                <div class="table-responsive">
-                    <table class="table table-advance">
+                <div class="clearfix"></div>
+                <div class="table-responsive" style="border:0">
+                    <table class="table table-advance" id="tableEmployees">
                         <thead>
                             <tr>
-                                <th style="width:18px"><input type="checkbox" /></th>
-                                <th><a class="sort-asc sort-desc" href="#">Rendering engine</a></th>
-                                <th><a class="sort-asc sort-desc" href="#">Browser</a></th>
-                                <th><a class="sort-asc sort-desc" href="#">Platform(s)</a></th>
-                                <th><a class="sort-asc sort-desc" href="#">Engine version</a></th>
-                                <th><a class="sort-asc sort-active" href="#">CSS grade</a></th>
-                                <th class="visible-md visible-lg" style="width:130px">Action</th>
+                                <th>ID</th>
+                                <th>FullName</th>
+                                <th>Address</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Birthday</th>
+                                <th class="text-center" width="23%">Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr class="table-flag-blue">
-                                <td><input type="checkbox" /></td>
-                                <td>Trident</td>
-                                <td>Internet Explorer 7</td>
-                                <td>Win XP SP2+</td>
-                                <td>7</td>
-                                <td>A</td>
-                                <td class="visible-md visible-lg">
-                                    <div class="btn-group">
-                                        <a class="btn btn-sm show-tooltip" title="View" href="#"><i class="fa fa-search-plus"></i></a>
-                                        <a class="btn btn-sm show-tooltip" title="Edit" href="#"><i class="fa fa-edit"></i></a>
-                                        <a class="btn btn-sm btn-danger show-tooltip" title="Delete" href="#"><i class="fa fa-trash-o"></i></a>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr class="table-flag-orange">
-                                <td><input type="checkbox" /></td>
-                                <td>Gecko</td>
-                                <td><span class="label label-success">Not Bad</span> Firefox 1.5</td>
-                                <td>Win 98+ / OSX.2+</td>
-                                <td>1.8</td>
-                                <td>A</td>
-                                <td class="visible-md visible-lg">
-                                    <div class="btn-group">
-                                        <a class="btn btn-sm show-tooltip" title="View" href="#"><i class="fa fa-search-plus"></i></a>
-                                        <a class="btn btn-sm show-tooltip" title="Edit" href="#"><i class="fa fa-edit"></i></a>
-                                        <a class="btn btn-sm btn-danger show-tooltip" title="Delete" href="#"><i class="fa fa-trash-o"></i></a>
-                                    </div>
-                                </td>
-                            </tr>
+                            @foreach (var p in Model)
+                            {
+                                <tr class="table-flag-blue">
+                                    <td><b>@p.EmployeeId</b></td>
+                                    <td>@p.FirstName @p.LastName</td>
+                                    <td>@p.Address</td>
+                                    <td>@p.Email</td>
+                                    <td>@p.Phone</td>
+                                    <td>@p.BirthDate?.ToString("dd-MM-yyyy")</td>
+                                    
+                                    <td class="text-center">
+                                        <div class="btn-group">
+                                            <p>
+                                                <button class="btn btn-magenta btnDetail" data-id="@p.EmployeeId" data-target="#modalDetail" data-toggle="modal"><i class="fa fa-eye"></i> Detail</button>
+                                                <a class="btn btn-primary" asp-action="Edit" asp-route-id="@p.EmployeeId"><i class="fa fa-edit"></i> Edit</a>
+                                                <button class="btn btn-danger btnDelete" data-id="@p.EmployeeId"><i class="fa fa-trash-o"></i> Delete</button>
+                                            </p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
                         </tbody>
                     </table>
                 </div>
-                <p class="text-right">
-                    1-12 of 46
-                    <a class="btn btn-circle disabled" href="#"><i class="fa fa-angle-left"></i></a>
-                    <a class="btn btn-circle" href="#"><i class="fa fa-angle-right"></i></a>
-                </p>
             </div>
         </div>
     </div>
 </div>
-<!--page specific plugin scripts-->
-<script type="text/javascript" src="assets/data-tables/jquery.dataTables.js"></script>
-<script type="text/javascript" src="assets/data-tables/bootstrap3/dataTables.bootstrap.js"></script>
+<!-- END Main Content -->
+<!-- Modal -->
+<div class="modal fade" id="modalDetail" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Thông tin</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div id="modalBody">
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.js"></script>
+    <script type="text/javascript" src="~/Admin/assets/data-tables/bootstrap3/dataTables.bootstrap.js"></script>
+    <script src="~/Admin/js/Employee.js"></script>
+}
