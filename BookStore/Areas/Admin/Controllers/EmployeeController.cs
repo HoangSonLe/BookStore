@@ -33,7 +33,7 @@ namespace BookStore.Areas.Admin.Controllers
             var info = HttpContext.Session.GetObject<Employee>("Employee");
             Employee emp = new Employee();
             ViewData["RoleId"] = new SelectList(_context.Roles, "RoleId", "RoleName", info.Role);
-            var managers = _context.Employee.Where(p => p.Role < info.Role).ToList();
+            var managers = await _context.Employee.Where(p => p.Role < info.Role).ToListAsync();
 
             ViewBag.Managers = managers;
             return View(emp);
@@ -41,7 +41,7 @@ namespace BookStore.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> Add(Employee employee)
         {
-            bool check = _context.Employee.Any(e => e.EmployeeId == employee.EmployeeId);
+            bool check = _context.Employee.Any(e => e.UserName == employee.UserName);
             employee.CreatedDate = DateTime.Now;
             if (!check)
             {
@@ -89,8 +89,8 @@ namespace BookStore.Areas.Admin.Controllers
             }
 
             var info = HttpContext.Session.GetObject<Employee>("Employee");
-            ViewData["RoleId"] = new SelectList(_context.Roles, "RoleId", "RoleName", 1);
-            var managers = _context.Employee.Where(p => p.Role < 1).ToList();
+            ViewData["RoleId"] = new SelectList(_context.Roles, "RoleId", "RoleName", info.Role);
+            var managers = _context.Employee.Where(p => p.Role < info.Role).ToList();
 
             ViewBag.Managers = managers;
             return View(employee);
