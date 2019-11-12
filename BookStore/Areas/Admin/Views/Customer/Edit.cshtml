@@ -1,0 +1,79 @@
+﻿@{
+    Layout = null;
+}
+
+@model Customer
+
+<form id="formEdit" enctype="multipart/form-data">
+    <div class="modal-body">
+        <br />
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Tên khách hàng</label>
+                    <input type="hidden" class="form-control inputName" asp-for="CustomerId" value="@Model.CustomerId">
+                    <input type="text" class="form-control" asp-for="FirstName" value="@Model.FirstName" placeholder="Nhập tên">
+                </div>
+                <div class="form-group">
+                    <label>Họ khách hàng</label>
+                    <input type="text" class="form-control" asp-for="LastName" value="@Model.LastName" placeholder="Nhập họ">
+                </div>
+                <div class="form-group">
+                    <label>Tài khoản</label>
+                    <input type="text" class="form-control" readonly="" asp-for="UserName" value="@Model.UserName" />
+                </div>
+                <div class="form-group">
+                    <label>Mật khẩu</label>
+                    <input type="password" class="form-control" asp-for="Password" value="@Model.Password" placeholder="Nhập mật khẩu">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="text" class="form-control" asp-for="Email" value="@Model.Email" placeholder="Nhập email">
+                </div>
+                <div class="form-group">
+                    <label>Giới tính</label>
+                    <select class="form-control" asp-for="Sex">
+                        @if (Model.Sex == true)
+                        {
+                            <option selected value="true">Nam</option>
+                            <option value="false">Nữ</option>
+                        }
+                        else
+                        {
+                            <option selected value="false">Nữ</option>
+                            <option value="true">Nam</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Số điện thoại</label>
+                    <input type="text" class="form-control" asp-for="Phone" value="@Model.Phone" placeholder="Nhập số điện thoại">
+                </div>
+                <div class="form-group">
+                    <label>Ngày tạo</label>
+                    <input type="text" readonly="" class="form-control" asp-for="CreatedDate" value="@Model.CreatedDate" />
+                </div>
+
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                
+                <div class="form-group">
+                    <label>Địa chỉ</label>
+                    <input type="text" class="form-control" asp-for="Address" value="@Model.Address" placeholder="Nhập địa chỉ">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="submit" data-id="@Model.CustomerId" class="btn btn-primary btnEditSaveChange">Save Changes</button>
+        <button type="reset" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+    </div>
+</form>
+
+
+<script src="~/Admin/js/Customer.js"></script>
