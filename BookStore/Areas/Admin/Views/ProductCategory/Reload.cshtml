@@ -1,0 +1,85 @@
+﻿@model IEnumerable<ProductCategory>
+<div class="col-md-12">
+    <div class="box">
+        <div class="box-title">
+            <h3><i class="fa fa-table"></i> Dynamic Table</h3>
+            <div class="box-tool">
+                <a data-action="collapse" href="#"><i class="fa fa-chevron-up"></i></a>
+                <a data-action="close" href="#"><i class="fa fa-times"></i></a>
+            </div>
+        </div>
+        <div class="box-content">
+            <div class="btn-toolbar pull-right clearfix">
+                <div class="btn-group">
+                    <a class="btn btn-circle show-tooltip btnAdd" data-target="#modalDetail" data-toggle="modal" title="Add new record" href="#"><i class="fa fa-plus"></i></a>
+                    <a class="btn btn-circle show-tooltip" title="Edit selected" href="#"><i class="fa fa-edit"></i></a>
+                    <a class="btn btn-circle show-tooltip" title="Delete selected" href="#"><i class="fa fa-trash-o"></i></a>
+                </div>
+                <div class="btn-group">
+                    <a class="btn btn-circle show-tooltip" title="Print" href="#"><i class="fa fa-print"></i></a>
+                    <a class="btn btn-circle show-tooltip" title="Export to PDF" href="#"><i class="fa fa-file-text-o"></i></a>
+                    <a class="btn btn-circle show-tooltip" title="Export to Exel" href="#"><i class="fa fa-table"></i></a>
+                </div>
+                <div class="btn-group">
+                    <a class="btn btn-circle show-tooltip" title="Refresh" href="#"><i class="fa fa-repeat"></i></a>
+                </div>
+            </div>
+            <br /><br />
+            <div class="clearfix"></div>
+            <div class="table-responsive" style="border:0">
+                <table class="table table-advance" id="tablePublishers">
+                    <thead>
+                        <tr>
+                            <th>Category ID</th>
+                            <th>Name</th>
+                            <th>Url Friendly</th>
+                            <th>Parent Category</th>
+                            <th class="text-center">Status</th>
+                            <th class="text-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="content">
+                        @foreach (var p in Model)
+                        {
+                            <tr class="table-flag-blue">
+                                <td><b>@p.CategoryId</b></td>
+                                <td>@p.Name</td>
+                                <td>@p.UrlFriendly</td>
+                                @if (p.ParentId.HasValue)
+                                {
+                                    @foreach (var o in Model)
+                                    {
+                                        if (p.ParentId == o.CategoryId)
+                                        {
+                                            <td class="text-center">@o.Name</td>
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    <td class="text-center">Không có.</td>
+                                }
+                                @if (p.Status == true)
+                                {
+                                    <td class="text-center"><span class="label label-success">Hoạt động</span></td>
+                                }
+                                else
+                                {
+                                    <td class="text-center"><span class="label label-warning">Không hoạt động</span></td>
+                                }
+                                <td class="text-center">
+                                    <div class="btn-group">
+                                        <p>
+                                            <button class="btn btn-primary btnEdit" data-id="@p.CategoryId" data-target="#modalDetail" data-toggle="modal"><i class="fa fa-edit"></i> Edit</button>
+                                            <button class="btn btn-danger btnDelete" data-id="@p.CategoryId" data-name="@p.Name"><i class="fa fa-trash-o"></i> Delete</button>
+                                        </p>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,10 +1,10 @@
 ﻿@model BookStore.Models.ProductCategory
-<form id="CreateOrEdit" asp-route-id="@Model.CategoryId" asp-action="CreateOrEdit" method="post" asp-controller="ProductCategory" enctype="multipart/form-data">
+<form id="CreateOrEdit" @*asp-route-id="@Model.CategoryId"*@ asp-action="CreateOrEdit" method="post" asp-controller="ProductCategory" enctype="multipart/form-data">
     <div class="modal-body" id="modalBody">
         <div class="form-group">
             <label>Category Name</label>
             <input type="hidden" class="form-control inputName" asp-for="CategoryId">
-            <input type="text" class="form-control inputName" asp-for="Name" value="@Model.Name" placeholder="Nhập tên">
+            <input type="text" class="form-control inputName" asp-for="Name" @*value="@Model.Name"*@ placeholder="Nhập tên">
         </div>
         <div class="form-group">
             <label>Url Friendly</label>
@@ -13,9 +13,10 @@
         <div class="form-group">
             <label>Parent Category</label>
             <select class="form-control" asp-for="ParentId">
+                <option selected value="0"></option>
                 @foreach (var p in ViewBag.category)
                 {
-                    if (Model.ParentId != null && Model.ParentId == p.ParentId)
+                    if (Model!=null && Model.ParentId != null && Model.ParentId == p.ParentId)
                     {
                         <option selected value="@p.CategoryId">@p.Name</option>
                     }
@@ -30,7 +31,8 @@
             <label class="form-check-label">Trạng thái hiển thị  </label>
             @{
                 string tmp = "";
-                if (Model.Status == true)
+
+                if (Model!=null && Model.Status == true)
                 {
                     tmp = "checked";
                 }
@@ -39,7 +41,7 @@
         </div>
     </div>
     <div class="modal-footer">
-        <button type="submit" data-id="@Model.CategoryId" class="btn btn-primary btnSubmit">Submit</button>
+        <button type="submit" class="btn btn-primary btnSubmit">Submit</button>
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
     </div>
 </form>
@@ -60,19 +62,34 @@
         });
         $('.btnSubmit').click(function (e) {
             e.preventDefault();
-            debugger;
+            let action = "@ViewBag.Action";
             var productCategory = $("#CreateOrEdit").serialize();
-            $.ajax({
-                url: "/Admin/ProductCategory/CreateOrEdit",
-                type: "POST",
-                data: productCategory,
-                success: function () {
+                $.ajax({
+                    url: "/Admin/ProductCategory/CreateOrEdit",
+                    type: "POST",
+                    data: 
+                        productCategory
+                    ,
+                    success: function (res) {
+                        $(".bodyContent").html("");
+                        $(".bodyContent").html(res);
+                        $("#modalDetail").modal("toggle");
+                        let text = "";
+                        if (action == "edit") text = "Cập nhật thành công!";
+                        else text="Thêm thành công!"
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Thành công!',
+                            text: text,
+                            showConfirmButton: false,
+                            timer: 3000
+                        });
+                    },
+                    error: function () {
 
-                },
-                error: function () {
-
-                }
-            });
+                    }
+                });
+            
         });
     })
 </script>

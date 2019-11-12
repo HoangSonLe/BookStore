@@ -65,7 +65,7 @@ $('#tablePublishers tbody').on('click', '.btnDelete', function () {
                         Swal.fire({
                             icon: 'error',
                             title: 'Lỗi',
-                            text: 'Không thành công!',
+                            text: 'Xóa Không thành công!',
                             showConfirmButton: false,
                             timer: 1000
                         });
@@ -77,5 +77,15 @@ $('#tablePublishers tbody').on('click', '.btnDelete', function () {
     })
 
 });
+$(".btnAdd").click(function () {
+    $.ajax({
+        url: "/Admin/ProductCategory/CreateOrEdit",
+        type: "GET",
+        success: function (data) {
+            $("#modalBody").html("");
+            $("#modalBody").html(data);
+        }
+    });
+})
 
 

@@ -2,7 +2,7 @@
 <!-- BEGIN Main Content -->
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">
 
-<div class="row">
+<div class="row bodyContent">
     <div class="col-md-12">
         <div class="box">
             <div class="box-title">
@@ -15,7 +15,7 @@
             <div class="box-content">
                 <div class="btn-toolbar pull-right clearfix">
                     <div class="btn-group">
-                        <a class="btn btn-circle show-tooltip" title="Add new record" href="#"><i class="fa fa-plus"></i></a>
+                        <a class="btn btn-circle show-tooltip btnAdd" data-target="#modalDetail" data-toggle="modal" title="Add new record" href="#"><i class="fa fa-plus"></i></a>
                         <a class="btn btn-circle show-tooltip" title="Edit selected" href="#"><i class="fa fa-edit"></i></a>
                         <a class="btn btn-circle show-tooltip" title="Delete selected" href="#"><i class="fa fa-trash-o"></i></a>
                     </div>
@@ -42,7 +42,7 @@
                                 <th class="text-center">Action</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="content">
                             @foreach (var p in Model)
                             {
                                 <tr class="table-flag-blue">
