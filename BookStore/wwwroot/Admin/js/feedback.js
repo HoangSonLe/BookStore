@@ -49,3 +49,18 @@ $('#tablePublishers tbody').on('click', '.btnDelete', function () {
     }
 })
 })
+$(".btnDetail").click(function () {
+    let feedbackID = $(this).data("id");
+    $.ajax({
+        url: "/Admin/Feedback/Detail",
+        type: "GET",
+        data: {
+            id: feedbackID
+        },
+        success: function (data) {
+            $("#modalBody").html("");
+            $("#modalBody").html(data);
+            //$("#modalBody").modal("show");
+        }
+    });
+})

@@ -29,9 +29,31 @@ namespace BookStore.Areas.Admin.Controllers
         public int Delete(int id)
         {
             var fb = _ctx.Feedback.Where(p => p.FeedbackId == id).SingleOrDefault();
-            _ctx.Feedback.Remove(fb);
-            _ctx.SaveChanges();
-            return 1;
+            if (fb != null)
+            {
+                _ctx.Feedback.Remove(fb);
+                _ctx.SaveChanges();
+                return 1;
+            }
+            return 0;
+        }
+
+        public IActionResult Detail(int? id)
+        {
+
+            if (id == null)
+            {
+                return BadRequest();
+            }
+            var fb = _ctx.Feedback.Where(p => p.FeedbackId == id).SingleOrDefault();
+            if (fb == null) return BadRequest(); 
+            if (fb.EmployeeId != null)
+            {
+                //Feedback need to reply from staff and Someone already replied
+                var emp = _ctx.Employee.SingleOrDefault(p => p.EmployeeId == id);
+                ViewBag.EmployeeName = emp.FirstName + " " + emp.LastName;
+            }
+            return PartialView("Detail", fb);
         }
     }
 }
