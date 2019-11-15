@@ -1,0 +1,184 @@
+﻿@model X.PagedList.IPagedList<Product>
+@using BookStore.Models
+@using X.PagedList.Mvc.Core;
+@using X.PagedList;
+
+@{
+    ViewData["Title"] = "Product";
+    ViewData["Breadcrumbs"] = "Product";
+    IEnumerable<Publishers> category = (IEnumerable<Publishers>)ViewData["Publisher"];
+}
+
+@await Html.PartialAsync("_Breadcrumbs")
+<link href="~/css/ProductItem.css" rel="stylesheet" />
+<script src="https://kit.fontawesome.com/aa03f9ec64.js" crossorigin="anonymous"></script>
+<!-- shop-main-area-start -->
+<div class="shop-main-area mb-70">
+    <div class="container">
+        <div class="row">
+            @await Html.PartialAsync("ShopLeft",category)
+            <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12 mt-0">
+                <div class="toolbar mb-30" style="padding-top:0px;">
+                    <div class="shop-tab section-title-5">
+                        <h2>Thể loại: @ViewBag.Category</h2>
+                    </div>
+                    <div class="field-limiter">
+                        <div class="control">
+                            <span>Show</span>
+                            <!-- chosen-start -->
+                            <select data-placeholder="Default Sorting" style="width:50px;" class="chosen-select" tabindex="1">
+                                <option value="12">12</option>
+                                <option value="24">24</option>
+                                <option value="36">36</option>
+                            </select>
+                            <!-- chosen-end -->
+                        </div>
+                    </div>
+                    <div class="toolbar-sorter">
+                        <span>Sort By</span>
+                        @{
+                            var iconName = "<i class='fas fa-sort-alpha-down-alt'></i>";
+                            var nameSort = @ViewData["NameSortParm"].ToString();
+                            var iconView = "<i class='fas fa-sort-amount-down-alt'></i>";
+                            var viewSort = @ViewData["ViewSortParm"].ToString();
+                            var iconPrice = "<i class='fas fa-sort-numeric-down-alt'></i>";
+                            var priceSort = @ViewData["PriceSortParm"].ToString();
+                        }
+                        @if (nameSort != "")
+                        {
+                            iconName = "<i class='fas fa-sort-alpha-up-alt'></i>";
+                        }
+                        @if (viewSort != "view_desc")
+                        {
+                            iconView = "<i class='fas fa-sort-amount-up-alt'></i>";
+                        }
+                        @if (priceSort != "price_desc")
+                        {
+                            iconPrice = "<i class='fas fa-sort-numeric-up-alt'></i>";
+                        }
+                        <a asp-action="Index" asp-route-currentCategory="@ViewData["CurrentCategory"]" asp-route-sortOrder="@ViewData["NameSortParm"]">Tên @Html.Raw(iconName)</a>
+                        <a asp-action="Index" asp-route-currentCategory="@ViewData["CurrentCategory"]" asp-route-sortOrder="@ViewData["ViewSortParm"]">Lượt xem @Html.Raw(iconView)</a>
+                        <a asp-action="Index" asp-route-currentCategory="@ViewData["CurrentCategory"]" asp-route-sortOrder="@ViewData["PriceSortParm"]">Giá @Html.Raw(iconPrice)</a>
+
+                    </div>
+                </div>
+                <!-- tab-area-start -->
+                <div class="tab-content">
+                    <div class="tab-pane active" id="th">
+                        <div class="row">
+                            @foreach (var p in Model)
+                            {
+                                <div class="col-lg-3 col-md-4 col-sm-6">
+                                    <!-- single-product-start -->
+                                    <div class="product-wrapper mb-40" title="@p.ProductName">
+                                        <div class="product-img">
+                                            <a href="#">
+                                                <img src="~/Image/@p.ImageCover" alt="@p.ImageCover" class="primary" style="margin:5px;height:220px;width:160px; text-align:center;" />
+                                            </a>
+                                            <div class="quick-view">
+                                                <a class="action-view quickViewModal" data-id="@p.ProductId" data-target="#productModal" data-toggle="modal" title="Quick View">
+                                                    <i class="fa fa-search-plus"></i>
+                                                </a>
+                                            </div>
+                                            @if (p.Discount != 0)
+                                            {
+                                                <div class="product-flag">
+                                                    <ul>
+                                                        <li><span class="discount-percentage">@p.Discount %</span></li>
+                                                    </ul>
+                                                </div>
+                                            }
+                                        </div>
+                                        <div class="product-details text-center">
+                                            <div class="divAreaContent">
+                                                <a href="#">@p.ProductName</a>
+                                            </div>
+                                            <div class="product-price">
+                                                <ul>
+                                                    @{var price = String.Format("{0:0,0 VNĐ}", p.Price);}
+                                                    @if (p.Discount != 0)
+                                                    {
+                                                        var promotionPrice = String.Format("{0:0,0 VNĐ}", p.PromotionPrice);
+                                                        <li>@promotionPrice</li>
+                                                        <li class="old-price">@price</li>
+                                                    }
+                                                    else
+                                                    {
+                                                        <li>@price</li>
+                                                    }
+
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class="product-link">
+                                            <div class="product-button">
+                                                <a href="#" title="Add to cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
+                                            </div>
+                                            <div class="add-to-link">
+                                                <ul>
+                                                    <li><a href="product-details.html" title="Details"><i class="fa fa-external-link"></i></a></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- single-product-end -->
+                                </div>
+
+                            }
+                        </div>
+                    </div>
+                </div>
+                <!-- tab-area-end -->
+                <!-- pagination-area-start -->
+                <div class="pagination-area mt-50">
+                    <div class="row">
+                        <div class="col-md-4">Trang @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) / @Model.PageCount</div>
+                        <div class="col-md-8">
+                            <div class="pagination" align="center">
+                                @Html.PagedListPager(Model, pageNumber => Url.Action("Index", new { sortOrder = @ViewData["CurrentSort"], currentCategory = @ViewData["CurrentCategory"], pageNumber }))
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- pagination-area-end -->
+            </div>
+        </div>
+    </div>
+</div>
+<!-- shop-main-area-end -->
+<!--Modal-->
+<div class="modal fade" id="productModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">x</span></button>
+            </div>
+            <div class="modal-body modalBody">
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{ 
+    <script>
+        $(function () {
+            $(".quickViewModal").on("click", function () {
+                var id = $(this).data("id");
+                $.ajax({
+                    url: "Products/Detail",
+                    type: "GET",
+                    data: {
+                        id: id
+                    },
+                    success: function (data) {
+                        $(".modalBody").html("");
+                        $(".modalBody").html(data);
+                    },
+                    error: function (data) {
+                        alert("error");
+
+                    }
+                });
+            });
+        });
+    </script>
+}

@@ -131,7 +131,8 @@ namespace BookStore.Areas.Admin.Controllers
                             };
                             _context.ProductImages.Add(productImages);
                         }
-                    }
+                    }
+
                     _context.Update(product);
                     await _context.SaveChangesAsync();
                 }

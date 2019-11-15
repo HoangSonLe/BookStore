@@ -10,24 +10,24 @@
                                 <a href="index.html">Trang chủ</a>
                             </li>
                             <li>
-                                <a href="product-details.html">Sản Phẩm<i class="fa fa-angle-down"></i></a>
+                                <a>Sản Phẩm<i class="fa fa-angle-down"></i></a>
                                 <div class="mega-menu">
                                     @foreach (var p in Model)
-                                        {
+                                    {
                                         <span>
-                                            @if (!p.ParentId.HasValue && p.Status==true)
+                                            @if (!p.ParentId.HasValue && p.Status == true)
                                             {
-                                                <a href="#" class="title">@p.Name</a>
+                                                <a class="title">@p.Name</a>
                                                 @foreach (var o in Model)
                                                 {
                                                     @if (o.ParentId.HasValue && o.ParentId == p.CategoryId)
                                                     {
-                                                        <a href="shop.html">@o.Name</a>
+                                                        <a style="width: 200px; white-space: nowrap; overflow: hidden;text-overflow: ellipsis;" title="@o.Name" asp-controller="Products" asp-action="Index" asp-route-currentCategory="@o.UrlFriendly">@o.Name</a>
                                                     }
                                                 }
                                             }
                                         </span>
-                                        }
+                                    }
                                 </div>
                             </li>
                             <li>
