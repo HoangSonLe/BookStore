@@ -121,5 +121,60 @@ namespace BookStore.Areas.Admin.Controllers
                 return PartialView("Datatable", comment);
             }
         }
+        public IActionResult Detail(int? id)
+        {
+            if (id == null) return BadRequest();
+            var comment = _ctx.Comment.SingleOrDefault(p => p.CommentId == id);
+            if (comment != null)
+            {
+                string productName = _ctx.Product.SingleOrDefault(p => p.ProductId == comment.ProductId).ProductName;
+                string name = "";
+                if (comment.EmployeeId != null)
+                {
+                    //This comment belongs to employee
+                    //Getting name of the employee who write this comment
+                    var emp = _ctx.Employee.SingleOrDefault(p => p.EmployeeId == comment.EmployeeId);
+                    name = emp.FirstName + " " + emp.LastName+" (Nhân viên)";
+                }
+                else
+                {
+                    //This comment belongs to customer
+                    //Getting name of the customer who write this comment
+                    var cus = _ctx.Customer.SingleOrDefault(p => p.CustomerId == comment.CustomerId);
+                    name = cus.FirstName + " " + cus.LastName;
+                }
+                var cmt = new CommentViewModel
+                {
+                    CommentId = comment.CommentId,
+                    ProductName = productName,
+                    Name = name,
+                    Context = comment.Context,
+                    CreatedDate = comment.CreatedDate,
+                    ModifiedDate = comment.ModifiedDate,
+                    customerID = comment.CustomerId,
+                    employeeID = comment.EmployeeId,
+                    Status = comment.Status
+                };
+                return PartialView("Detail", cmt);
+            }
+            return Content("No available");
+            
+        }
+
+        [HttpPost]
+        public IActionResult Edit(int id, string context, bool status, int isFiltering)
+        {
+            var comment = _ctx.Comment.SingleOrDefault(p => p.CommentId == id);
+            if (comment != null)
+            {
+                comment.Context = context;
+                comment.Status = (status) ? 1 : 0;
+                comment.ModifiedDate = DateTime.Now;
+                _ctx.Comment.Update(comment);
+                _ctx.SaveChanges();
+                return Filter(isFiltering);
+            }
+            return Content("Error");
+        }
     }
 }

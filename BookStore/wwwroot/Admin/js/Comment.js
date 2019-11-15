@@ -63,3 +63,35 @@ $('#tableComment tbody').on('click', '.btnDelete', function () {
     })
 
 });
+//$('#tableComment tbody').on('click', '.btnDetail', function () {
+//    var idItem = $(this).data("id");
+//    alert(idItem);
+//    //var nameItem = $(this).data("name");
+//    var item = $(this).parents('tr');
+//    $.ajax({
+//        url: "/Admin/Comment/Detail",
+//        type: "GET",
+//        data: {
+//            id: idItem
+//        },
+//        success: function (data) {
+//            $("#modalBody").html("");
+//            $("#modalBody").html(data);
+//        }
+//    });
+
+//});
+function detail(idItem) {
+    $.ajax({
+        url: "/Admin/Comment/Detail",
+        type: "GET",
+        data: {
+            id: idItem
+        },
+        success: function (data) {
+            $("#modalBody").html("");
+            $("#modalBody").html(data);
+        }
+    });
+}
+
