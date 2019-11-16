@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BookStore.Areas.ModelViews;
+using BookStore.Helpers;
 using BookStore.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -175,6 +176,35 @@ namespace BookStore.Areas.Admin.Controllers
                 return Filter(isFiltering);
             }
             return Content("Error");
+        }
+
+        
+        public IActionResult Add()
+        {
+            ViewBag.Products = _ctx.Product.Select(p => new ProductView
+            {
+                ProductId=p.ProductId,
+                ProductName=p.ProductName
+            });
+            return PartialView("Add");
+        }
+
+        [HttpPost]
+        public IActionResult Add(int productID, string comment, bool status, int isFiltering)
+        {
+            var em = HttpContext.Session.GetObject<Employee>("Employee");
+            if (em == null) return Content("Error");
+            Comment cm = new Comment
+            {
+                ProductId = productID,
+                EmployeeId = em.EmployeeId,
+                Context = comment,
+                CreatedDate = DateTime.Now,
+                Status = status ? 1 : 0
+            };
+            _ctx.Comment.Add(cm);
+            _ctx.SaveChanges();
+            return Filter(isFiltering);
         }
     }
 }

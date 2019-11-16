@@ -16,7 +16,7 @@
             <div class="box-content">
                 <div class="btn-toolbar pull-right clearfix">
                     <div class="btn-group" role="group">
-
+                        
                         <select class="form-control browser-default custom-select" id="opFilter">
                             <option id="all-option" class=selected value="0">Tất cả</option>
                             @foreach (ProductView p in ViewBag.Products)
@@ -26,7 +26,7 @@
                         </select>
                     </div>
                     <div class="btn-group">
-                        <a class="btn btn-circle show-tooltip" title="Add new record" href="#"><i class="fa fa-plus"></i></a>
+                        <a class="btn btn-circle show-tooltip btnAdd" data-target="#modalDetail" data-toggle="modal" title="Add new record" href="#"><i class="fa fa-plus"></i></a>
                         <a class="btn btn-circle show-tooltip" title="Edit selected" href="#"><i class="fa fa-edit"></i></a>
                         <a class="btn btn-circle show-tooltip" title="Delete selected" href="#"><i class="fa fa-trash-o"></i></a>
                     </div>
@@ -123,6 +123,15 @@
 
     <script src="~/Admin/js/Comment.js"></script>
     <script>
-
+        $(".btnAdd").click(function () {
+            $.ajax({
+                url: "/Admin/Comment/Add",
+                type: "GET",
+                success: function (data) {
+                    $("#modalBody").html("");
+                    $("#modalBody").html(data);
+                }
+            });
+        });
     </script>
 }
