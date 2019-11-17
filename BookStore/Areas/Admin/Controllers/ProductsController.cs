@@ -9,6 +9,7 @@ using BookStore.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using System.IO;
+using Microsoft.AspNetCore.Identity;
 
 namespace BookStore.Areas.Admin.Controllers
 {
@@ -54,8 +55,9 @@ namespace BookStore.Areas.Admin.Controllers
         // GET: Admin/Products/Create
         public IActionResult Create()
         {
-            ViewData["CategoryId"] = new SelectList(_context.ProductCategory, "CategoryId", "CategoryId");
+            ViewData["CategoryId"] = new SelectList(_context.ProductCategory.Where(p => p.ParentId != null).ToList(), "CategoryId", "Name");
             ViewData["PublisherId"] = new SelectList(_context.Publishers, "PublisherId", "PublisherName");
+
             return View();
         }
 
@@ -64,63 +66,28 @@ namespace BookStore.Areas.Admin.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ProductId,ProductName,Unit,UrlFriendly,Description,Price,PromotionPrice,IncludeVat,Quantity,CategoryId,PublisherId,Discount,ViewCounts,Status")] Product product)
+        public async Task<IActionResult> Create([Bind("Ffile")] IFormFile Ffile,[Bind(" ProductName,Unit,UrlFriendly,Description,Price,PromotionPrice,IncludeVat,Quantity,CategoryId,PublisherId,Discount,ViewCounts,Status")] Product product, List<IFormFile> fFiles)
         {
-            if (ModelState.IsValid)
-            {
-                _context.Add(product);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["CategoryId"] = new SelectList(_context.ProductCategory, "CategoryId", "CategoryId", product.CategoryId);
-            ViewData["PublisherId"] = new SelectList(_context.Publishers, "PublisherId", "PublisherName", product.PublisherId);
-            return View(product);
-        }
-
-        // GET: Admin/Products/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var product = await _context.Product.Include(m => m.ProductImages).AsNoTracking().SingleOrDefaultAsync(p => p.ProductId == id);
-            if (product == null)
-            {
-                return NotFound();
-            }
-            ViewBag.ProductImages = _context.ProductImages.Where(p => p.ProductId == id).ToList();
-            //ViewData["CategoryId"] = new SelectList(_context.ProductCategory, "CategoryId", "Name", product.CategoryId);
-            ViewData["CategoryId"] = new SelectList(_context.ProductCategory, "CategoryId", "Name", product.CategoryId);
-            ViewData["PublisherId"] = new SelectList(_context.Publishers, "PublisherId", "PublisherName", product.PublisherId);
-            //ViewData["ProductImages"] = new SelectList(_context.ProductImages, "ProductId", "ProductImage", product.ProductId);
-            return View(product);
-        }
-
-        // POST: Admin/Products/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id,[Bind("Ffile")] IFormFile Ffile, [Bind("ArrDeleteImage")] string ArrDeleteImage, [Bind("ProductId,ProductName,Unit,UrlFriendly,Description,Price,PromotionPrice,IncludeVat,Quantity,CategoryId,PublisherId,Discount,ViewCounts,Status")] Product product, List<IFormFile> fFiles)
-        {
-            string[] arrDeleteImage = new string[] { };
-
-            if (id != product.ProductId)
-            {
-                return NotFound();
-            }
-            if (ArrDeleteImage.Length > 0)
-            {
-                ArrDeleteImage = ArrDeleteImage.Trim();
-                arrDeleteImage = ArrDeleteImage.Split(',');
-            }
-
             if (ModelState.IsValid)
             {
                 try
                 {
+                    //thêm và xóa ảnh bìa
+                    if (Ffile != null && Ffile.Length != 0)
+                    {
+                        string fileName = $"{DateTime.Now.Ticks}{Ffile.FileName}";
+                        string fullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Image", fileName);
+                        using (var file = new FileStream(fullPath, FileMode.Create))
+                        {
+                            product.ImageCover = fileName;
+                           Ffile.CopyTo(file);
+                        }
+                    }
+                   
+                    _context.Add(product);
+                    _context.SaveChanges();
+                    var id = product.ProductId;
+                    //thêm hình ảnh mô tả
                     foreach (var myFile in fFiles)
                     {
                         string fileName = $"{DateTime.Now.Ticks}{myFile.FileName}";
@@ -137,6 +104,81 @@ namespace BookStore.Areas.Admin.Controllers
                             _context.ProductImages.Add(productImages);
                         }
                     }
+                    ViewBag.Message = "success";
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                }
+            }
+            ViewData["CategoryId"] = new SelectList(_context.ProductCategory, "CategoryId", "CategoryId", product.CategoryId);
+            ViewData["PublisherId"] = new SelectList(_context.Publishers, "PublisherId", "PublisherName", product.PublisherId);
+            return View();
+        }
+
+        // GET: Admin/Products/Edit/5
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var product = await _context.Product.Include(m => m.ProductImages).AsNoTracking().SingleOrDefaultAsync(p => p.ProductId == id);
+            if (product == null)
+            {
+                return NotFound();
+            }
+            var ProductImages = new List<ProductImages>();
+            ProductImages = _context.ProductImages.Where(p => p.ProductId == id).ToList();
+            ViewBag.ProductImages = ProductImages;
+            ViewData["CategoryId"] = new SelectList(_context.ProductCategory.Where(p=>p.ParentId!=null).ToList(), "CategoryId", "Name", product.CategoryId);
+            ViewData["PublisherId"] = new SelectList(_context.Publishers, "PublisherId", "PublisherName", product.PublisherId);
+            return View(product);
+        }
+
+        // POST: Admin/Products/Edit/5
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id,[Bind("Ffile")] IFormFile Ffile, [Bind("ArrDeleteImage")] string ArrDeleteImage, [Bind("ProductId,ProductName,Unit,UrlFriendly,Description,Price,PromotionPrice,IncludeVat,Quantity,CategoryId,PublisherId,Discount,ViewCounts,Status")] Product product, List<IFormFile> fFiles)
+        {
+            //mảng id hình ảnh xóa
+            string[] arrDeleteImage = new string[] { };
+
+            if (id != product.ProductId)
+            {
+                return NotFound();
+            }
+            if (ArrDeleteImage.Length > 0)
+            {
+                ArrDeleteImage = ArrDeleteImage.Trim();
+                arrDeleteImage = ArrDeleteImage.Split(',');
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    //thêm hình ảnh mô tả
+                    foreach (var myFile in fFiles)
+                    {
+                        string fileName = $"{DateTime.Now.Ticks}{myFile.FileName}";
+                        string fullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Image", fileName);
+
+                        using (var file = new FileStream(fullPath, FileMode.Create))
+                        {
+                            myFile.CopyTo(file);
+                            var productImages = new ProductImages()
+                            {
+                                ProductId = id,
+                                ProductImage = fileName
+                            };
+                            _context.ProductImages.Add(productImages);
+                        }
+                    }
+                    //xóa hình ảnh mô tả
                     if (arrDeleteImage.Count() > 0)
                     {
                         foreach (var o in arrDeleteImage)
@@ -159,6 +201,7 @@ namespace BookStore.Areas.Admin.Controllers
 
                         }
                     }
+                    //thêm và xóa ảnh bìa
                     var productBefore = _context.Product.AsNoTracking().SingleOrDefault(p => p.ProductId == id);
                     if (Ffile!=null && Ffile.Length != 0)
                     {
@@ -186,6 +229,7 @@ namespace BookStore.Areas.Admin.Controllers
                     
                     _context.Update(product);
                     await _context.SaveChangesAsync();
+                    ViewBag.Message = "success";
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -198,8 +242,10 @@ namespace BookStore.Areas.Admin.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
             }
+            var ProductImages = new List<ProductImages>();
+            ProductImages = _context.ProductImages.Where(p => p.ProductId == id).ToList();
+            ViewBag.ProductImages = ProductImages;
             ViewData["CategoryId"] = new SelectList(_context.ProductCategory, "CategoryId", "CategoryId", product.CategoryId);
             ViewData["PublisherId"] = new SelectList(_context.Publishers, "PublisherId", "PublisherName", product.PublisherId);
             return View(product);

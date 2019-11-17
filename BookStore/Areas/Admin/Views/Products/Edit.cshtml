@@ -1,13 +1,27 @@
 ﻿@model BookStore.Models.Product
+@{
+    ViewData["Title"] = "Product";
+    ViewData["Child"] = "Edit";
+}
 <link href="~/Admin/css/ProductImage.css" rel="stylesheet" />
 <div class="row">
     <div class="col-md-12">
         <div class="box">
+
+            @if (ViewBag.Message == "success")
+            {
+                <div class="alert alert-info">
+                    <button class="close" data-dismiss="alert">×</button>
+                    <h3>Thành công !!!</h3>
+                </div>
+            }
+
             <div class="box-title">
                 <h3><i class="fa fa-plus"></i>Add Product</h3>
                 <div class="box-tool">
                     <a data-action="collapse" href="#"><i class="fa fa-chevron-up"></i></a>
-                    <a data-action="close" href="#"><i class="fa fa-times"></i></a>
+                    <a class="btn btn-success" asp-action="Create"><i class="fa fa-plus"></i> Add</a>
+                    <a class="btn btn-danger" href="#"><i class="fa fa-times"></i></a>
                 </div>
             </div>
             <div class="box-content">
@@ -15,7 +29,7 @@
                     <form asp-action="Edit" method="post" id="formEdit" enctype="multipart/form-data" asp-route-id="@Model.ProductId">
                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                         <input type="hidden" asp-for="ProductId" />
-                        <input type="hidden" name="ArrDeleteImage" value=","/>
+                        <input type="hidden" name="ArrDeleteImage" value="," />
                         <div class="row">
                             <div class="col-lg-6">
                                 <div class="form-group">
@@ -25,7 +39,18 @@
                                 </div>
                                 <div class="form-group">
                                     <h5>Đơn vị tính</h5>
-                                    <input asp-for="Unit" class="form-control" />
+                                    <select asp-for="Unit" class="form-control">
+                                        @if (Model.Unit == "Quyển")
+                                        {
+                                            <option selected value="Quyển">Quyển</option>
+                                            <option value="Thùng">Thùng</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="Quyển">Quyển</option>
+                                            <option selected value="Thùng">Thùng</option>
+                                        }
+                                    </select>
                                     <span asp-validation-for="Unit" class="text-danger"></span>
                                 </div>
                                 <div class="form-group">
@@ -35,7 +60,18 @@
                                 </div>
                                 <div class="form-group">
                                     <h5>Tình trạng</h5>
-                                    <input asp-for="Status" class="form-control" />
+                                    <select asp-for="Status" class="form-control">
+                                        @if (Model.Status == true)
+                                        {
+                                            <option selected value="true">Kích hoạt</option>
+                                            <option value="false">Chưa kích hoạt</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="true">Kích hoạt</option>
+                                            <option selected value="false">Chưa kích hoạt</option>
+                                        }
+                                    </select>
                                     <span asp-validation-for="Status" class="text-danger"></span>
                                 </div>
                                 <div class="form-group">
@@ -62,7 +98,18 @@
                                 </div>
                                 <div class="form-group">
                                     <h5>Bao gồm VAT</h5>
-                                    <input asp-for="IncludeVat" class="form-control" />
+                                    <select asp-for="IncludeVat" class="form-control">
+                                        @if (Model.IncludeVat == true)
+                                        {
+                                            <option selected value="true">Bao gồm VAT</option>
+                                            <option value="false">Chưa bao gồm VAT</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="true">Bao gồm VAT</option>
+                                            <option selected value="false">Chưa bao gồm VAT</option>
+                                        }
+                                    </select>
                                     <span asp-validation-for="IncludeVat" class="text-danger"></span>
                                 </div>
                                 <div class="form-group">
@@ -103,6 +150,7 @@
                             </div>
                             <div class="col-lg-12">
                                 <h5>Hình Ảnh Minh Họa</h5>
+
                                 @foreach (var p in ViewBag.ProductImages)
                                 {
                                     <div class="form-group" style="display: inline-block;">
