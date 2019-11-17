@@ -1,7 +1,10 @@
 ﻿var table = $('#tablePublishers').DataTable();
 
-$(".btnDetail").click(function () {
-    var id = $(this).data("id");
+//$('#tablePublishers tbody').on('click', '.btnDetail', function (){
+    
+//});
+function onDetailProduct(id){
+    //var id = $(this).data("id");
     $.ajax({
         url: "/Admin/Products/Details",
         type: "GET",
@@ -13,8 +16,7 @@ $(".btnDetail").click(function () {
             $("#modalBody").html(data);
         }
     });
-});
-
+}
 $('#tablePublishers tbody').on('click', '.btnDelete', function () {
     var idItem = $(this).data("id");
     var nameItem = $(this).data("name");
@@ -30,13 +32,13 @@ $('#tablePublishers tbody').on('click', '.btnDelete', function () {
     }).then((result) => {
         if (result.value) {
             $.ajax({
-                url: "/Admin/ProductCategory/Delete",
+                url: "/Admin/Products/Delete",
                 type: "POST",
                 data: {
                     id: idItem
                 },
                 success: function (data) {
-                    if (data == 1) {
+                    if (data == "1") {
                         Swal.fire({
                             icon: 'success',
                             title: 'Thành công!',

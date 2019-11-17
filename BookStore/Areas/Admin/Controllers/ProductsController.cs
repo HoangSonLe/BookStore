@@ -85,7 +85,7 @@ namespace BookStore.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Product.Include(m => m.ProductImages).AsNoTracking().SingleOrDefaultAsync(p=> p.ProductId == id);
+            var product = await _context.Product.Include(m => m.ProductImages).AsNoTracking().SingleOrDefaultAsync(p => p.ProductId == id);
             if (product == null)
             {
                 return NotFound();
@@ -103,19 +103,24 @@ namespace BookStore.Areas.Admin.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ProductId,ProductName,Unit,UrlFriendly,Description,Price,PromotionPrice,IncludeVat,Quantity,CategoryId,PublisherId,Discount,ViewCounts,Status")] Product product, List<IFormFile> fFiles)
+        public async Task<IActionResult> Edit(int id,[Bind("Ffile")] IFormFile Ffile, [Bind("ArrDeleteImage")] string ArrDeleteImage, [Bind("ProductId,ProductName,Unit,UrlFriendly,Description,Price,PromotionPrice,IncludeVat,Quantity,CategoryId,PublisherId,Discount,ViewCounts,Status")] Product product, List<IFormFile> fFiles)
         {
+            string[] arrDeleteImage = new string[] { };
+
             if (id != product.ProductId)
             {
                 return NotFound();
+            }
+            if (ArrDeleteImage.Length > 0)
+            {
+                ArrDeleteImage = ArrDeleteImage.Trim();
+                arrDeleteImage = ArrDeleteImage.Split(',');
             }
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    //if (fFiles == null || fFiles.Count == 0)
-                    //    return Content("files not selected");
                     foreach (var myFile in fFiles)
                     {
                         string fileName = $"{DateTime.Now.Ticks}{myFile.FileName}";
@@ -132,7 +137,53 @@ namespace BookStore.Areas.Admin.Controllers
                             _context.ProductImages.Add(productImages);
                         }
                     }
+                    if (arrDeleteImage.Count() > 0)
+                    {
+                        foreach (var o in arrDeleteImage)
+                        {
+                            try
+                            {
+                                var image = _context.ProductImages.AsNoTracking().SingleOrDefault(p => p.ProductImagesId == int.Parse(o.Trim()));
+                                if (image != null)
+                                {
+                                    string fileNameBefore = image.ProductImage;
+                                    string fullPathBefore = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Image", fileNameBefore);
+                                    if (System.IO.File.Exists(fullPathBefore))
+                                    {
+                                        System.IO.File.Delete(fullPathBefore);
+                                    }
+                                    _context.ProductImages.Remove(image);
+                                }
+                            }
+                            catch (Exception e) { }
 
+                        }
+                    }
+                    var productBefore = _context.Product.AsNoTracking().SingleOrDefault(p => p.ProductId == id);
+                    if (Ffile!=null && Ffile.Length != 0)
+                    {
+                        if (productBefore.ImageCover != null)
+                        {
+                            string fileNameBefore = productBefore.ImageCover;
+                            string fullPathBefore = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Image", fileNameBefore);
+                            if (System.IO.File.Exists(fullPathBefore))
+                            {
+                                System.IO.File.Delete(fullPathBefore);
+                            }
+                        }
+                        string fileName = $"{DateTime.Now.Ticks}{Ffile.FileName}";
+                        string fullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Image", fileName);
+                        using (var file = new FileStream(fullPath, FileMode.Create))
+                        {
+                            product.ImageCover = fileName;
+                            Ffile.CopyTo(file);
+                        }
+                    }
+                    else
+                    {
+                        product.ImageCover = productBefore.ImageCover;
+                    }
+                    
                     _context.Update(product);
                     await _context.SaveChangesAsync();
                 }
@@ -154,35 +205,53 @@ namespace BookStore.Areas.Admin.Controllers
             return View(product);
         }
 
-        // GET: Admin/Products/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+       
+        [HttpPost]
+        public IActionResult Delete(int id)
         {
-            if (id == null)
+            var product = _context.Product.AsNoTracking().SingleOrDefault(p=>p.ProductId==id);
+            var images = _context.ProductImages.AsNoTracking().Where(p => p.ProductId == id).ToList();
+
+            if (product != null)
             {
-                return NotFound();
+                try
+                {
+                    //Xóa hình mô tả
+                    if (images.Count() > 0)
+                    {
+                        foreach (var image in images)
+                        {
+                            string fileNameBefore = image.ProductImage;
+                            string fullPathBefore = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Image", fileNameBefore);
+                            if (System.IO.File.Exists(fullPathBefore))
+                            {
+                                System.IO.File.Delete(fullPathBefore);
+                            }
+                            _context.ProductImages.Remove(image);
+                        }
+                    }
+                    //Xóa hình bìa
+                    if (product.ImageCover != null)
+                    {
+                        string fileNameBefore = product.ImageCover;
+                        string fullPathBefore = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Image", fileNameBefore);
+                        if (System.IO.File.Exists(fullPathBefore))
+                        {
+                            System.IO.File.Delete(fullPathBefore);
+                        }
+                    }
+
+                    _context.Product.Remove(product);
+                    _context.SaveChangesAsync();
+                    return Content("1");
+                }
+                catch (Exception e)
+                {
+                    return Content("0");
+                }
+                
             }
-
-            var product = await _context.Product
-                .Include(p => p.Category)
-                .Include(p => p.Publisher)
-                .FirstOrDefaultAsync(m => m.ProductId == id);
-            if (product == null)
-            {
-                return NotFound();
-            }
-
-            return View(product);
-        }
-
-        // POST: Admin/Products/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var product = await _context.Product.FindAsync(id);
-            _context.Product.Remove(product);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return Content("0");
         }
 
         private bool ProductExists(int id)
