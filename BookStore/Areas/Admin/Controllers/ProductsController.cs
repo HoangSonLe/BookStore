@@ -103,11 +103,18 @@ namespace BookStore.Areas.Admin.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ProductId,ProductName,Unit,UrlFriendly,Description,Price,PromotionPrice,IncludeVat,Quantity,CategoryId,PublisherId,Discount,ViewCounts,Status")] Product product, List<IFormFile> fFiles)
+        public async Task<IActionResult> Edit(int id,[Bind("ArrDeleteImage")] string ArrDeleteImage, [Bind("ProductId,ProductName,Unit,UrlFriendly,Description,Price,PromotionPrice,IncludeVat,Quantity,CategoryId,PublisherId,Discount,ViewCounts,Status")] Product product, List<IFormFile> fFiles)
         {
+            string[] arrDeleteImage= new string[] { };
+            
             if (id != product.ProductId)
             {
                 return NotFound();
+            }
+            if (ArrDeleteImage.Length > 0)
+            {
+                ArrDeleteImage = ArrDeleteImage.Trim();
+                arrDeleteImage = ArrDeleteImage.Split(',');
             }
 
             if (ModelState.IsValid)
@@ -131,7 +138,24 @@ namespace BookStore.Areas.Admin.Controllers
                             };
                             _context.ProductImages.Add(productImages);
                         }
-                    }
+                    }
+                    if (arrDeleteImage.Count() > 0)
+                    {
+                        foreach(var o in arrDeleteImage)
+                        {
+                            try
+                            {
+                                var image = _context.ProductImages.AsNoTracking().SingleOrDefault(p => p.ProductImagesId == int.Parse(o.Trim()));
+                                if (image != null)
+                                {
+                                    _context.ProductImages.Remove(image);
+                                }
+                            }
+                            catch (Exception e) { }
+                            
+                        }
+                    }
+
                     _context.Update(product);
                     await _context.SaveChangesAsync();
                 }

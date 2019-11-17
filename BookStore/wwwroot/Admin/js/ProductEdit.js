@@ -1,28 +1,8 @@
-﻿function viewImage(image) {
-    // Get the modal
-    var modal = document.getElementById("myModal");
-
-    // Get the image and insert it inside the modal - use its "alt" text as a caption
-    var img = document.getElementById(image);
-    var modalImg = document.getElementById("img01");
-    var captionText = document.getElementById("caption");
-    modal.style.display = "block";
-    modalImg.src = img.src;
-    captionText.innerHTML = img.alt;
-
-    // Get the <span> element that closes the modal
-    var span = document.getElementsByClassName("close")[0];
-
-    // When the user clicks on <span> (x), close the modal
-    span.onclick = function () {
-        modal.style.display = "none";
-    }
-    modal.onclick = function () {
-        modal.style.display = "none";
-    }
-}
+﻿var arrDeleteImage = [];
 $(function () {
-
+    $("#formAdd").submit(function () {
+        location.href = $(this).attr("href") + "&arrImageDelete=" + onGetArrDeletedImage();
+    });
     $("#fileupload").change(function () {
         if (typeof (FileReader) != "undefined") {
             var dvPreview = $("#dvPreview");
@@ -86,9 +66,40 @@ $(function () {
             reader.readAsDataURL(input.files[0]);
         }
     }
+    $(".btnDeleteImage").on("click", function () {
+        var id = $(this).data("id");
+        arrDeleteImage.push(id);
+        var str = $("[name='ArrDeleteImage']").val().toString();
+        $("[name='ArrDeleteImage']").val(str + id + ",");
+        //console.log(typeof ($("[name='ArrDeleteImage']").val()));
+        //console.log($("[name='ArrDeleteImage']").val());
+        $(this).closest("div").remove();
+    });
 
 })
+function viewImage(image) {
+    // Get the modal
+    var modal = document.getElementById("myModal");
 
+    // Get the image and insert it inside the modal - use its "alt" text as a caption
+    var img = document.getElementById(image);
+    var modalImg = document.getElementById("img01");
+    var captionText = document.getElementById("caption");
+    modal.style.display = "block";
+    modalImg.src = img.src;
+    captionText.innerHTML = img.alt;
+
+    // Get the <span> element that closes the modal
+    var span = document.getElementsByClassName("close")[0];
+
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function () {
+        modal.style.display = "none";
+    }
+    modal.onclick = function () {
+        modal.style.display = "none";
+    }
+}
 ClassicEditor
     .create(document.querySelector('#editor'))
     .then(editor => {

@@ -1,7 +1,10 @@
 ﻿var table = $('#tablePublishers').DataTable();
 
-$(".btnDetail").click(function () {
-    var id = $(this).data("id");
+//$('#tablePublishers tbody').on('click', '.btnDetail', function (){
+    
+//});
+function onDetailProduct(id){
+    //var id = $(this).data("id");
     $.ajax({
         url: "/Admin/Products/Details",
         type: "GET",
@@ -13,8 +16,7 @@ $(".btnDetail").click(function () {
             $("#modalBody").html(data);
         }
     });
-});
-
+}
 $('#tablePublishers tbody').on('click', '.btnDelete', function () {
     var idItem = $(this).data("id");
     var nameItem = $(this).data("name");

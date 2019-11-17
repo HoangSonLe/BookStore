@@ -12,9 +12,10 @@
             </div>
             <div class="box-content">
                 <div class="table-responsive" style="border:0">
-                    <form asp-action="Edit" method="post" id="formAdd" enctype="multipart/form-data">
+                    <form asp-action="Edit" method="post" id="formAdd" enctype="multipart/form-data" asp-route-id="@Model.ProductId">
                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                         <input type="hidden" asp-for="ProductId" />
+                        <input type="hidden" name="ArrDeleteImage" value=","/>
                         <div class="row">
                             <div class="col-lg-6">
                                 <div class="form-group">
@@ -82,15 +83,14 @@
                                 </div>
                             </div>
                             <div class="col-lg-12">
-                                <h5>Hình Ảnh</h5>
-                                <div class="form-group">
-                                    @foreach (var p in ViewBag.ProductImages)
-                                    {
-
+                                <h5>Hình Ảnh Minh Họa</h5>
+                                @foreach (var p in ViewBag.ProductImages)
+                                {
+                                    <div class="form-group" style="display: inline-block;">
                                         <img id="@p.ProductImagesId" onclick="viewImage(@p.ProductImagesId)" src="~/Image/@p.ProductImage" alt="@p.ProductImage" style="border:2px solid black; height:150px; width:150px;" />
-                                        <a href="#" class="btn btn-danger btn-circle" style="position:relative; top:-70px; left:-20px;"><i class="fa fa-times"></i></a>
-                                    }
-                                </div>
+                                        <a data-id="@p.ProductImagesId " class="btn btn-danger btn-circle btnDeleteImage" style="position:relative; top:-70px; left:-20px;"><i class="fa fa-times"></i></a>
+                                    </div>
+                                }
                                 <h5>Upload thêm hình</h5>
                                 <input id="fileupload" type="file" name="fFiles" multiple />
                                 <hr />
@@ -112,7 +112,6 @@
                                 </div>
                             </div>
                         </div>
-
                     </form>
                 </div>
             </div>
@@ -131,6 +130,7 @@
     <!-- Modal Caption (Image Text) -->
     <div id="caption"></div>
 </div>
+<script src="~/js/Tools/SlugString.js"></script>
 <script src="https://cdn.ckeditor.com/ckeditor5/15.0.0/classic/ckeditor.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <script src="~/Admin/js/ProductEdit.js"></script>
