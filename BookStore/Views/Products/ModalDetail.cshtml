@@ -37,23 +37,30 @@
                 {
                     var promotionPrice = String.Format("{0:0,0 VNĐ}", Model.PromotionPrice);
                     <ul>
-                    <li>@promotionPrice</li>
-                    <li class="old-price">@price</li>
+                        <li style="font-family:Arial; font-weight:normal;">@promotionPrice</li>
+                        <li class="old-price" style="font-family:Arial; font-weight:normal;">@price</li>
                     </ul>
                 }
                 else
                 {
-                    <span>@price</span>
+                    <ul>
+                        <li style="font-family:Arial; font-weight:normal;">@price</li>
+                    </ul>
                 }
 
             </div>
             <div style="overflow-y: scroll; height: 250px; width:500px;margin-right:-1000px	">
                 @Html.Raw(Model.Description)
             </div>
-            <form action="#" style="margin-top:30px;">
-                <input type="number" value="1" />
-                <button>Add to cart</button>
+            <form id="formSubmit" style="margin-top:30px;">
+                <input id="quantityNumber" type="number" value="1" />
+                <button onclick="onClickAddToCart(@Model.ProductId,$('#quantityNumber').val());">Add to cart</button>
             </form>
         </div>
     </div>
 </div>
+<script>
+    $("#formSubmit").submit(function (e) {
+        e.preventDefault();
+    });
+</script>

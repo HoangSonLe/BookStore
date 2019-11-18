@@ -4,8 +4,8 @@
 @using X.PagedList;
 
 @{
-    ViewData["Title"] = "Product";
-    ViewData["Breadcrumbs"] = "Product";
+    ViewData["Title"] = "Sản phẩm";
+    ViewData["Breadcrumbs"] = "Sản phẩm";
     IEnumerable<Publishers> category = (IEnumerable<Publishers>)ViewData["Publisher"];
 }
 
@@ -16,7 +16,7 @@
 <div class="shop-main-area mb-70">
     <div class="container">
         <div class="row">
-            @await Html.PartialAsync("ShopLeft",category)
+            @await Html.PartialAsync("ShopLeft", category)
             <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12 mt-0">
                 <div class="toolbar mb-30" style="padding-top:0px;">
                     <div class="shop-tab section-title-5">
@@ -75,7 +75,7 @@
                                             <a href="#">
                                                 <img src="~/Image/@p.ImageCover" alt="@p.ImageCover" class="primary" style="margin:5px;height:220px;width:160px; text-align:center;" />
                                             </a>
-                                            <div class="quick-view">
+                                            <div class="quick-view" style="cursor:pointer;">
                                                 <a class="action-view quickViewModal" data-id="@p.ProductId" data-target="#productModal" data-toggle="modal" title="Quick View">
                                                     <i class="fa fa-search-plus"></i>
                                                 </a>
@@ -99,12 +99,12 @@
                                                     @if (p.Discount != 0)
                                                     {
                                                         var promotionPrice = String.Format("{0:0,0 VNĐ}", p.PromotionPrice);
-                                                        <li>@promotionPrice</li>
-                                                        <li class="old-price">@price</li>
+                                                        <li style="font-family:Arial; font-weight:normal;">@promotionPrice</li>
+                                                        <li class="old-price" style="font-family:Arial; font-weight:normal;">@price</li>
                                                     }
                                                     else
                                                     {
-                                                        <li>@price</li>
+                                                        <li style="font-family:Arial; font-weight:normal;">@price</li>
                                                     }
 
                                                 </ul>
@@ -112,7 +112,7 @@
                                         </div>
                                         <div class="product-link">
                                             <div class="product-button">
-                                                <a href="#" title="Add to cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
+                                                <a onclick="onClickAddToCart(@p.ProductId,1)" style="cursor:pointer;" title="Add to cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
                                             </div>
                                             <div class="add-to-link">
                                                 <ul>
@@ -158,7 +158,8 @@
         </div>
     </div>
 </div>
-@section Scripts{ 
+@section Scripts{
+    <script src="~/js/jsScriptByMySelf/UpdateCart.js"></script>
     <script>
         $(function () {
             $(".quickViewModal").on("click", function () {

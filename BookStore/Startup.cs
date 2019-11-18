@@ -52,7 +52,10 @@ namespace BookStore
                     });
             services.AddDbContext<MyDBContext>(option => option.UseSqlServer(Configuration.GetConnectionString("MyDb")));
             services.AddAutoMapper(typeof(Startup));
-            services.AddSession();
+            services.AddSession(p =>
+            {
+                p.IdleTimeout = TimeSpan.FromMinutes(30);
+            });
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
