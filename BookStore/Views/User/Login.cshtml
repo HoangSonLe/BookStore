@@ -1,16 +1,28 @@
-﻿<!-- header-area-start -->
-@await Html.PartialAsync("_MyHeader")
-<!-- header-area-end -->
+﻿@{
+    ViewData["Title"] = "Đăng nhập";
+    ViewData["Breadcrumbs"] = "Đăng nhập";
+}
 <!-- breadcrumbs-area-start -->
 @await Html.PartialAsync("_Breadcrumbs")
-<!-- breadcrumbs-area-end -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script><!-- breadcrumbs-area-end -->
+@if (ViewBag.ThongBaoLoi != null)
+{
+    <script>
+        Swal.fire({
+            icon: 'error',
+            title: 'Lỗi...',
+            text: 'Đăng nhập không thành công!',
+            showConfirmButton: false,
+            timer: 1500
+        });
+    </script>
+}
 <div class="user-login-area mb-70">
     <div class="container">
         <div class="row">
             <div class="col-lg-12">
                 <div class="login-title text-center mb-30">
                     <h2>Login</h2>
-                    <p>doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo<br>inventore veritatis et quasi architecto beat</p>
                 </div>
             </div>
             <div class="col-lg-offset-3 col-lg-6 col-md-offset-3 col-md-6 col-sm-12 col-xs-12">
@@ -18,48 +30,52 @@
                     <form class="form-signin" asp-controller="User" asp-action="Login" method="post">
                         <div class="single-login">
                             <label>Username <span>*</span></label>
-                            <input type="text" name="username" required="required" placeholder="Tên đăng nhập" />
+                            <input type="text" name="UserName" required="required" placeholder="Tên đăng nhập" />
                         </div>
                         <div class="single-login">
                             <label>Passwords <span>*</span></label>
-                            <input type="password" name="password" required="required" placeholder="Mật khẩu"/>
+                            <input type="password" name="Password" required="required" placeholder="Mật khẩu" />
                         </div>
 
                         <div class="single-login single-login-2">
-                            <a class="btnLogin">Login</a>
+                            <a class="btnLogin" style="cursor:pointer;">Login</a>
+                            <button type="submit" class="btnLogin" style="cursor:pointer;">Login</button>
                             @*<button type="submit">Login</button>
-                               <input id="rememberme" type="checkbox" name="rememberme" value="forever">
-                                <span>Remember me</span>*@
+                                <input id="rememberme" type="checkbox" name="rememberme" value="forever">
+                                 <span>Remember me</span>*@
                         </div>
                         <a href="#">Lost your password?</a>
-                        </form>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
 </div>
-<script>
-    $(function(){
-        $(".btnLogin").click(function (e) {
-            var username = document.getElementsByName("username")[0].value;
-            var password = document.getElementsByName("password")[0].value;
-            e.preventDefault();
-            $.ajax({
-                url: "/User/Login",
-                type: "POST",
-                data: {
-                    username: username,
-                    password: password
-                },
-                success: function (data) {
-                        alert(data);
-                    if (data == "false") {
-                    }
-                },
-                error: function () {
-                    alert("nạdknas");
-                }
+
+@section Scripts{
+    @*<script>
+            $(function () {
+                $(".btnLogin").click(function (e) {
+                    var username = document.getElementsByName("username")[0].value;
+                    var password = document.getElementsByName("password")[0].value;
+                    e.preventDefault();
+                    $.ajax({
+                        url: "/User/Login",
+                        type: "POST",
+                        data: {
+                            username: username,
+                            password: password
+                        },
+                        success: function (data) {
+                            if (data == "false") {
+
+                            }
+                        },
+                        error: function () {
+                            alert("nạdknas");
+                        }
+                    });
+                })
             });
-        })
-    });
-</script>
+        </script>*@
+}

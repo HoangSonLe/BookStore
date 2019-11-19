@@ -5,10 +5,13 @@ using System.Threading.Tasks;
 using BookStore.Helpers;
 using BookStore.Models;
 using BookStore.ModelViews;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookStore.Controllers
 {
+    [Authorize(AuthenticationSchemes = "Admin")]
+    [Authorize(AuthenticationSchemes = "Customer")]
     public class CartController : Controller
     {
         private readonly MyDBContext _ctx;

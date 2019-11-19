@@ -8,18 +8,20 @@ using Microsoft.EntityFrameworkCore;
 using BookStore.Models;
 using BookStore.Helpers;
 using X.PagedList;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BookStore.Controllers
 {
+    [Authorize(AuthenticationSchemes = "Admin")]
+    [Authorize(AuthenticationSchemes = "Customer")]
     public class ProductsController : Controller
     {
         private readonly MyDBContext _context;
-
         public ProductsController(MyDBContext context)
         {
             _context = context;
         }
-
+        [AllowAnonymous]
         // GET: Products
         public async Task<IActionResult> Index(string sortOrder,int? pageNumber, string currentCategory)
         {
@@ -61,6 +63,7 @@ namespace BookStore.Controllers
             return View(await myDBContext.ToList().ToPagedListAsync(pageNumber ?? 1, pageSize));
         }
 
+        [AllowAnonymous]
         // GET: Products/Details/5
         public IActionResult Detail(int? id)
         {

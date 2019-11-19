@@ -1,6 +1,20 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
+@await Html.PartialAsync("_Breadcrumbs")
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script><!-- breadcrumbs-area-end -->
+@if (ViewBag.ThongBaoThanhCong != null)
+{
+    <script>
+        Swal.fire({
+            icon: 'success',
+            title: 'Thành công',
+            text: 'Đăng nhập thành công!',
+            showConfirmButton: false,
+            timer: 1500
+        });
+    </script>
+}
 
 <!-- banner-area-start -->
 @await Html.PartialAsync("Banner1")

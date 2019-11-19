@@ -12,7 +12,7 @@
                 text: 'Thêm sản phẩm vào giỏ hàng thành công!',
                 showConfirmButton: false,
                 timer: 1500
-            })
+            });
             $("#cartList").html("");
             $("#cartList").html(data);
         },
