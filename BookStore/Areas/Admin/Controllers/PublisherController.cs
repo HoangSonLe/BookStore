@@ -7,6 +7,7 @@ using BookStore.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace BookStore.Areas.Admin.Controllers
 {
@@ -23,7 +24,7 @@ namespace BookStore.Areas.Admin.Controllers
         public IActionResult Index()
         {
             ViewBag.Title = "Publishers";
-            var publishers = _ctx.Publishers.ToList();
+            var publishers = _ctx.Publishers.AsNoTracking().ToList();
             return View(publishers);
         }
         public int Delete(int id)
@@ -43,23 +44,60 @@ namespace BookStore.Areas.Admin.Controllers
             var pub = _ctx.Publishers.SingleOrDefault(p => p.PublisherId == id);
             return PartialView("Edit",pub);
         }
+
         [HttpPost]
-        public IActionResult UploadFile(IFormFile img)
+        public IActionResult Edit(IFormFile file, Publishers publisher)
         {
-           
-                if (img != null)
+            var pub = _ctx.Publishers.AsNoTracking().SingleOrDefault(p => p.PublisherId == publisher.PublisherId);
+            if (pub != null)//check if exist
+            {
+                if (file != null)
                 {
-                    string fileName = $"{DateTime.Now.Ticks}{img.FileName}";
-                    string fullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot","Admin" ,"Image", fileName);
-
-                    using (var f = new FileStream(fullPath, FileMode.Create))
-                    {
-                        img.CopyTo(f);
-                    }
-                    
+                    string fileName = UploadFile(file);
+                    publisher.Logo = fileName;
+                    _ctx.Publishers.Update(publisher);
                 }
+                else
+                {
+                    // Not change logo
+                    pub.PublisherName = publisher.PublisherName;
+                    pub.Address = publisher.Address;
+                    pub.Phone = publisher.Phone;
+                    pub.Email = publisher.Email;
+                    pub.Description = publisher.Description;
+                    _ctx.Publishers.Update(pub);
+                }
+                _ctx.SaveChanges();
 
-            return Content("Uploaded");
+                return RedirectToAction("Index");
+            }
+            return BadRequest();
         }
+        
+        public string UploadFile(IFormFile img)
+        {
+            string fileName = $"{DateTime.Now.Ticks}{img.FileName}";
+            string fullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot" ,"Image", fileName);
+            using (var f = new FileStream(fullPath, FileMode.Create))
+            {
+                img.CopyTo(f);
+            }
+            return fileName;
+        }
+
+        public IActionResult Create()
+        {
+            return PartialView("Create");
+        }
+
+        [HttpPost]
+        public IActionResult Create(IFormFile file, Publishers publisher)
+        {
+            publisher.Logo = UploadFile(file);
+            _ctx.Publishers.Add(publisher);
+            _ctx.SaveChanges();
+            return RedirectToAction("Index");
+        }
+
     }
 }
