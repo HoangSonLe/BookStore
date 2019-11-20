@@ -6,7 +6,7 @@
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <div class="col-md-4">
                     <div class="row" style="margin-left:20px">
-                        <img src="https://icon-library.net/images/no-image-available-icon/no-image-available-icon-6.jpg" width="180" height="180" id="preview">
+                        <img src="https://icon-library.net/images/no-image-available-icon/no-image-available-icon-6.jpg" style="width:180px;height:180px;margin-bottom:10px" id="preview">
                     </div>
                     <div class="row" style="margin-left:20px">
                         <div id="msg"></div>
@@ -24,25 +24,29 @@
                     <div class="form-group row">
                         <label class="col-sm-3 col-form-label">Tên nhà xuất bản:</label>
                         <div class="col-sm-8">
-                            <input asp-for="PublisherName" class="form-control">
+                            <input asp-for="PublisherName" id="pubName" class="form-control">
+                            <label id="errorName" style="color:red;display:none ">Vui lòng nhập tên nhà xuất bản</label>
                         </div>
                     </div>
                     <div class="form-group row">
                         <label class="col-sm-3 col-form-label">Địa chỉ: </label>
                         <div class="col-sm-8">
-                            <input asp-for="Address" class="form-control">
+                            <input asp-for="Address" id="pubAddress" class="form-control">
+                            <label id="errorAddress" style="color:red;display:none">Vui lòng nhập địa chỉ</label>
                         </div>
                     </div>
                     <div class="form-group row">
                         <label class="col-sm-3 col-form-label">Số điện thoại: </label>
                         <div class="col-sm-8">
-                            <input asp-for="Phone" class="form-control">
+                            <input asp-for="Phone" id="pubPhone" class="form-control">
+                            <label id="errorPhone" style="color:red;display:none">Số điện thoại không hợp lệ</label>
                         </div>
                     </div>
                     <div class="form-group row">
                         <label class="col-sm-3 col-form-label">Email: </label>
                         <div class="col-sm-8">
-                            <input asp-for="Email" class="form-control" >
+                            <input asp-for="Email" id="pubEmail" class="form-control">
+                            <label id="errorEmail" style="color:red;display:none">Email không hợp lệ</label>
                         </div>
                     </div>
                     <div class="form-group row">
@@ -72,10 +76,58 @@
             });
         }
         else {
-            document.getElementById("createForm").submit();
+            if (validate()) {
+                document.getElementById("createForm").submit();
+            }
         }
     }
-    $(document).on("click", ".browse", function () {
+    function validate() {
+        let isValid = true;
+        let name = $("#pubName").val();
+        let address = $("#pubAddress").val();
+        let phone = $("#pubPhone").val();
+        let email = $("#pubEmail").val();
+        //validate name
+        if (name.length > 0) {
+            $("#errorName").css('display', 'none');
+        }
+        else {
+            $("#errorName").css('display', 'block');
+            isValid = false;
+        }
+
+        //validate address
+        if (address.length > 0) {
+            $("#errorAddress").css('display', 'none');
+        }
+        else {
+            $("#errorAddress").css('display', 'block');
+            isValid = false;
+        }
+
+        //validate phone
+        let pattern = /0[3789][0-9]{8}$/;
+        if (pattern.test(phone)) {
+            $("#errorPhone").css('display', 'none');
+        }
+        else {
+            $("#errorPhone").css('display', 'block');
+            isValid = false;
+
+        }
+
+        //validate email
+        let patternEmail = /^[a-z][a-z0-9_\.]{3,32}@@[a-z0-9]{2,}(\.[a-z0-9]{2,4}){1,2}$/gm;
+        if (patternEmail.test(email)) {
+            $("#errorEmail").css('display', 'none');
+        }
+        else {
+            isValid = false;
+            $("#errorEmail").css('display', 'block');
+        }
+        return isValid;
+    }
+    $(".browse").click( function () {
         var file = $(this).parents().find(".file");
         file.trigger("click");
     });
@@ -91,22 +143,4 @@
         // read the image file as a data URL.
         reader.readAsDataURL(this.files[0]);
     });
-
-    //$(".btnSubmit").click(function () {
-    //    var formData = new FormData();
-    //    var input = document.getElementById("#myFile");
-    //    var files = input.files;
-    //    formData.append('img', files[0]);
-    //    $.ajax({
-    //        url: "/Admin/Publisher/UploadFile",
-    //        type: "POST",
-    //        data: formData,
-    //        success: function (data) {
-    //            alert(data);
-    //        },
-    //        error: function (e) {
-    //            alert(e);
-    //        }
-    //    });
-    //});
 </script>

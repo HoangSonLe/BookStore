@@ -7,13 +7,6 @@
         position: absolute;
     }
 </style>
-@if (ViewBag.Message == "success")
-{
-    <div class="alert alert-info">
-        <button class="close" data-dismiss="alert">×</button>
-        <h3>Thành công !!!</h3>
-    </div>
-}
 <div class="row">
     <div class="col-md-12">
         <div class="box">
@@ -107,34 +100,4 @@
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.js"></script>
     <script type="text/javascript" src="~/Admin/assets/data-tables/bootstrap3/dataTables.bootstrap.js"></script>
     <script src="~/Admin/js/Publisher.js"></script>
-    <script>
-        $('#tablePublishers tbody').on('click', '.btnEdit', function () {
-            var idItem = $(this).data("id");
-            $.ajax({
-                url: "/Admin/Publisher/Edit",
-                type: "GET",
-                data: {
-                    id: idItem
-                },
-                success: function (data) {
-                    $("#modalBody").html("");
-                    $("#modalBody").html(data);
-                    //$("#modalBody").modal("show");
-                }
-            });
-
-        });
-        $(".btnAdd").click(function () {
-            $.ajax({
-                url: "/Admin/Publisher/Create",
-                type: "GET",
-
-                success: function (data) {
-                    $("#modalBody").html("");
-                    $("#modalBody").html(data);
-                    //$("#modalBody").modal("show");
-                }
-            });
-        })
-    </script>
 }

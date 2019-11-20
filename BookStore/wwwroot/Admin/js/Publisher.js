@@ -49,3 +49,32 @@ $('#tablePublishers tbody').on('click', '.btnDelete', function () {
     })
 
 });
+$('#tablePublishers tbody').on('click', '.btnEdit', function () {
+    var idItem = $(this).data("id");
+    $.ajax({
+        url: "/Admin/Publisher/Edit",
+        type: "GET",
+        data: {
+            id: idItem
+        },
+        success: function (data) {
+            $("#modalBody").html("");
+            $("#modalBody").html(data);
+            //$("#modalBody").modal("show");
+        }
+    });
+
+});
+$(".btnAdd").click(function () {
+    $.ajax({
+        url: "/Admin/Publisher/Create",
+        type: "GET",
+
+        success: function (data) {
+            $("#modalBody").html("");
+            $("#modalBody").html(data);
+            //$("#modalBody").modal("show");
+        }
+    });
+})
+
