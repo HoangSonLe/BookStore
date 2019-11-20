@@ -19,27 +19,22 @@ namespace BookStore.Models
         public virtual DbSet<Comment> Comment { get; set; }
         public virtual DbSet<Contact> Contact { get; set; }
         public virtual DbSet<Customer> Customer { get; set; }
-        public virtual DbSet<Department> Department { get; set; }
-        public virtual DbSet<Division> Division { get; set; }
         public virtual DbSet<Employee> Employee { get; set; }
         public virtual DbSet<Feedback> Feedback { get; set; }
-        public virtual DbSet<Menu> Menu { get; set; }
         public virtual DbSet<OrderDetail> OrderDetail { get; set; }
         public virtual DbSet<Orders> Orders { get; set; }
-        public virtual DbSet<Permission> Permission { get; set; }
         public virtual DbSet<Product> Product { get; set; }
         public virtual DbSet<ProductCategory> ProductCategory { get; set; }
         public virtual DbSet<ProductImages> ProductImages { get; set; }
         public virtual DbSet<ProductLike> ProductLike { get; set; }
         public virtual DbSet<Publishers> Publishers { get; set; }
         public virtual DbSet<Roles> Roles { get; set; }
-        public virtual DbSet<Slider> Slider { get; set; }
-        public virtual DbSet<WebPage> WebPage { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
                 optionsBuilder.UseSqlServer("Server=.;Database=MyDB;Trusted_Connection=True;");
             }
         }
@@ -107,6 +102,10 @@ namespace BookStore.Models
 
                 entity.Property(e => e.Address).HasMaxLength(250);
 
+                entity.Property(e => e.AuthyId)
+                    .HasMaxLength(250)
+                    .IsUnicode(false);
+
                 entity.Property(e => e.CreatedDate).HasColumnType("datetime");
 
                 entity.Property(e => e.Email).HasMaxLength(250);
@@ -121,47 +120,20 @@ namespace BookStore.Models
                     .HasMaxLength(250)
                     .IsUnicode(false);
 
-                entity.Property(e => e.Phone).HasMaxLength(250);
+                entity.Property(e => e.PhoneNumber).HasMaxLength(250);
+
+                entity.Property(e => e.RandomKey)
+                    .HasMaxLength(250)
+                    .IsUnicode(false);
 
                 entity.Property(e => e.UserName)
                     .HasMaxLength(250)
                     .IsUnicode(false);
-            });
 
-            modelBuilder.Entity<Department>(entity =>
-            {
-                entity.Property(e => e.DepartmentId)
-                    .HasColumnName("DepartmentID")
-                    .ValueGeneratedNever();
-
-                entity.Property(e => e.DepartmentName)
-                    .IsRequired()
-                    .HasMaxLength(50);
-            });
-
-            modelBuilder.Entity<Division>(entity =>
-            {
-                entity.Property(e => e.DivisionId).HasColumnName("DivisionID");
-
-                entity.Property(e => e.DepartmentId).HasColumnName("DepartmentID");
-
-                entity.Property(e => e.Division1)
-                    .HasColumnName("Division")
-                    .HasColumnType("datetime");
-
-                entity.Property(e => e.EmployeeId).HasColumnName("EmployeeID");
-
-                entity.HasOne(d => d.Department)
-                    .WithMany(p => p.Division)
-                    .HasForeignKey(d => d.DepartmentId)
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .HasConstraintName("FK__Division__Depart__3D5E1FD2");
-
-                entity.HasOne(d => d.Employee)
-                    .WithMany(p => p.Division)
-                    .HasForeignKey(d => d.EmployeeId)
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .HasConstraintName("FK__Division__Employ__3E52440B");
+                entity.HasOne(d => d.RoleNavigation)
+                    .WithMany(p => p.Customer)
+                    .HasForeignKey(d => d.Role)
+                    .HasConstraintName("FK__Customer__Role__6E01572D");
             });
 
             modelBuilder.Entity<Employee>(entity =>
@@ -234,22 +206,6 @@ namespace BookStore.Models
                     .HasConstraintName("FK__Feedback__Employ__412EB0B6");
             });
 
-            modelBuilder.Entity<Menu>(entity =>
-            {
-                entity.Property(e => e.MenuId).HasColumnName("MenuID");
-
-                entity.Property(e => e.MenuContent).HasMaxLength(250);
-
-                entity.Property(e => e.MenuName).HasMaxLength(250);
-
-                entity.Property(e => e.ParentId).HasColumnName("ParentID");
-
-                entity.HasOne(d => d.Parent)
-                    .WithMany(p => p.InverseParent)
-                    .HasForeignKey(d => d.ParentId)
-                    .HasConstraintName("FK__Menu__ParentID__4222D4EF");
-            });
-
             modelBuilder.Entity<OrderDetail>(entity =>
             {
                 entity.Property(e => e.OrderDetailId).HasColumnName("OrderDetailID");
@@ -309,27 +265,6 @@ namespace BookStore.Models
                     .HasForeignKey(d => d.EmployeeId)
                     .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK__Orders__Employee__45F365D3");
-            });
-
-            modelBuilder.Entity<Permission>(entity =>
-            {
-                entity.Property(e => e.PermissionId).HasColumnName("PermissionID");
-
-                entity.Property(e => e.DepartmentId).HasColumnName("DepartmentID");
-
-                entity.Property(e => e.WebPageId).HasColumnName("WebPageID");
-
-                entity.HasOne(d => d.Department)
-                    .WithMany(p => p.Permission)
-                    .HasForeignKey(d => d.DepartmentId)
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .HasConstraintName("FK__Permissio__Depar__46E78A0C");
-
-                entity.HasOne(d => d.WebPage)
-                    .WithMany(p => p.Permission)
-                    .HasForeignKey(d => d.WebPageId)
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .HasConstraintName("FK__Permissio__WebPa__47DBAE45");
             });
 
             modelBuilder.Entity<Product>(entity =>
@@ -461,32 +396,6 @@ namespace BookStore.Models
                     .ValueGeneratedNever();
 
                 entity.Property(e => e.RoleName).HasMaxLength(250);
-            });
-
-            modelBuilder.Entity<Slider>(entity =>
-            {
-                entity.HasKey(e => e.SlideId)
-                    .HasName("PK__Slider__9E7CB670EDD3444F");
-
-                entity.Property(e => e.SlideId).HasColumnName("SlideID");
-
-                entity.Property(e => e.Description).HasMaxLength(250);
-
-                entity.Property(e => e.SliderImage).HasMaxLength(250);
-            });
-
-            modelBuilder.Entity<WebPage>(entity =>
-            {
-                entity.Property(e => e.WebPageId).HasColumnName("WebPageID");
-
-                entity.Property(e => e.WebPageName)
-                    .IsRequired()
-                    .HasMaxLength(50);
-
-                entity.Property(e => e.WebPageUrl)
-                    .IsRequired()
-                    .HasColumnName("WebPageURL")
-                    .HasMaxLength(250);
             });
         }
     }
