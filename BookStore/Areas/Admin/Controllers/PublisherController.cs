@@ -34,6 +34,13 @@ namespace BookStore.Areas.Admin.Controllers
             {
                 _ctx.Publishers.Remove(publisher);
                 _ctx.SaveChanges();
+                //delete old logo
+                string logoBefore = publisher.Logo;
+                string fullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Image", logoBefore);
+                if (System.IO.File.Exists(fullPath))
+                {
+                    System.IO.File.Delete(fullPath);
+                }
                 return 1;
             }
             return 0;
@@ -56,6 +63,13 @@ namespace BookStore.Areas.Admin.Controllers
                     string fileName = UploadFile(file);
                     publisher.Logo = fileName;
                     _ctx.Publishers.Update(publisher);
+                    //delete old logo
+                    string logoBefore = pub.Logo;
+                    string fullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Image", logoBefore);
+                    if (System.IO.File.Exists(fullPath))
+                    {
+                        System.IO.File.Delete(fullPath);
+                    }
                 }
                 else
                 {
