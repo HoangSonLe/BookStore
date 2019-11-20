@@ -7,6 +7,7 @@ using BookStore.Helpers;
 using BookStore.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace BookStore.Areas.Admin.Controllers
 {
@@ -21,22 +22,23 @@ namespace BookStore.Areas.Admin.Controllers
         }
         public IActionResult Index()
         {
-            var products = _ctx.Product.Select(p=>new ProductView
+            //using AsNoTracking to improve performance => read-only
+            var products = _ctx.Product.AsNoTracking().Select(p=>new ProductView
             {
                 ProductId=p.ProductId,
                 ProductName=p.ProductName
             });
-            var emp = _ctx.Employee.Select(p => new
+            var emp = _ctx.Employee.AsNoTracking().Select(p => new
             {
                 p.EmployeeId,
                 Name= p.FirstName + " " + p.LastName
             });
-            var cus = _ctx.Customer.Select(p => new
+            var cus = _ctx.Customer.AsNoTracking().Select(p => new
             {
                 p.CustomerId,
                 Name=p.FirstName+" "+p.LastName
             });
-            var comment = _ctx.Comment.Select(p => new CommentViewModel
+            var comment = _ctx.Comment.AsNoTracking().Select(p => new CommentViewModel
             {
                 CommentId = p.CommentId,
                 ProductName = products.SingleOrDefault(pp=>pp.ProductId==p.ProductId).ProductName,
@@ -70,24 +72,25 @@ namespace BookStore.Areas.Admin.Controllers
         public IActionResult Filter(int? id)
         {
             if (id == null) return BadRequest();
-            var products = _ctx.Product.Select(p => new ProductView
+            var products = _ctx.Product.AsNoTracking().Select(p => new ProductView
             {
                 ProductId = p.ProductId,
                 ProductName = p.ProductName
             });
-            var emp = _ctx.Employee.Select(p => new
+            var emp = _ctx.Employee.AsNoTracking().Select(p => new
             {
                 p.EmployeeId,
                 Name = p.FirstName + " " + p.LastName
             });
-            var cus = _ctx.Customer.Select(p => new
+            var cus = _ctx.Customer.AsNoTracking().Select(p => new
             {
                 p.CustomerId,
                 Name = p.FirstName + " " + p.LastName
             });
             if (id != 0)
             {
-               var comment = _ctx.Comment.Where(p => p.ProductId == id).Select(p => new CommentViewModel
+                //filter by id
+               var comment = _ctx.Comment.AsNoTracking().Where(p => p.ProductId == id).Select(p => new CommentViewModel
                 {
                     CommentId = p.CommentId,
                     ProductName = products.SingleOrDefault(pp => pp.ProductId == p.ProductId).ProductName,
@@ -105,7 +108,8 @@ namespace BookStore.Areas.Admin.Controllers
             }
             else
             {
-                var comment = _ctx.Comment.Select(p => new CommentViewModel
+                //filter all
+                var comment = _ctx.Comment.AsNoTracking().Select(p => new CommentViewModel
                 {
                     CommentId = p.CommentId,
                     ProductName = products.SingleOrDefault(pp => pp.ProductId == p.ProductId).ProductName,
