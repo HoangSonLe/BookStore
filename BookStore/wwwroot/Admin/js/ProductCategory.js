@@ -54,7 +54,7 @@ $('#tablePublishers tbody').on('click', '.btnDelete', function () {
                             title: 'Thành công!',
                             text: 'Xóa thành công!',
                             showConfirmButton: false,
-                            timer: 1000
+                            timer: 2000
                         });
                         table
                             .row(item)
@@ -67,7 +67,7 @@ $('#tablePublishers tbody').on('click', '.btnDelete', function () {
                             title: 'Lỗi',
                             text: 'Xóa Không thành công!',
                             showConfirmButton: false,
-                            timer: 1000
+                            timer: 2000
                         });
                     }
                 }

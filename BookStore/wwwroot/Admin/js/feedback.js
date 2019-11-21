@@ -64,3 +64,17 @@ $(".btnDetail").click(function () {
         }
     });
 })
+$("#opFilter").change(function () {
+    let stt = document.getElementById(this.id).value;
+    $.ajax({
+        url: "/Admin/Feedback/Filter",
+        type: "GET",
+        data: {
+            status: stt
+        },
+        success: function (data) {
+            $(".bodyContent").html("");
+            $(".bodyContent").html(data);
+        }
+    });
+})

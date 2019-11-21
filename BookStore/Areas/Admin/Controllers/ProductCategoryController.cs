@@ -9,6 +9,7 @@ using BookStore.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
 namespace BookStore.Areas.Admin.Controllers
@@ -26,7 +27,7 @@ namespace BookStore.Areas.Admin.Controllers
         public IActionResult Index()
         {
             ViewBag.Title = "Product Category";
-            var category = _ctx.ProductCategory.ToList();
+            var category = _ctx.ProductCategory.AsNoTracking().ToList();
             return View(category);
         }
         
@@ -48,6 +49,7 @@ namespace BookStore.Areas.Admin.Controllers
             ViewBag.Action = "add";
             return PartialView("CreateOrEdit");
         }
+
         [HttpPost]
         public IActionResult CreateOrEdit(ProductCategory productCategory)
         {
@@ -84,6 +86,7 @@ namespace BookStore.Areas.Admin.Controllers
             return PartialView("Reload", listCategories);
         }
 
+        [HttpPost]
         public int Delete(int? id)
         {
             try
