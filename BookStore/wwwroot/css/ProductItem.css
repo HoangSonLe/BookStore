@@ -1,0 +1,27 @@
+﻿.divAreaContent {
+    width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.divAreaContent a {
+    font-weight: bold;
+    color: black;
+    font-size: 16px;
+    line-height: 1.3;
+    padding: 0;
+}
+
+.divAreaContentList {
+    width: 600px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.divAreaContentList p {
+    margin: 0 !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

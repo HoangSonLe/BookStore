@@ -1,0 +1,48 @@
+﻿@using BookStore.ModelViews
+@model List<CartItem>
+<div class="my-cart">
+    <ul>
+        <li>
+            <a asp-controller="Cart" asp-action="Index"><i class="fa fa-shopping-cart"></i>My Cart</a>
+            <span>@Model.Count()</span>
+            <div class="mini-cart-sub" style="width:330px;">
+                <div class="cart-product">
+                    @{
+                        float? totalCart = 0;
+                    }
+                    @if (Model.Count > 0)
+                    {
+                        @foreach (var p in Model)
+                        {
+                            totalCart = totalCart + (float)p.QuantityProduct * p.Price;
+                            <div class="single-cart">
+                                <div class="cart-img">
+                                    <a asp-action="DetailPage" asp-controller="Products" asp-route-id="@p.ProductId"><img src="~/Image/@p.ImageCover" alt="@p.ProductName" /></a>
+                                </div>
+                                <div class="cart-info">
+                                    <h5><a asp-action="DetailPage" asp-controller="Products" asp-route-id="@p.ProductId">@p.ProductName</a></h5>
+                                    @{
+                                        var price = String.Format("{0:0,0} VNĐ", p.Price);
+                                    }
+                                    <p style="font-family:Arial;">@p.QuantityProduct x @price</p>
+                                </div>
+                            </div>
+
+                        }
+                    }
+                </div>
+                <div class="cart-totals">
+                    @{ 
+                        var totalCartString = String.Format("{0:0,0} VNĐ", totalCart);
+                    }
+                    <h5 style="font-family:Arial;">Total <span style="font-family:Arial;">@totalCartString</span></h5>
+                </div>
+                <div class="cart-bottom">
+                    <a class="view-cart" asp-controller="Cart" asp-action="Index">view cart</a>
+                    <a href="checkout.html">Check out</a>
+                </div>
+            </div>
+        </li>
+    </ul>
+</div>
+

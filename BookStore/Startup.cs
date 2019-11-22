@@ -34,15 +34,12 @@ namespace BookStore
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
-            services.AddAuthentication(o =>
+            services.AddAuthentication()
+                    .AddCookie("Customer", o =>
                     {
-                        o.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                    })
-                    .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, o =>
-                    {
-                        o.LoginPath = "/Login/Index";
-                        o.AccessDeniedPath = "/Login/Access";
-                        o.LogoutPath = "/Login/Logout";
+                        o.LoginPath = "/User/Login";
+                        o.AccessDeniedPath = "/User/Access";
+                        o.LogoutPath = "/User/Logout";
                     })
                     .AddCookie("Admin", o =>
                     {
@@ -52,7 +49,10 @@ namespace BookStore
                     });
             services.AddDbContext<MyDBContext>(option => option.UseSqlServer(Configuration.GetConnectionString("MyDb")));
             services.AddAutoMapper(typeof(Startup));
-            services.AddSession();
+            services.AddSession(p =>
+            {
+                p.IdleTimeout = TimeSpan.FromMinutes(30);
+            });
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
@@ -69,6 +69,7 @@ namespace BookStore
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+            app.UseAuthentication();
             app.UseSession();
             app.UseHttpsRedirection();
             app.UseStaticFiles();

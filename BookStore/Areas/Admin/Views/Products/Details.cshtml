@@ -1,46 +1,57 @@
-﻿@model BookStore.Models.Product
+﻿<link rel="stylesheet" href="~/Admin/assets/bootstrap/css/bootstrap.min.css">
+<link rel="stylesheet" href="~/Admin/assets/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="~/Admin/css/flaty-responsive.css">
+<link href="~/Admin/css/flaty1.css" rel="stylesheet" />
+
+@model BookStore.Models.Product
 <div class="modal-body" id="modalBody">
     <div style="padding: 0 15px 0 15px">
         <div class="row">
-            <div class="form-group row">
-                <label class="col-sm-6 col-form-label"><b>Tên Sản Phẩm: </b></label>
-                <div class="col-sm-4">
-                    <input type="text" readonly="" class="form-control-plaintext" value="@Model.ProductName">
+            <div class="col-lg-6">
+                <div class="form-group row">
+                    <label class="col-sm-6"><b>Tên Sản Phẩm: </b></label>
+                    <div class="col-sm-4">
+                        <p>@Model.ProductName</p>
+                    </div>
                 </div>
+                <div class="form-group row">
+                    <label class="col-sm-6"><b>Loại Sản Phẩm: </b></label>
+                    <div class="col-sm-4">
+                        <p>@Model.Category.Name</p>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-6"><b>Nhà Xuất Bản: </b></label>
+                    <div class="col-sm-4">
+                        <p>@Model.Publisher.PublisherName</p>
+                    </div>
+                </div>
+
             </div>
-            <div class="form-group row">
-                <label class="col-sm-6 col-form-label"><b>Loại Sản Phẩm: </b></label>
-                <div class="col-sm-6">
-                    <input type="text" readonly="" class="form-control-plaintext" value="@Model.Category.Name">
+            <div class="col-lg-6">
+                <div class="form-group row">
+                    <label class="col-sm-6"><b>Bao gồm VAT: </b></label>
+                    <div class="col-sm-5">
+                        @{
+                            var vat = Model.IncludeVat == true ? "checked" : "";
+                        }
+                        <input type="checkbox" readonly="" @vat>
+                    </div>
                 </div>
-            </div>
-            <div class="form-group row">
-                <label class="col-sm-6 col-form-label"><b>Nhà Xuất Bản: </b></label>
-                <div class="col-sm-6">
-                    <input type="text" readonly="" class="form-control-plaintext" value="@Model.Publisher.PublisherName">
+                <div class="form-group row">
+                    <label class="col-sm-7 col-form-label"><b>Tình Trạng: </b></label>
+                    <div class="col-sm-5">
+                        @{
+                            var status = Model.Status == true ? "Active" : "No Active";
+                        }
+                        <input type="text" readonly="" class="form-control-plaintext" value="@status">
+                    </div>
                 </div>
-            </div>
-            <div class="form-group row">
-                <label class="col-sm-7 col-form-label"><b>Bao gồm VAT: </b></label>
-                <div class="col-sm-5">
-                    @{
-                        var vat = Model.IncludeVat == true ? "True" : "False";
-                    }
-                    <input type="text" readonly="" class="form-control-plaintext" value="@vat">
-                </div>
-            </div>
-            <div class="form-group row">
-                <label class="col-sm-7 col-form-label"><b>Tình Trạng: </b></label>
-                <div class="col-sm-5">
-                    @{
-                        var status = Model.Status == true ? "Active" : "No Active";
-                    }
-                    <input type="text" readonly="" class="form-control-plaintext" value="@status">
-                </div>
+
             </div>
         </div>
         <div class="row">
-            <div class="col-6">
+            <div class="col-lg-6">
                 <div class="form-group row">
                     <label class="col-sm-7 col-form-label"><b>Giá Sản Phẩm: </b></label>
                     <div class="col-sm-5">
@@ -59,9 +70,8 @@
                         <input type="text" readonly="" class="form-control-plaintext" value="@Model.PromotionPrice VNĐ">
                     </div>
                 </div>
-
             </div>
-            <div class="col-6">
+            <div class="col-lg-6">
                 <div class="form-group row">
                     <label class="col-sm-7 col-form-label"><b>Số Lượng: </b></label>
                     <div class="col-sm-5">
@@ -84,6 +94,28 @@
             </div>
         </div>
         <div class="row">
+            <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+                <div class="carousel-inner">
+                    @foreach (var o in Model.ProductImages)
+                    {
+                        <div class="carousel-item active">
+                            <img class="d-block w-100" src="~/Image/@o.ProductImage" alt="@Model.ProductName">
+                        </div>
+                        <div class="item active">
+                            <img src="~/Image/@o.ProductImage" alt="@Model.ProductName">
+                        </div>
+                    }
+
+                </div>
+                <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Previous</span>
+                </a>
+                <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Next</span>
+                </a>
+            </div>
             <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
                 <!-- Indicators -->
                 <ol class="carousel-indicators">
@@ -94,19 +126,12 @@
 
                 <!-- Wrapper for slides -->
                 <div class="carousel-inner" role="listbox">
-                    <div class="item active">
-                        <img alt="...">
-                        <div class="carousel-caption">
-                            ...
+                    @foreach (var o in Model.ProductImages)
+                    {
+                        <div class="item active">
+                            <img src="~/Image/@o.ProductImage" alt="@Model.ProductName">
                         </div>
-                    </div>
-                    <div class="item">
-                        <img alt="...">
-                        <div class="carousel-caption">
-                            ...
-                        </div>
-                    </div>
-                    ...
+                    }
                 </div>
 
                 <!-- Controls -->
