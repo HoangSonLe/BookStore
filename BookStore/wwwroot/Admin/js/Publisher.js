@@ -49,6 +49,22 @@ $('#tablePublishers tbody').on('click', '.btnDelete', function () {
     })
 
 });
+$('#tablePublishers tbody').on('click', '.btnDetail', function () {
+    var idItem = $(this).data("id");
+    $.ajax({
+        url: "/Admin/Publisher/Detail",
+        type: "GET",
+        data: {
+            id: idItem
+        },
+        success: function (data) {
+            $("#modalBody").html("");
+            $("#modalBody").html(data);
+            //$("#modalBody").modal("show");
+        }
+    });
+
+});
 $('#tablePublishers tbody').on('click', '.btnEdit', function () {
     var idItem = $(this).data("id");
     $.ajax({

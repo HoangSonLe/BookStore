@@ -113,5 +113,12 @@ namespace BookStore.Areas.Admin.Controllers
             return RedirectToAction("Index");
         }
 
+        public IActionResult Detail(int? id)
+        {
+            if (id == null) return BadRequest();
+            var pub = _ctx.Publishers.SingleOrDefault(p => p.PublisherId == id);
+            return PartialView("Detail", pub);
+        }
+
     }
 }
