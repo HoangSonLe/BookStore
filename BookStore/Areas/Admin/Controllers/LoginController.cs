@@ -27,7 +27,7 @@ namespace BookStore.Areas.Admin.Controllers
             return View();
         }
         [HttpPost,AllowAnonymous]
-        public async Task<IActionResult> Index(LoginViewModel loginViewModel ,string ReturnUrl = null)
+        public async Task<IActionResult> Index(LoginViewModel loginViewModel ,string ReturnUrl)
         {
             Employee employee = _ctx.Employee.SingleOrDefault(p => p.UserName == loginViewModel.UserName && p.Password == MyHashTool.GetMd5Hash(loginViewModel.Password));
             if(employee == null)

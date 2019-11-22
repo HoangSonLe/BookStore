@@ -9,9 +9,15 @@ using BookStore.Models;
 using BookStore.ModelViews;
 using BookStore.Helpers;
 using Microsoft.AspNetCore.Mvc;
+using BookStore.Areas.ModelViews;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BookStore.Controllers
 {
+    [Authorize(AuthenticationSchemes = "Admin")]
+    [Authorize(AuthenticationSchemes = "Customer")]
     public class UserController : Controller
     {
         private readonly MyDBContext _ctx;
@@ -23,55 +29,71 @@ namespace BookStore.Controllers
         }
         public IActionResult Index()
         {
-            return View("../Home/Index");
+            return View();
         }
+        [AllowAnonymous]
         public IActionResult Login()
         {
             return View();
         }
+   
         [HttpPost]
-        public string Login(String username, String password)
+        [AllowAnonymous]
+        public async Task<IActionResult> Login([Bind("UserName", "Password")] LoginViewModel loginViewModel, string ReturnUrl = null)
         {
-            var passwordMD5 = GetMD5(password);
-            var IsSuccessLogin = "false";
-            var customer = _ctx.Customer.Where(p => p.UserName == username && p.Password == passwordMD5).SingleOrDefault();
-            if (customer != null)
+            Customer customer = _ctx.Customer.SingleOrDefault(p => p.UserName == loginViewModel.UserName && p.Password == MyHashTool.GetMd5Hash(loginViewModel.Password));
+            if (customer == null)
             {
-                LoginInfo loginInfo = new LoginInfo()
+                Employee employee = _ctx.Employee.SingleOrDefault(p => p.UserName == loginViewModel.UserName && p.Password == MyHashTool.GetMd5Hash(loginViewModel.Password));
+                if (employee == null)
                 {
-                    UserID = customer.CustomerId,
-                    Name = customer.FirstName + " " + customer.LastName,
-                    //Role = customer.Roles.RoleId,
+                    ViewBag.ThongBaoLoi = "Sai thông tin đăng nhập !!!";
+                    return View();
+                }
+                var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name,employee.FirstName + " " + employee.LastName),
+                    new Claim(ClaimTypes.Role, employee.Role.ToString())
                 };
-                HttpContext.Session.SetObject<LoginInfo>("Info", loginInfo);
-                IsSuccessLogin = "true";
+                ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, "Admin");
+                ClaimsPrincipal claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+                await HttpContext.SignInAsync("Admin",claimsPrincipal);
+                HttpContext.Session.SetObject<Employee>("Employee", employee);
             }
             else
             {
-                //return Redirect("/");
-
+                var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name,customer.FirstName + " " + customer.LastName),
+                    new Claim(ClaimTypes.Role, "Customer")
+                };
+                ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, "Customer");
+                ClaimsPrincipal claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+                await HttpContext.SignInAsync("Customer", claimsPrincipal);
+                HttpContext.Session.SetObject<Customer>("Customer", customer);
             }
-            //return Redirect("/");
-            return IsSuccessLogin;
-        }
-        public string GetMD5(string str)
-        {
 
-            MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider();
-
-            byte[] bHash = md5.ComputeHash(Encoding.UTF8.GetBytes(str));
-
-            StringBuilder sbHash = new StringBuilder();
-
-            foreach (byte b in bHash)
+            ViewBag.ThongBaoThanhCong = "Thành công !!!";
+            if (Url.IsLocalUrl(ReturnUrl))
             {
-
-                sbHash.Append(String.Format("{0:x2}", b));
-
+                return Redirect(ReturnUrl);
             }
-
-            return sbHash.ToString();
-
+            return RedirectToAction("Index", "Home");
         }
+        public async Task<IActionResult> Logout()
+        {
+            var b = HttpContext.Session.GetObject<Customer>("Customer");
+            if (b != null)
+            {
+                HttpContext.Session.Remove("Customer");
+                await HttpContext.SignOutAsync("Customer");
+            }
+            else
+            {
+                HttpContext.Session.Remove("Employee");
+                await HttpContext.SignOutAsync("Admin");
+            }
+            return RedirectToAction("Index", "Home");
+        }
     }
 }

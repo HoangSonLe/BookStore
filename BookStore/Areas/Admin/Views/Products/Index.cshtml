@@ -15,17 +15,12 @@
             <div class="box-content">
                 <div class="btn-toolbar pull-right clearfix">
                     <div class="btn-group">
-                        <a class="btn btn-circle show-tooltip" title="Add new record" href="#"><i class="fa fa-plus"></i></a>
-                        <a class="btn btn-circle show-tooltip" title="Edit selected" href="#"><i class="fa fa-edit"></i></a>
-                        <a class="btn btn-circle show-tooltip" title="Delete selected" href="#"><i class="fa fa-trash-o"></i></a>
+                        <a class="btn btn-circle show-tooltip" title="Thêm Sản Phẩm" asp-controller="Products" asp-action="Create"><i class="fa fa-plus"></i></a>
                     </div>
                     <div class="btn-group">
                         <a class="btn btn-circle show-tooltip" title="Print" href="#"><i class="fa fa-print"></i></a>
                         <a class="btn btn-circle show-tooltip" title="Export to PDF" href="#"><i class="fa fa-file-text-o"></i></a>
                         <a class="btn btn-circle show-tooltip" title="Export to Exel" href="#"><i class="fa fa-table"></i></a>
-                    </div>
-                    <div class="btn-group">
-                        <a class="btn btn-circle show-tooltip" title="Refresh" href="#"><i class="fa fa-repeat"></i></a>
                     </div>
                 </div>
                 <br /><br />
@@ -68,8 +63,8 @@
                                 <td class="text-center">
                                     <div class="btn-group">
                                         <p>
-                                            <button class="btn btn-magenta btnDetail" data-id="@p.ProductId" data-target="#modalDetail" data-toggle="modal"><i class="fa fa-eye"></i> Detail</button>
-                                            <button class="btn btn-primary btnEdit" data-id="@p.ProductId" data-target="#modalDetail" data-toggle="modal"><i class="fa fa-edit"></i> Edit</button>
+                                            <button class="btn btn-magenta btnDetail" onclick="onDetailProduct(@p.ProductId)" data-id="@p.ProductId" data-target="#modalDetail" data-toggle="modal"><i class="fa fa-eye"></i> Detail</button>
+                                            <a class="btn btn-primary" asp-controller="Products" asp-action="Edit" asp-route-id="@p.ProductId"><i class="fa fa-edit"></i> Edit</a>
                                             <button class="btn btn-danger btnDelete" data-id="@p.ProductId" data-name="@p.ProductName"><i class="fa fa-trash-o"></i> Delete</button>
                                         </p>
                                     </div>
@@ -85,8 +80,8 @@
 </div>
 <!-- END Main Content -->
 <!-- Modal -->
-<div class="modal fade" id="modalDetail" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+<div class="modal fade bd-example-modal-lg" id="modalDetail" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Thông tin</h5>

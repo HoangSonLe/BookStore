@@ -1,4 +1,95 @@
 ﻿var table = $('#tableCustomers').DataTable();
+var NameImage = "";
+
+async function ReadImage(input) {
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function (e) {
+            $('#image_upload_preview').attr('src', e.target.result).width('200').height('200'); // setting ur image here		
+        };
+        reader.readAsDataURL(input.files[0]);
+        var data = new FormData();
+        data.append('file', input.files[0], input.files[0].name);
+        $.ajax({
+            url: "/Admin/Customer/UploadImage",
+            type: "POST",
+            data: data,
+            contentType: false,
+            processData: false,
+            success: function (message) {
+                NameImage = message.name;
+            },
+            error: function () {
+                alert("there was error uploading files!");
+            }
+        });
+    }
+}
+
+function validate(data) {
+   
+    let isValid = true;
+    let FirstName = data.find('input[name="FirstName"]').val();
+    let UserName = data.find('input[name="UserName"]').val();
+    let Password = data.find('input[name="Password"]').val();
+    let Address = data.find('input[name="Address"]').val();
+    let Phone = data.find('input[name="PhoneNumber"]').val();
+    let Email = data.find('input[name="Email"]').val();
+
+    //validate firstname
+    if (FirstName.length > 0) {
+        $("#errorFirstName").css('display', 'none');
+    }
+    else {
+        $("#errorFirstName").css('display', 'block');
+        isValid = false;
+    }
+    //validate username
+    if (UserName.length > 0) {
+        $("#errorUserName").css('display', 'none');
+    }
+    else {
+        $("#errorUserName").css('display', 'block');
+        isValid = false;
+    }
+    //validate password
+    let patternPassword = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/;
+    if (patternPassword.test(Password)) {
+        $("#errorPassword").css('display', 'none');
+    }
+    else {
+        isValid = false;
+        $("#errorPassword").css('display', 'block');
+    }
+    //validate address
+    if (Address.length > 0) {
+        $("#errorAddress").css('display', 'none');
+    }
+    else {
+        $("#errorAddress").css('display', 'block');
+        isValid = false;
+    }
+    //validate phone
+    let pattern = /0[3789][0-9]{8}$/;
+    if (pattern.test(Phone)) {
+        $("#errorPhoneNumber").css('display', 'none');
+    }
+    else {
+        $("#errorPhoneNumber").css('display', 'block');
+        isValid = false;
+    }
+    //validate email
+    let patternEmail = /^[a-z][a-z0-9_\.]{3,32}@[a-z0-9]{2,}(\.[a-z0-9]{2,4}){1,2}$/gm;
+    if (patternEmail.test(Email)) {
+        $("#errorEmail").css('display', 'none');
+    }
+    else {
+        isValid = false;
+        $("#errorEmail").css('display', 'block');
+    }
+    return isValid;
+}
+
 
 $(".btnAdd").click(function () {
     $.ajax({
@@ -14,36 +105,41 @@ $(".btnAdd").click(function () {
 
 $(".btnCreate").on('click', function (e) {
     e.preventDefault();
-    var customer = $("#formAdd").serialize();
-    $.ajax({
-        url: "/Admin/Customer/Add",
-        type: "POST",
-        data: customer,
-        success: function (data) {
-            Swal.fire({
-                icon: 'success',
-                title: 'Thành công!',
-                text: 'Thêm thành công!',
-                showConfirmButton: false,
-                timer: 1000
-            });
-            $("#tbodyDatatable").html("");
-            $("#tbodyDatatable").html(data);
-        },
-        error: function () {
-            Swal.fire({
-                icon: 'fail',
-                title: 'Thất bại!',
-                text: 'Thêm không thành công!',
-                showConfirmButton: false,
-                timer: 1000
-            });
-        }
-    });
+    if (validate($("#formAdd"))) {
+        var customer = $("#formAdd").serialize();
+        var nameImage = "&NameImage=" + NameImage;
+        $.ajax({
+            url: "/Admin/Customer/Add",
+            type: "POST",
+            data: customer + nameImage,
+            success: function (data) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Thành công!',
+                    text: 'Thêm thành công!',
+                    showConfirmButton: false,
+                    timer: 1000
+                });
+                $(".tableCustomer").html("");
+                $(".tableCustomer").html(data);
+                $("#modalDetail").modal("hide");
+            },
+            error: function () {
+                Swal.fire({
+                    icon: 'fail',
+                    title: 'Thất bại!',
+                    text: 'Thêm không thành công!',
+                    showConfirmButton: false,
+                    timer: 1000
+                });
+            }
+        });
 
+        nameImage = "";
+    }
 });
 
-$(".btnDetail").click(function () {
+$('#tableCustomers tbody').on('click', '.btnDetail', function () {
     var id = $(this).data("id");
     $.ajax({
         url: "/Admin/Customer/Details",
@@ -58,7 +154,7 @@ $(".btnDetail").click(function () {
     });
 });
 
-$(".btnEdit").click(function () {
+$('#tableCustomers tbody').on('click', '.btnEdit', function () {
     var id = $(this).data("id");
     $.ajax({
         url: "/Admin/Customer/Edit",
@@ -73,37 +169,44 @@ $(".btnEdit").click(function () {
     });
 });
 
-$(".btnEditSaveChange").on('click', function (e) {
+
+
+$(".btnEditSaveChange").click(function (e) {
     e.preventDefault();
-    var customer = $("#formEdit").serialize();
-    $.ajax({
-        url: "/Admin/Customer/Edit",
-        type: "POST",
-        data: customer,
-        success: function (data) {
-            Swal.fire({
-                icon: 'success',
-                title: 'Thành công!',
-                text: 'Sửa thành công!',
-                showConfirmButton: false,
-                timer: 1000
-            });
-            $("#tbodyDatatable").html("");
-            $("#tbodyDatatable").html(data);
-        },
-        error: function () {
-            Swal.fire({
-                icon: 'error',
-                title: 'Thất bại!',
-                text: 'Sửa không thành công!',
-                showConfirmButton: false,
-                timer: 1000
-            });
-        }
-    });
+    if (validate($("#formEdit"))) {
+        var customer = $("#formEdit").serialize();
+        var nameImage = "&NameImage=" + NameImage;
+        $.ajax({
+            url: "/Admin/Customer/Edit",
+            type: "POST",
+            data: customer + nameImage,
+            success: function (data) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Thành công!',
+                    text: 'Sửa thành công!',
+                    showConfirmButton: false,
+                    timer: 1000
+                });
+                $(".tableCustomer").html("");
+                $(".tableCustomer").html(data);
+                $("#modalDetail").modal("hide");
+            },
+            error: function () {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Thất bại!',
+                    text: 'Sửa không thành công!',
+                    showConfirmButton: false,
+                    timer: 1000
+                });
+            }
+        });
+        NameImage = "";
+    }
 });
 
-$(".btnDelete").click(function () {
+$('#tableCustomers tbody').on('click', '.btnDelete', function () {
     var id = $(this).data("id");
     var item = $(this).parents('tr');
     Swal.fire({

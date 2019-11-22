@@ -3,7 +3,7 @@
 }
 
 @model IEnumerable<Customer>
-
+  
 <table class="table table-advance" id="tableCustomers">
     <thead>
         <tr>
@@ -16,7 +16,7 @@
             <th class="text-center" width="23%">Action</th>
         </tr>
     </thead>
-    <tbody id="tbodyDatatable">
+    <tbody>
         @foreach (var p in Model)
         {
             <tr class="table-flag-blue">
@@ -24,7 +24,7 @@
                 <td>@p.FirstName @p.LastName</td>
                 <td>@p.Address</td>
                 <td>@p.Email</td>
-                <td>@p.Phone</td>
+                <td>@p.PhoneNumber</td>
                 @{var sex = p.Sex == true ? "Nam" : "Nữ";}
                 <td>@sex</td>
                 <td class="text-center">
@@ -40,5 +40,4 @@
         }
     </tbody>
 </table>
-
 <script src="~/Admin/js/Customer.js"></script>

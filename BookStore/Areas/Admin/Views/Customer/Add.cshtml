@@ -8,29 +8,23 @@
     <div class="modal-body">
         <br />
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-4">
                 <div class="form-group">
-                    <label>Tên khách hàng</label>
-                    <input type="text" class="form-control" asp-for="FirstName" value="@Model.FirstName" placeholder="Nhập tên">
+                    <div class="text-center">
+                        @if (String.IsNullOrEmpty(Model.Image))
+                        {
+                            <img id="image_upload_preview" src="https://cdn1.iconfinder.com/data/icons/navigation-elements/512/user-login-man-human-body-mobile-person-512.png" style="width: 200px; height: 200px;" class="avatar img-circle" alt="avatar">
+                        }
+                        else
+                        {
+                            <img id="image_upload_preview" src="~/img/Customer/@Model.Image" style="width: 200px; height: 200px;" class="avatar img-circle" alt="avatar">
+                        }
+
+                        <h6>Upload a different photo...</h6>
+                        <input type="file" name="file" class="form-control" asp-for="Image" onchange="ReadImage(this)">
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label>Họ khách hàng</label>
-                    <input type="text" class="form-control" asp-for="LastName" value="@Model.LastName" placeholder="Nhập họ">
-                </div>
-                <div class="form-group">
-                    <label>Tài khoản</label>
-                    <input type="text" class="form-control" asp-for="UserName" value="@Model.UserName" placeholder="Nhập tài khoản" />
-                </div>
-                <div class="form-group">
-                    <label>Mật khẩu</label>
-                    <input type="password" class="form-control" asp-for="Password" value="@Model.Password" placeholder="Nhập mật khẩu">
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label>Email</label>
-                    <input type="text" class="form-control" asp-for="Email" value="@Model.Email" placeholder="Nhập email">
-                </div>
+                <br />
                 <div class="form-group">
                     <label>Giới tính</label>
                     <select class="form-control" asp-for="Sex">
@@ -48,19 +42,99 @@
                 </div>
                 <div class="form-group">
                     <label>Số điện thoại</label>
-                    <input type="text" class="form-control" asp-for="Phone" value="@Model.Phone" placeholder="Nhập số điện thoại">
+                    <input type="text" class="form-control" asp-for="PhoneNumber" value="@Model.PhoneNumber" placeholder="Nhập số điện thoại">
+                    <label id="errorPhoneNumber" style="color:red;display:none ">Số điện thoại không hợp lệ</label>
                 </div>
+
+
             </div>
+            <div class="col-md-8">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Họ khách hàng</label>
+                            <input type="text" class="form-control" asp-for="LastName" value="@Model.LastName" required placeholder="Nhập họ">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Tên khách hàng</label>
+                            <input type="hidden" class="form-control inputName" asp-for="CustomerId" value="@Model.CustomerId">
+                            <input type="text" class="form-control" asp-for="FirstName" value="@Model.FirstName" required placeholder="Nhập tên">
+                            <label id="errorFirstName" style="color:red;display:none ">Vui lòng nhập tên khách hàng</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Tài khoản</label>
+                            <input type="text" class="form-control" asp-for="UserName" value="@Model.UserName" />
+                            <label id="errorUserName" style="color:red;display:none ">Vui lòng nhập tài khoản khách hàng</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Mật khẩu</label>
+                            <input type="password" class="form-control" asp-for="Password" value="@Model.Password" placeholder="Nhập mật khẩu">
+                            <label id="errorPassword" style="color:red;display:none ">
+                                Mật khẩu có ít nhất 1 chữ số <br />
+                                Mật khẩu có ít nhất 1 chữ thường <br />
+                                Mật khẩu có ít nhất 1 chữ in hoa <br />
+                                Mật khẩu phải có ít nhất 8 kí tự
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Active</label>
+                            <select class="form-control" asp-for="IsActive">
+                                @if (Model.IsActive == true)
+                                {
+                                    <option selected value="true">True</option>
+                                    <option value="false">False</option>
+                                }
+                                else
+                                {
+                                    <option selected value="false">False</option>
+                                    <option value="true">True</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>PhoneNumberConfirmed</label>
+                            <select class="form-control" asp-for="PhoneNumberConfirmed">
+                                @if (Model.PhoneNumberConfirmed == true)
+                                {
+                                    <option selected value="true">True</option>
+                                    <option value="false">False</option>
+                                }
+                                else
+                                {
+                                    <option selected value="false">False</option>
+                                    <option value="true">True</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="text" class="form-control" asp-for="Email" value="@Model.Email" placeholder="Nhập email">
+                    <label id="errorEmail" style="color:red;display:none ">Địa chỉ Email không hợp lệ</label>
 
-        </div>
-        <div class="row">
-            <div class="col-md-12">
-
+                </div>
                 <div class="form-group">
                     <label>Địa chỉ</label>
                     <input type="text" class="form-control" asp-for="Address" value="@Model.Address" placeholder="Nhập địa chỉ">
+                    <label id="errorAddress" style="color:red;display:none ">Vui lòng nhập địa chỉ khách hàng</label>
                 </div>
             </div>
+
         </div>
     </div>
     <div class="modal-footer">
@@ -69,5 +143,5 @@
     </div>
 </form>
 
-
 <script src="~/Admin/js/Customer.js"></script>
+
