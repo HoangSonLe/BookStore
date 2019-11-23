@@ -52,6 +52,7 @@ namespace BookStore
             services.AddSession(p =>
             {
                 p.IdleTimeout = TimeSpan.FromMinutes(30);
+                p.Cookie.IsEssential = true;
             });
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
