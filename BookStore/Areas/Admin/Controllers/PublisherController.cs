@@ -17,6 +17,7 @@ namespace BookStore.Areas.Admin.Controllers
     public class PublisherController : Controller
     {
         private readonly MyDBContext _ctx;
+        private static string notifySuccess=null;
         public PublisherController (MyDBContext myDBContext)
         {
             _ctx = myDBContext;
@@ -25,6 +26,11 @@ namespace BookStore.Areas.Admin.Controllers
         {
             ViewBag.Title = "Publishers";
             var publishers = _ctx.Publishers.AsNoTracking().ToList();
+            if (notifySuccess != null)
+            {
+                ViewBag.Message = notifySuccess;
+                notifySuccess = null;//release
+            }
             return View(publishers);
         }
         public int Delete(int id)
@@ -82,7 +88,7 @@ namespace BookStore.Areas.Admin.Controllers
                     _ctx.Publishers.Update(pub);
                 }
                 _ctx.SaveChanges();
-
+                notifySuccess = "Cập nhật dữ liệu thành công !!!";
                 return RedirectToAction("Index");
             }
             return BadRequest();
@@ -110,6 +116,7 @@ namespace BookStore.Areas.Admin.Controllers
             publisher.Logo = UploadFile(file);
             _ctx.Publishers.Add(publisher);
             _ctx.SaveChanges();
+            notifySuccess = "Thêm dữ liệu thành công !!!";
             return RedirectToAction("Index");
         }
 
