@@ -1,15 +1,111 @@
-﻿
-@{
-    Layout = null;
+﻿@model IEnumerable<Publishers>
+<!-- BEGIN Main Content -->
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">
+<style>
+    .file {
+        visibility: hidden;
+        position: absolute;
+    }
+</style>
+@if (ViewBag.Message !=null)
+{
+    <div class="alert alert-info">
+        <button class="close" data-dismiss="alert">×</button>
+        <h3>@ViewBag.Message</h3>
+    </div>
 }
+<div class="row">
+    <div class="col-md-12">
+        <div class="box">
+            <div class="box-title">
+                <h3><i class="fa fa-table"></i> Dynamic Table</h3>
+                <div class="box-tool">
+                    <a data-action="collapse" href="#"><i class="fa fa-chevron-up"></i></a>
+                    <a data-action="close" href="#"><i class="fa fa-times"></i></a>
+                </div>
+            </div>
+            <div class="box-content">
+                <div class="btn-toolbar pull-right clearfix">
+                    <div class="btn-group">
+                        <a class="btn btn-circle show-tooltip btnAdd" data-target="#modalDetail" data-toggle="modal" title="Add new record" href="#"><i class="fa fa-plus"></i></a>
+                        <a class="btn btn-circle show-tooltip" title="Edit selected" href="#"><i class="fa fa-edit"></i></a>
+                        <a class="btn btn-circle show-tooltip" title="Delete selected" href="#"><i class="fa fa-trash-o"></i></a>
+                    </div>
+                    <div class="btn-group">
+                        <a class="btn btn-circle show-tooltip" title="Print" href="#"><i class="fa fa-print"></i></a>
+                        <a class="btn btn-circle show-tooltip" title="Export to PDF" href="#"><i class="fa fa-file-text-o"></i></a>
+                        <a class="btn btn-circle show-tooltip" title="Export to Exel" href="#"><i class="fa fa-table"></i></a>
+                    </div>
+                    <div class="btn-group">
+                        <a class="btn btn-circle show-tooltip" title="Refresh" href="#"><i class="fa fa-repeat"></i></a>
+                    </div>
+                </div>
+                <br /><br />
+                <div class="clearfix"></div>
+                <div class="table-responsive" style="border:0">
+                    <table class="table table-advance" id="tablePublishers">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Logo</th>
+                                <th>Name</th>
+                                <th>Address</th>
+                                <th>Phone</th>
+                                <th>Email</th>
+                                <th class="text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var p in Model)
+                            {
+                                <tr class="table-flag-blue">
+                                    <td><b>@p.PublisherId</b></td>
+                                    <td>
+                                        <img src="~/Image/@p.Logo" alt="Image" width="80" height="80" />
+                                    </td>
+                                    <td>@p.PublisherName</td>
+                                    <td>@p.Address</td>
+                                    <td>@p.Phone</td>
+                                    <td>@p.Email</td>
+                                    <td class="text-center">
+                                        <div class="btn-group">
+                                            <p>
+                                                <button class="btn btn-magenta btnDetail" data-id="@p.PublisherId" data-target="#modalDetail" data-toggle="modal"><i class="fa fa-eye"></i> Detail</button>
+                                                <button class="btn btn-primary btnEdit" data-id="@p.PublisherId" data-target="#modalDetail" data-toggle="modal"><i class="fa fa-edit"></i> Edit</button>
+                                                <button class="btn btn-danger btnDelete" data-id="@p.PublisherId" data-name="@p.PublisherName"><i class="fa fa-trash-o"></i> Delete</button>
+                                            </p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END Main Content -->
+<!-- Modal -->
+<div class="modal fade bd-example-modal-lg" id="modalDetail" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Thông tin</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div id="modalBody">
+                ...
+            </div>
 
-<!DOCTYPE html>
+        </div>
+    </div>
+</div>
 
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>Index</title>
-</head>
-<body>
-</body>
-</html>
+@section Scripts{
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.js"></script>
+    <script type="text/javascript" src="~/Admin/assets/data-tables/bootstrap3/dataTables.bootstrap.js"></script>
+    <script src="~/Admin/js/Publisher.js"></script>
+}
