@@ -26,6 +26,19 @@
                 </div>
             </div>
             <div class="col-lg-offset-3 col-lg-6 col-md-offset-3 col-md-6 col-sm-12 col-xs-12">
+                @if (ViewBag.RegisterSuccess != null)
+                {
+                    <p style="font-style:italic; color:deeppink">Đăng ký thành công. Bảo mật 2 lớp thành công.</p>
+                }
+                @if (ViewBag.RegisterSMS != null)
+                {
+                    <p style="font-style:italic; color:deeppink">Gửi xác thực thất bại.</p>
+                }
+                @if (ViewBag.ThongBaoLoi != null)
+                {
+                    <p style="font-style:italic; color:deeppink">Không tồn tại tài khoản này.Vui lòng xem lại Username và Password</p>
+                }
+                <p style="font-style:italic; color:deeppink">@ViewBag.ResultSMS</p>
                 <div class="login-form">
                     <form class="form-signin" asp-controller="User" asp-action="Login" method="post">
                         <div class="single-login">
@@ -38,11 +51,7 @@
                         </div>
 
                         <div class="single-login single-login-2">
-                            <a class="btnLogin" style="cursor:pointer;">Login</a>
-                            <button type="submit" class="btnLogin" style="cursor:pointer;">Login</button>
-                            @*<button type="submit">Login</button>
-                                <input id="rememberme" type="checkbox" name="rememberme" value="forever">
-                                 <span>Remember me</span>*@
+                            <button type="submit" class="btn btn-primary btnLogin" style="cursor:pointer;">Login</button>
                         </div>
                         <a href="#">Lost your password?</a>
                     </form>
@@ -51,31 +60,3 @@
         </div>
     </div>
 </div>
-
-@section Scripts{
-    @*<script>
-            $(function () {
-                $(".btnLogin").click(function (e) {
-                    var username = document.getElementsByName("username")[0].value;
-                    var password = document.getElementsByName("password")[0].value;
-                    e.preventDefault();
-                    $.ajax({
-                        url: "/User/Login",
-                        type: "POST",
-                        data: {
-                            username: username,
-                            password: password
-                        },
-                        success: function (data) {
-                            if (data == "false") {
-
-                            }
-                        },
-                        error: function () {
-                            alert("nạdknas");
-                        }
-                    });
-                })
-            });
-        </script>*@
-}

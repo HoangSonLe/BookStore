@@ -12,12 +12,11 @@
                                 if (User.Identity.IsAuthenticated)
                                 {
                                     <li><a href="register.html">@User.Identity.Name</a></li>
-                                    <li><a href="checkout.html">Sign up</a></li>
                                     <li><a asp-action="Logout" asp-controller="User">Log out</a></li>
                                 }
                                 else
                                 {
-                                    <li><a href="checkout.html">Sign up</a></li>
+                                    <li><a asp-action="Register" asp-controller="User">Sign up</a></li>
                                     <li><a asp-action="Login" asp-controller="User">Sign in</a></li>
                                 }
                             }

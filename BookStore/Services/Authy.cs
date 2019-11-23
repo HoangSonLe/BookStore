@@ -37,7 +37,7 @@ namespace BookStore.Services
             authyBaseAddress = Configuration["SecurityServiceConfigs:AuthyBaseAddress"];
             authyApiKey = Configuration["SecurityServiceConfigs:AuthyApiKey"];
             authyUserAgent = Configuration["SecurityServiceConfigs:AuthyUserAgent"];
-            twilioAccountSID = Configuration["SecurityServiceConfigs:TwilioAccountSID"];
+            twilioAccountSID = Configuration["SecurityServiceConfigs:twilioAccountSID"];
 
             _clientFactory = clientFactory;
             client = this.CreateHttpClient();
