@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>Koparion – Book Shop Bootstrap 4 Template</title>
+    <title>@ViewData["Title"]</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Favicon -->
@@ -30,15 +30,21 @@
     <link rel="stylesheet" href="~/css/responsive.css">
     <!-- modernizr css -->
     <script src="~/js/vendor/modernizr-2.8.3.min.js"></script>
+
 </head>
 <body>
+    <!-- header-area-start -->
+    @await Html.PartialAsync("_MyHeader")
+    <!-- header-area-end -->
     @RenderBody()
     <!-- footer-area-start -->
     @await Html.PartialAsync("_MyFooter")
+    <!—- ShareThis BEGIN -—>
+    <div class=”sharethis-inline-share-buttons”>
+    <script async src="https://platform-api.sharethis.com/js/sharethis.js#property=5dd8dd6fa9e8ed00126981a4&product=sticky-share-buttons"></script>
+    </div>
+    <!—- ShareThis END -—>
     <!-- footer-area-end -->
-    <!-- Modal -->
-    @await Html.PartialAsync("./Components/ProductModalDetail/Default")
-    <!-- Modal end -->
     <!-- all js here -->
     <!-- jquery latest version -->
     <script src="~/js/vendor/jquery-1.12.0.min.js"></script>
@@ -67,6 +73,7 @@
     <!-- main js -->
     <script src="~/js/main.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
     @RenderSection("Scripts", required: false)
 
 </body>

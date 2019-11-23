@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using AutoMapper;
 using BookStore.Models;
-using Microsoft.AspNetCore.Authentication.Cookies;
+using BookStore.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -34,15 +30,12 @@ namespace BookStore
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
-            services.AddAuthentication(o =>
+            services.AddAuthentication()
+                    .AddCookie("Customer", o =>
                     {
-                        o.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                    })
-                    .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, o =>
-                    {
-                        o.LoginPath = "/Login/Index";
-                        o.AccessDeniedPath = "/Login/Access";
-                        o.LogoutPath = "/Login/Logout";
+                        o.LoginPath = "/User/Login";
+                        o.AccessDeniedPath = "/User/Access";
+                        o.LogoutPath = "/User/Logout";
                     })
                     .AddCookie("Admin", o =>
                     {
@@ -52,8 +45,17 @@ namespace BookStore
                     });
             services.AddDbContext<MyDBContext>(option => option.UseSqlServer(Configuration.GetConnectionString("MyDb")));
             services.AddAutoMapper(typeof(Startup));
-            services.AddSession();
+            services.AddSession(p =>
+            {
+                p.IdleTimeout = TimeSpan.FromMinutes(30);
+                p.Cookie.IsEssential = true;
+            });
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            // 2FA
+            services.AddHttpClient();
+            services.AddTransient<IAuthy, Authy>();
+            //SMS
+            services.AddTransient<ISmsService, SmsService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -69,6 +71,7 @@ namespace BookStore
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+            app.UseAuthentication();
             app.UseSession();
             app.UseHttpsRedirection();
             app.UseStaticFiles();

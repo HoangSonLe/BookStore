@@ -1,20 +1,35 @@
 ﻿@model BookStore.Models.Product
+@{
+    ViewData["Title"] = "Product";
+    ViewData["Child"] = "Edit";
+}
 <link href="~/Admin/css/ProductImage.css" rel="stylesheet" />
 <div class="row">
     <div class="col-md-12">
         <div class="box">
+
+            @if (ViewBag.Message == "success")
+            {
+                <div class="alert alert-info">
+                    <button class="close" data-dismiss="alert">×</button>
+                    <h3>Thành công !!!</h3>
+                </div>
+            }
+
             <div class="box-title">
                 <h3><i class="fa fa-plus"></i>Add Product</h3>
                 <div class="box-tool">
                     <a data-action="collapse" href="#"><i class="fa fa-chevron-up"></i></a>
-                    <a data-action="close" href="#"><i class="fa fa-times"></i></a>
+                    <a class="btn btn-success" asp-action="Create"><i class="fa fa-plus"></i> Add</a>
+                    <a class="btn btn-danger" href="#"><i class="fa fa-times"></i></a>
                 </div>
             </div>
             <div class="box-content">
                 <div class="table-responsive" style="border:0">
-                    <form asp-action="Edit" method="post" id="formAdd" enctype="multipart/form-data">
+                    <form asp-action="Edit" method="post" id="formEdit" enctype="multipart/form-data" asp-route-id="@Model.ProductId">
                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                         <input type="hidden" asp-for="ProductId" />
+                        <input type="hidden" name="ArrDeleteImage" value="," />
                         <div class="row">
                             <div class="col-lg-6">
                                 <div class="form-group">
@@ -24,7 +39,18 @@
                                 </div>
                                 <div class="form-group">
                                     <h5>Đơn vị tính</h5>
-                                    <input asp-for="Unit" class="form-control" />
+                                    <select asp-for="Unit" class="form-control">
+                                        @if (Model.Unit == "Quyển")
+                                        {
+                                            <option selected value="Quyển">Quyển</option>
+                                            <option value="Thùng">Thùng</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="Quyển">Quyển</option>
+                                            <option selected value="Thùng">Thùng</option>
+                                        }
+                                    </select>
                                     <span asp-validation-for="Unit" class="text-danger"></span>
                                 </div>
                                 <div class="form-group">
@@ -34,7 +60,18 @@
                                 </div>
                                 <div class="form-group">
                                     <h5>Tình trạng</h5>
-                                    <input asp-for="Status" class="form-control" />
+                                    <select asp-for="Status" class="form-control">
+                                        @if (Model.Status == true)
+                                        {
+                                            <option selected value="true">Kích hoạt</option>
+                                            <option value="false">Chưa kích hoạt</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="true">Kích hoạt</option>
+                                            <option selected value="false">Chưa kích hoạt</option>
+                                        }
+                                    </select>
                                     <span asp-validation-for="Status" class="text-danger"></span>
                                 </div>
                                 <div class="form-group">
@@ -61,7 +98,18 @@
                                 </div>
                                 <div class="form-group">
                                     <h5>Bao gồm VAT</h5>
-                                    <input asp-for="IncludeVat" class="form-control" />
+                                    <select asp-for="IncludeVat" class="form-control">
+                                        @if (Model.IncludeVat == true)
+                                        {
+                                            <option selected value="true">Bao gồm VAT</option>
+                                            <option value="false">Chưa bao gồm VAT</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="true">Bao gồm VAT</option>
+                                            <option selected value="false">Chưa bao gồm VAT</option>
+                                        }
+                                    </select>
                                     <span asp-validation-for="IncludeVat" class="text-danger"></span>
                                 </div>
                                 <div class="form-group">
@@ -82,17 +130,37 @@
                                 </div>
                             </div>
                             <div class="col-lg-12">
-                                <h5>Hình Ảnh</h5>
-                                <div class="form-group">
-                                    @foreach (var p in ViewBag.ProductImages)
-                                    {
+                                <h5>Hình Ảnh Bìa</h5>
+                                @if (Model.ImageCover != null)
+                                {
+                                    <div class="form-group" style="display: inline-block;">
+                                        <img id="@Model.ProductId" onclick="viewImage(@Model.ProductId)" src="~/Image/@Model.ImageCover" alt="@Model.ImageCover" style="border:2px solid black; height:150px; width:150px;" />
+                                        <a data-id="@Model.ImageCover " class="btn btn-danger btn-circle btnDeleteImageCover" style="position:relative; top:-70px; left:-20px;"><i class="fa fa-times"></i></a>
+                                    </div>
+                                }
+                                <button id="undoDeleteImage" class="btn btn-warning" title="Hoàn tác thao tác xóa hình bìa"><i class="fa fa-undo"></i> Undo</button>
+                                <button id="fileSelectCover" onclick="changeSelectFile('fileuploadCover', 'fileSelectCover' , event)" class="btn btn-primary"><i class="fa fa-plus"></i> Upload hình bìa</button>
+                                <input id="fileuploadCover" style="display:none" onchange="livePreview(this.files,'#divAddImageCover')" type="file" name="Ffile" />
+                                <hr />
+                                <b>Live Preview</b>
+                                <br /><br />
+                                <div id="divAddImageCover">
 
-                                        <img id="@p.ProductImagesId" onclick="viewImage(@p.ProductImagesId)" src="~/Image/@p.ProductImage" alt="@p.ProductImage" style="border:2px solid black; height:150px; width:150px;" />
-                                        <a href="#" class="btn btn-danger btn-circle" style="position:relative; top:-70px; left:-20px;"><i class="fa fa-times"></i></a>
-                                    }
                                 </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <h5>Hình Ảnh Minh Họa</h5>
+
+                                @foreach (var p in ViewBag.ProductImages)
+                                {
+                                    <div class="form-group" style="display: inline-block;">
+                                        <img id="@p.ProductImagesId" onclick="viewImage(@p.ProductImagesId)" src="~/Image/@p.ProductImage" alt="@p.ProductImage" style="border:2px solid black; height:150px; width:150px;" />
+                                        <a data-id="@p.ProductImagesId " class="btn btn-danger btn-circle btnDeleteImage" style="position:relative; top:-70px; left:-20px;"><i class="fa fa-times"></i></a>
+                                    </div>
+                                }
                                 <h5>Upload thêm hình</h5>
-                                <input id="fileupload" type="file" name="fFiles" multiple />
+                                <input id="fileupload" class="image" style="display:none" type="file" name="fFiles" onchange="livePreview(this.files,'#dvPreview')" multiple />
+                                <button id="fileSelect" onclick="changeSelectFile('fileupload', 'fileSelect', event)" class="btn btn-primary" title="Upload các hình mô tả"><i class="fa fa-plus"></i> Upload các hình mô tả</button>
                                 <hr />
                                 <b>Live Preview</b>
                                 <br />
@@ -108,11 +176,10 @@
                             </div>
                             <div class="col-lg-12">
                                 <div class="form-group">
-                                    <input type="submit" value="Save" class="btn btn-primary" />
+                                    <button type="submit" value="Save" class="btn btn-primary submitForm">Save changes</button>
                                 </div>
                             </div>
                         </div>
-
                     </form>
                 </div>
             </div>
@@ -131,6 +198,7 @@
     <!-- Modal Caption (Image Text) -->
     <div id="caption"></div>
 </div>
+<script src="~/js/Tools/SlugString.js"></script>
 <script src="https://cdn.ckeditor.com/ckeditor5/15.0.0/classic/ckeditor.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <script src="~/Admin/js/ProductEdit.js"></script>

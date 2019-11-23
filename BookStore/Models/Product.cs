@@ -27,6 +27,7 @@ namespace BookStore.Models
         public int? Discount { get; set; }
         public int? ViewCounts { get; set; }
         public bool? Status { get; set; }
+        public string ImageCover { get; set; }
 
         public virtual ProductCategory Category { get; set; }
         public virtual Publishers Publisher { get; set; }

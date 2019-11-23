@@ -1,6 +1,11 @@
-﻿<!-- header-area-start -->
-@await Html.PartialAsync("_MyHeader")
-<!-- header-area-end -->
+﻿@{
+    ViewData["Title"] = "Giỏ hàng";
+    ViewData["Breadcrumbs"] = "Giỏ hàng";
+    List<CartItem> cart = (List<CartItem>)Model;
+}
+@using BookStore.ModelViews
+@model List<CartItem>
+
 <!-- breadcrumbs-area-start -->
 @await Html.PartialAsync("_Breadcrumbs")
 <!-- breadcrumbs-area-end -->
@@ -17,6 +22,6 @@
     </div>
 </div>
 <!-- entry-header-area-end -->
-<!-- cart-main-area-start -->
-@await Html.PartialAsync("CartDetail")
-<!-- cart-main-area-end -->
+<div id="productCart">
+    @Html.Partial("ProductCart", cart);
+</div>

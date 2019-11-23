@@ -1,69 +1,72 @@
-﻿<div class="cart-main-area mb-70">
+﻿@{
+    float? totalCart = 0;
+}
+@using BookStore.ModelViews
+@model List<CartItem>
+<link href="~/css/CssByMySelf/IncreaseDecreaseInput.css" rel="stylesheet" />
+<div class="cart-main-area mb-70">
     <div class="container">
         <div class="row">
             <div class="col-lg-12">
-                <form action="#">
-                    <div class="table-content table-responsive">
-                        <table>
-                            <thead>
+                <div class="table-content table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th class="product-thumbnail">Ảnh Minh Họa</th>
+                                <th class="product-name" width="30%;">Tên Sản Phẩm</th>
+                                <th class="product-price">Giá</th>
+                                <th class="product-quantity">Số lượng</th>
+                                <th class="product-subtotal">Tổng</th>
+                                <th class="product-remove" width="10%;">Xóa</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            @foreach (var p in Model)
+                            {
+                                totalCart = totalCart + (float)p.QuantityProduct * p.Price;
+                                var price = String.Format("{0:0,0} VNĐ", p.Price);
+                                var priceTotalItem = String.Format("{0:0,0} VNĐ", p.Price * p.QuantityProduct);
+
                                 <tr>
-                                    <th class="product-thumbnail">Image</th>
-                                    <th class="product-name">Product</th>
-                                    <th class="product-price">Price</th>
-                                    <th class="product-quantity">Quantity</th>
-                                    <th class="product-subtotal">Total</th>
-                                    <th class="product-remove">Remove</th>
+                                    <td class="product-thumbnail"><a href="#"><img style="width:140px; height:180px;" src="~/Image/@p.ImageCover" alt="@p.ProductName" /></a></td>
+                                    <td class="product-name"><a href="#">@p.ProductName</a></td>
+                                    <td class="product-price"><span class="amount" style="font-family:Arial;">@price</span></td>
+                                    <td class="product-quantity">
+                                        <div class="value-button" id="decrease" onclick="decreaseValue(@p.ProductId)" value="Decrease Value">-</div>
+                                        <input type="number" style="font-family:Arial;" id="@p.ProductId" onchange="changeValue(@p.ProductId)" min="1" value="@p.QuantityProduct">
+                                        <div class="value-button" id="increase" onclick="increaseValue(@p.ProductId)" value="Increase Value">+</div>
+                                    </td>
+                                    <td class="product-subtotal" style="font-family:Arial;">@priceTotalItem</td>
+                                    <td class="product-remove"><a style="cursor: pointer;" onclick="onClickRemoveInCart(@p.ProductId)"><i class="fa fa-times"></i></a></td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td class="product-thumbnail"><a href="#"><img src="img/cart/1.jpg" alt="man" /></a></td>
-                                    <td class="product-name"><a href="#">Vestibulum suscipit</a></td>
-                                    <td class="product-price"><span class="amount">£165.00</span></td>
-                                    <td class="product-quantity"><input type="number" value="1"></td>
-                                    <td class="product-subtotal">£165.00</td>
-                                    <td class="product-remove"><a href="#"><i class="fa fa-times"></i></a></td>
-                                </tr>
-                                <tr>
-                                    <td class="product-thumbnail"><a href="#"><img src="img/cart/2.jpg" alt="man" /></a></td>
-                                    <td class="product-name"><a href="#">Vestibulum dictum magna</a></td>
-                                    <td class="product-price"><span class="amount">£50.00</span></td>
-                                    <td class="product-quantity"><input type="number" value="1"></td>
-                                    <td class="product-subtotal">£50.00</td>
-                                    <td class="product-remove"><a href="#"><i class="fa fa-times"></i></a></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </form>
+
+                            }
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
         <div class="row">
             <div class="col-lg-8 col-md-8 col-sm-6 col-xs-12">
                 <div class="buttons-cart mb-30">
                     <ul>
-                        <li><a href="#">Update Cart</a></li>
-                        <li><a href="#">Continue Shopping</a></li>
+                        <li><a href="#">Tiếp tục mua sắp</a></li>
                     </ul>
                 </div>
-                <div class="coupon">
-                    <h3>Coupon</h3>
-                    <p>Enter your coupon code if you have one.</p>
-                    <form action="#">
-                        <input type="text" placeholder="Coupon code">
-                        <a href="#">Apply Coupon</a>
-                    </form>
-                </div>
             </div>
+            @{
+                var totalString = String.Format("{0:0,0} VNĐ", totalCart);
+            }
             <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
                 <div class="cart_totals">
-                    <h2>Cart Totals</h2>
+                    <h2 style="margin:0;padding:0;">Tổng tiền</h2><hr />
                     <table>
                         <tbody>
                             <tr class="cart-subtotal">
-                                <th>Subtotal</th>
+                                <th>Tổng</th>
                                 <td>
-                                    <span class="amount">£215.00</span>
+                                    <p class="amount" style="font-family:Arial;">@totalString</p>
                                 </td>
                             </tr>
                             <tr class="shipping">
@@ -71,26 +74,18 @@
                                 <td>
                                     <ul id="shipping_method">
                                         <li>
-                                            <input type="radio">
-                                            <label>
-                                                Flat Rate:
-                                                <span class="amount">£7.00</span>
-                                            </label>
-                                        </li>
-                                        <li>
-                                            <input type="radio">
                                             <label> Free Shipping </label>
                                         </li>
                                     </ul>
-                                    <a href="#">Calculate Shipping</a>
                                 </td>
                             </tr>
                             <tr class="order-total">
-                                <th>Total</th>
+                                <th>
+                                    Tổng tiền
+                                    <small style="display:block; font-size:small; text-transform:lowercase;">(đã gồm ship)</small>
+                                </th>
                                 <td>
-                                    <strong>
-                                        <span class="amount">£215.00</span>
-                                    </strong>
+                                    <p class="amount" style="font-family:Arial;">@totalString</p>
                                 </td>
                             </tr>
                         </tbody>
@@ -103,3 +98,26 @@
         </div>
     </div>
 </div>
+<script src="~/js/jsScriptByMySelf/UpdateCart.js"></script>
+<script>
+    function changeValue(id) {
+        var number = $("#" + id).val();
+        if (number < 0) {
+            number = 0;
+        }
+        onClickUpdateNumberToCart(id, number);
+    };
+    function increaseValue(id) {
+        onClickUpdateToCart(id, 1);
+    };
+
+    function decreaseValue(id) {
+        var value = parseInt(document.getElementById(id).value, 10);
+        value = isNaN(value) ? 0 : value;
+        value < 1 ? value = 1 : '';
+        value--;
+        if (value > 0) {
+            onClickUpdateToCart(id, -1);
+        };
+    };
+</script>

@@ -8,7 +8,6 @@ namespace BookStore.Models
         public Employee()
         {
             Comment = new HashSet<Comment>();
-            Division = new HashSet<Division>();
             Feedback = new HashSet<Feedback>();
             InverseManager = new HashSet<Employee>();
             Orders = new HashSet<Orders>();
@@ -30,7 +29,6 @@ namespace BookStore.Models
         public virtual Employee Manager { get; set; }
         public virtual Roles RoleNavigation { get; set; }
         public virtual ICollection<Comment> Comment { get; set; }
-        public virtual ICollection<Division> Division { get; set; }
         public virtual ICollection<Feedback> Feedback { get; set; }
         public virtual ICollection<Employee> InverseManager { get; set; }
         public virtual ICollection<Orders> Orders { get; set; }

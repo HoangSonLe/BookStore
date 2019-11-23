@@ -1,0 +1,66 @@
+﻿@model Product
+<div class="row">
+    <div class="col-md-5 col-sm-5 col-xs-12">
+        <div class="modal-tab">
+            <div class="product-details-large tab-content">
+                <div class="tab-pane active">
+                    <img src="~/Image/@Model.ImageCover" alt="@Model.ImageCover" />
+                </div>
+                @if (Model.ProductImages.Count > 0)
+                {
+                    @foreach (var p in Model.ProductImages)
+                    {
+                        <div class="tab-pane" id="@p.ProductImagesId">
+                            <img src="~/Image/@p.ProductImage" alt="@p.ProductImage" />
+                        </div>
+                    }
+                }
+            </div>
+            <div class="product-details-small quickview-active owl-carousel">
+                <a class="active" href="#@Model.ImageCover"><img src="~/Image/@Model.ImageCover" alt="@Model.ImageCover" /></a>
+                @if (Model.ProductImages.Count > 0)
+                {
+                    @foreach (var p in Model.ProductImages)
+                    {
+                        <a href="#@p.ProductImagesId"><img src="~/Image/@p.ProductImagesId" alt="@Model.ProductImages" /></a>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-md-7 col-sm-7 col-xs-12">
+        <div class="modal-pro-content">
+            <h3>@Model.ProductName</h3>
+            <div class="product-price" style="margin-bottom:30px;">
+                @{var price = String.Format("{0:0,0 VNĐ}", Model.Price);}
+                @if (Model.Discount != 0)
+                {
+                    var promotionPrice = String.Format("{0:0,0 VNĐ}", Model.PromotionPrice);
+                    <ul>
+                        <li style="font-family:Arial; font-weight:normal;">@promotionPrice</li>
+                        <li class="old-price" style="font-family:Arial; font-weight:normal;">@price</li>
+                    </ul>
+                }
+                else
+                {
+                    <ul>
+                        <li style="font-family:Arial; font-weight:normal;">@price</li>
+                    </ul>
+                }
+
+            </div>
+            <div style="overflow-y: scroll; height: 250px; width:500px;margin-right:-1000px	">
+                @Html.Raw(Model.Description)
+            </div>
+            <form id="formSubmit" style="margin-top:30px;">
+                <input id="quantityNumber" type="number" value="1" />
+                <button onclick="onClickAddToCart(@Model.ProductId,$('#quantityNumber').val());">Add to cart</button>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    $("#formSubmit").submit(function (e) {
+        e.preventDefault();
+    });
+</script>

@@ -3,10 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BookStore.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookStore.Controllers
 {
+    [Authorize(AuthenticationSchemes = "Admin")]
+    [Authorize(AuthenticationSchemes = "Customer")]
+    [Authorize(Roles = "Customer")]
     public class ContactController : Controller
     {
         private readonly MyDBContext _ctx;
@@ -14,10 +18,12 @@ namespace BookStore.Controllers
         {
             _ctx = myDBContext;
         }
+        [AllowAnonymous]
         public IActionResult Index()
         {
             return View();
         }
+        [AllowAnonymous]
         [HttpPost]
         public bool Index(string name, string phone, string email, string subject, string message, int radioCheckReply)
         {

@@ -288,23 +288,16 @@
         <!-- END Button Messages -->
         <!-- BEGIN Button User -->
         <li class="user-profile">
-            @using Microsoft.AspNetCore.Http;
-            @using BookStore.Helpers;
-            @{
-                var nameEmployee = "Hello";
-                if (User.Identity.IsAuthenticated)
-                {
-                    var emp = Context.Session.GetObject<Employee>("Employee");
-                    if(emp!= null)
-                    {
-                        nameEmployee = emp.FirstName + " " + emp.LastName;
-                    }
-                }
-
-            }
             <a data-toggle="dropdown" href="#" class="user-menu dropdown-toggle">
-                <img class="nav-user-photo" src="~/Admin/img/demo/avatar/avatar1.jpg" alt="Penny's Photo" />
-                <span class="hhh" id="user_info">@nameEmployee</span>
+                @using BookStore.Helpers;
+                @{
+                    if (User.Identity.IsAuthenticated)
+                    {
+                        <img class="nav-user-photo" src="~/Admin/img/demo/avatar/avatar1.jpg" alt="Penny's Photo" />
+                        <span class="hhh" id="user_info">@User.Identity.Name</span>
+                    }
+                 }
+
                 <i class="fa fa-caret-down"></i>
             </a>
             <!-- BEGIN User Dropdown -->
