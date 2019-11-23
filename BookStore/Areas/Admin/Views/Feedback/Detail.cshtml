@@ -1,0 +1,55 @@
+﻿@model Feedback
+<div class="modal-body" id="modalBody">
+    <div class="form-group">
+        <b>Tên người gửi: </b>
+        @Model.Name
+    </div>
+    <div class="form-group">
+        <b>Email người gửi: </b>
+        @Model.Email
+    </div>
+    <div class="form-group">
+        <b>Tiêu đề: </b>
+        @Model.ContextSubject
+    </div>
+    <div class="form-group">
+        <b>Ngày gửi: </b>
+        @Model.CreatedDate
+    </div>
+    <div class="form-group">
+        <b>Nội dung: </b><br>
+        <div style="overflow-y: auto; max-height:100px">
+            @Model.ContextMessage
+        </div>
+    </div>
+    @{
+        if (Model.EmployeeId != null)
+        {
+            <div class="form-group">
+                <b>Trả lời từ nhân viên: </b>
+                @ViewBag.EmployeeName
+            </div>
+            <div class="form-group">
+                <b>Nội dung trả lời: </b><br />
+                <div style="overflow-y: auto; max-height:100px">
+                    @Model.ReplyContext
+                    </div>
+            </div>
+            <div class="form-group">
+                <b>Ngày trả lời: </b>
+                @Model.ReplyDate
+            </div>
+        }
+    }
+
+            </div>
+<div class="modal-footer">
+    @{
+        if (Model.Reply && Model.EmployeeId == null)
+        {
+            //Need reply and no one has replied yet
+            <button type="submit" class="btn btn-primary btnSubmit">Reply</button>
+        }
+    }
+    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+</div>

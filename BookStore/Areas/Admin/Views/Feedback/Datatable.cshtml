@@ -1,0 +1,62 @@
+﻿@model IEnumerable<Feedback>
+<table class="table table-advance" id="tablePublishers">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Context Subject</th>
+            <th>Context Message</th>
+            <th>Created Date</th>
+            <th class="text-center">Reply</th>
+            <th class="text-center">Action</th>
+        </tr>
+    </thead>
+    <tbody id="content">
+        @foreach (var p in Model)
+        {
+            string subject = p.ContextSubject;
+            string message = p.ContextMessage;
+            if (p.ContextSubject.Length > 30)
+            {
+                subject = subject.Substring(0, 30) + "...";
+            }
+            if (p.ContextMessage.Length > 40)
+            {
+                message = message.Substring(0, 40) + "...";
+            }
+
+            <tr class="table-flag-blue">
+                <td><b>@p.FeedbackId</b></td>
+                <td>@p.Name</td>
+                <td>@p.Email</td>
+                <td>@p.Phone</td>
+                <td>@subject</td>
+                <td>@message</td>
+                <td>@p.CreatedDate</td>
+
+
+                @if (p.Reply == true)
+                {
+                    <td class="text-center"><input name="Status" type="checkbox" checked disabled></td>
+                }
+                else
+                {
+                    <td class="text-center"><input name="Status" type="checkbox" disabled></td>
+                }
+                <td class="text-center">
+                    <div class="btn-group">
+                        <p>
+                            <button class="btn btn-primary btnDetail" data-id="@p.FeedbackId" data-target="#modalDetail" data-toggle="modal"><i class="fa fa-eye"></i> Detail</button>
+                            <button class="btn btn-danger btnDelete" data-id="@p.FeedbackId" data-name="@p.Name"><i class="fa fa-trash-o"></i> Delete</button>
+                        </p>
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.js"></script>
+<script type="text/javascript" src="~/Admin/assets/data-tables/bootstrap3/dataTables.bootstrap.js"></script>
+<script src="~/Admin/js/feedback.js"></script>
