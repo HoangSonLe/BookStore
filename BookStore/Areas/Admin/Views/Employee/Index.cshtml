@@ -15,7 +15,7 @@
             <div class="box-content">
                 <div class="btn-toolbar pull-right clearfix">
                     <div class="btn-group">
-                        <a class="btn btn-circle show-tooltip" asp-action="Add" title="Add new record"><i class="fa fa-plus"></i></a>
+                        <a class="btn btn-circle show-tooltip btnAdd"  title="Add new record"><i class="fa fa-plus"></i></a>
                         <a class="btn btn-circle show-tooltip" title="Edit selected" href="#"><i class="fa fa-edit"></i></a>
                         <a class="btn btn-circle show-tooltip" title="Delete selected" href="#"><i class="fa fa-trash-o"></i></a>
                     </div>
@@ -30,7 +30,7 @@
                 </div>
                 <br /><br />
                 <div class="clearfix"></div>
-                <div class="table-responsive" style="border:0">
+                <div class="table-responsive tableEmployee" style="border:0">
                     <table class="table table-advance" id="tableEmployees">
                         <thead>
                             <tr>
@@ -57,8 +57,8 @@
                                     <td class="text-center">
                                         <div class="btn-group">
                                             <p>
-                                                <button class="btn btn-magenta btnDetail" data-id="@p.EmployeeId" data-target="#modalDetail" data-toggle="modal"><i class="fa fa-eye"></i> Detail</button>
-                                                <a class="btn btn-primary" asp-action="Edit" asp-route-id="@p.EmployeeId"><i class="fa fa-edit"></i> Edit</a>
+                                                <button class="btn btn-magenta btnDetail" data-id="@p.EmployeeId"><i class="fa fa-eye"></i> Detail</button>
+                                                <a class="btn btn-primary btnEdit" data-id="@p.EmployeeId"><i class="fa fa-edit"></i> Edit</a>
                                                 <button class="btn btn-danger btnDelete" data-id="@p.EmployeeId"><i class="fa fa-trash-o"></i> Delete</button>
                                             </p>
                                         </div>
@@ -75,7 +75,7 @@
 <!-- END Main Content -->
 <!-- Modal -->
 <div class="modal fade" id="modalDetail" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog" style="width:1000px;" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Thông tin</h5>
