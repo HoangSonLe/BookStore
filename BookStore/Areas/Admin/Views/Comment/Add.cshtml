@@ -1,0 +1,70 @@
+﻿@using BookStore.Areas.ModelViews
+<div class="modal-body" id="modalBody">
+    <div class="form-group">
+        <label>Tên sách: </label>
+        <select class="form-control" id="productID">
+            @foreach (ProductView p in ViewBag.Products)
+            {
+                <option value="@p.ProductId">@p.ProductName</option>
+            }
+            @*<option>Tôi thấy hoa vàng trên cỏ xanh</option>
+                <option>ABC</option>
+                <option>Ahihi</option>*@
+        </select>
+    </div>
+    <div class="form-group">
+        <label>Bình luận: </label>
+        <textarea class="form-control" style="resize: none;" placeholder="Nhập bình luận" id="context"></textarea>
+    </div>
+    <div class="form-group">
+        <label>Trạng thái hiển thị </label>
+        <input name="Status" id="status" type="checkbox" checked />
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary btnAddProduct">Submit</button>
+    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+</div>
+<script>
+    $(".btnAddProduct").click(function () {
+        let comment = $("#context").val().trim();
+        let productID = $("#productID").val();
+        let isCheck = $('#status').is(":checked");
+        let isFilteringProId = $("#opFilter").val();// What product is Filtering
+        $.ajax({
+            url: "/Admin/Comment/Add",
+            type: "POST",
+            data: {
+                productID: productID,
+                comment: comment,
+                status: isCheck,
+                isFiltering: isFilteringProId
+            },
+            success: function (data) {
+                if (data.indexOf("Error") == -1) {
+                    // No Error
+                    $(".bodyContent").html("");
+                    $(".bodyContent").html(data);
+                    $("#modalDetail").modal("toggle");
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Thành công!',
+                        text: 'Thêm thành công!',
+                        showConfirmButton: false,
+                        timer: 2000
+                    });
+                }
+                else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lỗi',
+                        text: 'Phiên làm việc đã hết hạn. Vui lòng kiểm tra lại!',
+                        showConfirmButton: false,
+                        timer: 2000
+                    });
+                }
+            }
+
+        });
+    })
+</script>

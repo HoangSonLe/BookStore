@@ -1,0 +1,131 @@
+﻿@model BookStore.Areas.ModelViews.CommentViewModel
+@using BookStore.Helpers;
+@{
+    var e = Context.Session.GetObject<Employee>("Employee");
+    int isOwner = 0;
+}
+<div class="modal-body" id="modalBody">
+    <div class="form-group">
+        <b>Người bình luận: </b>
+        @Model.Name
+    </div>
+    <div class="form-group">
+        <b>Tên sản phẩm: </b>
+        @Model.ProductName
+    </div>
+    @{
+        if (e != null)
+        { //in case of session is expired
+            if (Model.employeeID == e.EmployeeId)
+            {
+                isOwner = 1;
+                <div class="form-group">
+                    <textarea style="width:550px;height:80px;resize: none;" placeholder="Nhập bình luận" id="context">@Model.Context</textarea>
+                    <label id="errorContext" style="color:red;display:none ">Vui lòng nhập bình luận</label>
+                </div>
+            }
+            else
+            {
+                <div class="form-group">
+                    <b>Nội dung: </b><br />
+                    <div style="overflow-y: auto; max-height:100px" id="context">
+                        @Model.Context
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="form-group">
+                <b>Nội dung: </b><br />
+                <div style="overflow-y: auto; max-height:100px" id="context">
+                    @Model.Context
+                </div>
+            </div>
+        }
+    }
+    <div class="form-group">
+        <b>Ngày tạo: </b>
+        @Model.CreatedDate
+    </div>
+    <div class="form-group">
+        <b>Ngày sửa gần nhất: </b>
+        @Model.ModifiedDate
+    </div>
+    <div class="form-group">
+        <b class="form-check-label">Trạng thái hiển thị:  </b>
+        @{
+            string tmp = "";
+            if (Model.Status == 1)
+            {
+                tmp = "checked";
+            }
+            <input name="Status" id="status" type="checkbox" @tmp>
+        }
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary btnSubmit">Submit</button>
+    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+</div>
+<script>
+    $(".btnSubmit").click(function (e) {
+        e.preventDefault();
+        let isCheck = $('#status').is(":checked");
+        let context = "";
+        let isOwner =@isOwner;
+        if (isOwner==1) {
+            context = $("#context").val().trim();// get value in textarea
+        }
+        else {
+            context = $("#context").text().trim(); 
+        }
+        if (validate(context)) {
+            let isFilteringProId = $("#opFilter").val();// What product is Filtering
+            let commentID =@Model.CommentId;
+            $.ajax({
+                url: "/Admin/Comment/Edit",
+                type: "POST",
+                data: {
+                    id: commentID,
+                    context: context,
+                    status: isCheck,
+                    isFiltering: isFilteringProId
+                },
+                success: function (data) {
+                    if (data.indexOf("Error") == -1) {
+                        // No Error
+                        $(".bodyContent").html("");
+                        $(".bodyContent").html(data);
+                        $("#modalDetail").modal("toggle");
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Thành công!',
+                            text: 'Cập nhật thành công!',
+                            showConfirmButton: false,
+                            timer: 2000
+                        });
+                    }
+                    else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Lỗi',
+                            text: 'Đã xảy ra lỗi. Xin vui lòng thử lại!',
+                            showConfirmButton: false,
+                            timer: 2000
+                        });
+                    }
+                }
+            });
+        }
+    });
+    function validate(context) {
+        if (context.length > 0) {
+            $("#errorContext").css('display', 'none');
+            return true;
+        }
+        $("#errorContext").css('display', 'block');
+        return false;
+        
+    }
+</script>

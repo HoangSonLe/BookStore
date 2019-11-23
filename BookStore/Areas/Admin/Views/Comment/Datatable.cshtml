@@ -1,0 +1,51 @@
+﻿@model IEnumerable<BookStore.Areas.ModelViews.CommentViewModel>
+<table class="table table-advance" id="tableComment">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Product Name</th>
+            <th>Name</th>
+            <th>Context</th>
+            <th>Created Date</th>
+            <th>Modified Date</th>
+            <th class="text-center">Status</th>
+            <th class="text-center">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var p in Model)
+        {
+            <tr class="table-flag-blue">
+                <td><b>@p.CommentId</b></td>
+                <td>@p.ProductName</td>
+                <td>@p.Name</td>
+                <td>@p.Context</td>
+                <td>@p.CreatedDate</td>
+                <td>@p.ModifiedDate</td>
+                <td class="text-center">
+                    @{
+                        if (p.Status == 1)
+                        {
+
+                            <input name="Status" type="checkbox" checked disabled>
+                        }
+                        else
+                        {
+                            <input name="Status" type="checkbox" disabled>
+                        }
+                    }
+                </td>
+                <td class="text-center">
+                    <div class="btn-group">
+                        <p>
+                            <button class="btn btn-primary btnEdit" data-id="@p.CommentId" data-target="#modalDetail" data-toggle="modal" onclick="detail(@p.CommentId)"><i class="fa fa-edit"></i> Edit</button>
+                            <button class="btn btn-danger btnDelete" data-id="@p.CommentId" data-name="@p.Name"><i class="fa fa-trash-o"></i> Delete</button>
+                        </p>
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<script src="~/Admin/js/Comment.js"></script>
