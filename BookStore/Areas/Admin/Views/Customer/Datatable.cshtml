@@ -1,0 +1,43 @@
+﻿@{
+    Layout = null;
+}
+
+@model IEnumerable<Customer>
+  
+<table class="table table-advance" id="tableCustomers">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>FullName</th>
+            <th>Address</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Sex</th>
+            <th class="text-center" width="23%">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var p in Model)
+        {
+            <tr class="table-flag-blue">
+                <td><b>@p.CustomerId</b></td>
+                <td>@p.FirstName @p.LastName</td>
+                <td>@p.Address</td>
+                <td>@p.Email</td>
+                <td>@p.PhoneNumber</td>
+                @{var sex = p.Sex == true ? "Nam" : "Nữ";}
+                <td>@sex</td>
+                <td class="text-center">
+                    <div class="btn-group">
+                        <p>
+                            <button class="btn btn-magenta btnDetail" data-id="@p.CustomerId" data-target="#modalDetail" data-toggle="modal"><i class="fa fa-eye"></i> Detail</button>
+                            <a class="btn btn-primary btnEdit" data-id="@p.CustomerId" data-target="#modalDetail" data-toggle="modal"><i class="fa fa-edit"></i> Edit</a>
+                            <button class="btn btn-danger btnDelete" data-id="@p.CustomerId"><i class="fa fa-trash-o"></i> Delete</button>
+                        </p>
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<script src="~/Admin/js/Customer.js"></script>
