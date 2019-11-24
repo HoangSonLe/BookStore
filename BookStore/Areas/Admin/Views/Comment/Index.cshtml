@@ -74,12 +74,13 @@
                                         @{
                                             if (p.Status == 1)
                                             {
-
-                                                <input name="Status" type="checkbox" checked disabled>
+                                                <label class="label label-success">Hiển thị</label>
+                                                @*<input name="Status" type="checkbox" checked disabled>*@
                                             }
                                             else
                                             {
-                                                <input name="Status" type="checkbox" disabled>
+                                                <label class="label label-warning">Không hiển thị</label>
+                                                @*<input name="Status" type="checkbox" disabled>*@
                                             }
                                         }
                                     </td>

@@ -72,29 +72,29 @@ namespace BookStore.Controllers
                     //        //Send SMS success
                     return View("VerifyUser");
                     // Gửi sms mã xác nhận
-                    //var sendSMSResponse = await _authy.SendSmsAsync(customer.AuthyId).ConfigureAwait(false);
-                    //if (sendSMSResponse.StatusCode == HttpStatusCode.OK)
-                    //{
-                    //    var smsVerificationSucceedObject = JsonConvert.DeserializeObject<AccessCodeVerifyResult>(await sendSMSResponse.Content.ReadAsStringAsync());
-                    //    if (smsVerificationSucceedObject.Success)
-                    //    {
-                    //        ViewBag.CustomerId = customer.CustomerId;
-                    //        //Send SMS success
-                    //        return View("VerifyUser");
+                    var sendSMSResponse = await _authy.SendSmsAsync(customer.AuthyId).ConfigureAwait(false);
+                    if (sendSMSResponse.StatusCode == HttpStatusCode.OK)
+                    {
+                        var smsVerificationSucceedObject = JsonConvert.DeserializeObject<AccessCodeVerifyResult>(await sendSMSResponse.Content.ReadAsStringAsync());
+                        if (smsVerificationSucceedObject.Success)
+                        {
+                            ViewBag.CustomerId = customer.CustomerId;
+                            //Send SMS success
+                            return View("VerifyUser");
 
-                    //    }
-                    //    else
-                    //    {
-                    //        ViewBag.CustomerId = customer.CustomerId;
-                    //        //Fail
-                    //        return View("VerifyUser");
-                    //    }
-                    //}
-                    //else
-                    //{
-                    //    ViewBag.ResultSMS = "Gửi mã thất bại!";
-                    //    return View("Login");
-                    //}
+                        }
+                        else
+                        {
+                            ViewBag.CustomerId = customer.CustomerId;
+                            //Fail
+                            return View("VerifyUser");
+                        }
+                    }
+                    else
+                    {
+                        ViewBag.ResultSMS = "Gửi mã thất bại!";
+                        return View("Login");
+                    }
                 }
             }
             else
@@ -112,6 +112,8 @@ namespace BookStore.Controllers
         {
             HttpContext.Session.Remove("Customer");
             await HttpContext.SignOutAsync("Customer");
+            HttpContext.Session.Remove("Admin");
+            await HttpContext.SignOutAsync("Admin");
             return RedirectToAction("Index", "Home");
         }
         [AllowAnonymous]

@@ -62,8 +62,8 @@
             <ul class="submenu">
                 <li><a href="table_basic.html">Customer</a></li>
                 <li><a href="table_basic.html">Order</a></li>
-                <li><a href="table_advance.html">FeedBack</a></li>
-                <li><a href="table_dynamic.html">Comment</a></li>
+                <li><a asp-controller="Feedback" asp-action="Index">FeedBack</a></li>
+                <li><a asp-controller="Comment" asp-action="Index">Comment</a></li>
             </ul>
             <!-- END Submenu -->
         </li>
@@ -77,7 +77,7 @@
             <ul class="submenu">
                 <li><a asp-controller="Products" asp-action="Index">Product</a></li>
                 <li><a asp-controller="ProductCategory" asp-action="Index">Product Category</a></li>
-                <li><a href="map_vector.html">Publisher</a></li>
+                <li><a asp-controller="Publisher" asp-action="Index">Publisher</a></li>
             </ul>
             <!-- END Submenu -->
         </li>
