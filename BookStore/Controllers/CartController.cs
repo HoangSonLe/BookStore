@@ -47,11 +47,13 @@ namespace BookStore.Controllers
                 return data;
             }
         }
+        [AllowAnonymous]
         public IActionResult Index()
         {
             List<CartItem> cart = Cart; 
             return View(cart);
         }
+        [AllowAnonymous]
         public IActionResult AddToCart(int id, int quantity)
         {
             try
@@ -88,6 +90,7 @@ namespace BookStore.Controllers
             List<CartItem> cart = HttpContext.Session.GetObject<List<CartItem>>("Cart");
             return PartialView("PopupCart", cart);
         }
+        [AllowAnonymous]
         public IActionResult UpdateToCart(int id, int quantity)
         {
             try
@@ -105,6 +108,7 @@ namespace BookStore.Controllers
             List<CartItem> cart = HttpContext.Session.GetObject<List<CartItem>>("Cart");
             return PartialView("ProductCart", cart);
         }
+        [AllowAnonymous]
         public IActionResult UpdateNumberToCart(int id, int quantity)
         {
             try
@@ -122,6 +126,7 @@ namespace BookStore.Controllers
             List<CartItem> cart = HttpContext.Session.GetObject<List<CartItem>>("Cart");
             return PartialView("ProductCart", cart);
         }
+        [AllowAnonymous]
         public IActionResult DeleteInCart(int id)
         {
             List<CartItem> cartItems = Cart;
@@ -131,6 +136,7 @@ namespace BookStore.Controllers
             List<CartItem> cart = HttpContext.Session.GetObject<List<CartItem>>("Cart");
             return PartialView("ProductCart", cart);
         }
+        [AllowAnonymous]
         public IActionResult ViewProductCart()
         {
             List<CartItem> cart = HttpContext.Session.GetObject<List<CartItem>>("Cart");
