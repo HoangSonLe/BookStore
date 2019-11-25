@@ -85,6 +85,54 @@ namespace BookStore.Controllers
             return PartialView("ModalDetail",product);
         }
 
+        [AllowAnonymous]
+        [Route("{loai}/{hanghoa}")]
+        public IActionResult DetailPage(string loai, string hanghoa)
+        {
+            var category = _context.ProductCategory.SingleOrDefault(p => p.UrlFriendly == loai);
+            if (category == null) return BadRequest();
+            else
+            {
+                int CateID = category.CategoryId;
+                var product = _context.Product
+                            .Include(x => x.ProductImages)
+                            .Include(x => x.Publisher)
+                            .Where(p => p.CategoryId == CateID && p.UrlFriendly == hanghoa)
+                            .AsNoTracking()
+                            .SingleOrDefault();
+                var relativeProduct = _context.Product
+                                     .Include(x => x.Category)
+                                     .Where(p => p.CategoryId == CateID || p.PublisherId == product.PublisherId)
+                                     .AsNoTracking()
+                                     .OrderByDescending(x=>x.ProductId)
+                                     .Take(6);
+                var newProducts = _context.Product
+                                .Include(x => x.Category)
+                                .AsNoTracking()
+                                .OrderByDescending(x => x.ProductId)
+                                .Take(6);
+                ViewBag.relative = relativeProduct;
+                ViewBag.newProducts = newProducts;
+                return View(product);
+            }
+        }
+
+        [AllowAnonymous]
+        public IActionResult GetUpSellPRoducts(int category, int exceptProID)
+        {
+            var products = _context.Product
+                                    .Include(x => x.Category)
+                                    .Where(p => p.CategoryId == category && p.ProductId != exceptProID)
+                                    .ToList();
+            return PartialView("UpsellProducts",products);
+        }
+
+        [AllowAnonymous]
+        public IActionResult GetNewProducts()
+        {
+            var products = _context.Product.OrderByDescending(x => x.ProductId).Take(6);
+            return PartialView("NewProducts");
+        }
 
     }
 }
