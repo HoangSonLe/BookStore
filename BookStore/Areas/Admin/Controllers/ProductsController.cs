@@ -62,8 +62,6 @@ namespace BookStore.Areas.Admin.Controllers
         }
 
         // POST: Admin/Products/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Ffile")] IFormFile Ffile,[Bind(" ProductName,Unit,UrlFriendly,Description,Price,PromotionPrice,IncludeVat,Quantity,CategoryId,PublisherId,Discount,ViewCounts,Status")] Product product, List<IFormFile> fFiles)
@@ -72,38 +70,13 @@ namespace BookStore.Areas.Admin.Controllers
             {
                 try
                 {
-                    //thêm và xóa ảnh bìa
-                    if (Ffile != null && Ffile.Length != 0)
-                    {
-                        string fileName = $"{DateTime.Now.Ticks}{Ffile.FileName}";
-                        string fullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Image", fileName);
-                        using (var file = new FileStream(fullPath, FileMode.Create))
-                        {
-                            product.ImageCover = fileName;
-                           Ffile.CopyTo(file);
-                        }
-                    }
-                   
+                    //thêm ảnh bìa
+                    product.ImageCover = UploadAnhBia(Ffile);
+                    //Thêm product vào db
                     _context.Add(product);
                     _context.SaveChanges();
-                    var id = product.ProductId;
                     //thêm hình ảnh mô tả
-                    foreach (var myFile in fFiles)
-                    {
-                        string fileName = $"{DateTime.Now.Ticks}{myFile.FileName}";
-                        string fullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Image", fileName);
-
-                        using (var file = new FileStream(fullPath, FileMode.Create))
-                        {
-                            myFile.CopyTo(file);
-                            var productImages = new ProductImages()
-                            {
-                                ProductId = id,
-                                ProductImage = fileName
-                            };
-                            _context.ProductImages.Add(productImages);
-                        }
-                    }
+                    UploadAnhMoTa(fFiles, product.ProductId);
                     ViewBag.Message = "success";
                     await _context.SaveChangesAsync();
                 }
@@ -156,28 +129,12 @@ namespace BookStore.Areas.Admin.Controllers
                 ArrDeleteImage = ArrDeleteImage.Trim();
                 arrDeleteImage = ArrDeleteImage.Split(',');
             }
-
             if (ModelState.IsValid)
             {
                 try
                 {
                     //thêm hình ảnh mô tả
-                    foreach (var myFile in fFiles)
-                    {
-                        string fileName = $"{DateTime.Now.Ticks}{myFile.FileName}";
-                        string fullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Image", fileName);
-
-                        using (var file = new FileStream(fullPath, FileMode.Create))
-                        {
-                            myFile.CopyTo(file);
-                            var productImages = new ProductImages()
-                            {
-                                ProductId = id,
-                                ProductImage = fileName
-                            };
-                            _context.ProductImages.Add(productImages);
-                        }
-                    }
+                    UploadAnhMoTa(fFiles, id);
                     //xóa hình ảnh mô tả
                     if (arrDeleteImage.Count() > 0)
                     {
@@ -188,16 +145,11 @@ namespace BookStore.Areas.Admin.Controllers
                                 var image = _context.ProductImages.AsNoTracking().SingleOrDefault(p => p.ProductImagesId == int.Parse(o.Trim()));
                                 if (image != null)
                                 {
-                                    string fileNameBefore = image.ProductImage;
-                                    string fullPathBefore = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Image", fileNameBefore);
-                                    if (System.IO.File.Exists(fullPathBefore))
-                                    {
-                                        System.IO.File.Delete(fullPathBefore);
-                                    }
+                                    XoaAnh(image.ProductImage);
                                     _context.ProductImages.Remove(image);
                                 }
                             }
-                            catch (Exception e) { }
+                            catch (Exception) { }
 
                         }
                     }
@@ -207,26 +159,15 @@ namespace BookStore.Areas.Admin.Controllers
                     {
                         if (productBefore.ImageCover != null)
                         {
-                            string fileNameBefore = productBefore.ImageCover;
-                            string fullPathBefore = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Image", fileNameBefore);
-                            if (System.IO.File.Exists(fullPathBefore))
-                            {
-                                System.IO.File.Delete(fullPathBefore);
-                            }
+                            XoaAnh(product.ImageCover);
                         }
-                        string fileName = $"{DateTime.Now.Ticks}{Ffile.FileName}";
-                        string fullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Image", fileName);
-                        using (var file = new FileStream(fullPath, FileMode.Create))
-                        {
-                            product.ImageCover = fileName;
-                            Ffile.CopyTo(file);
-                        }
+                        //Thêm Ảnh Bìa
+                        product.ImageCover = UploadAnhBia(Ffile);
                     }
                     else
                     {
                         product.ImageCover = productBefore.ImageCover;
                     }
-                    
                     _context.Update(product);
                     await _context.SaveChangesAsync();
                     ViewBag.Message = "success";
@@ -250,8 +191,6 @@ namespace BookStore.Areas.Admin.Controllers
             ViewData["PublisherId"] = new SelectList(_context.Publishers, "PublisherId", "PublisherName", product.PublisherId);
             return View(product);
         }
-
-       
         [HttpPost]
         public IActionResult Delete(int id)
         {
@@ -267,35 +206,23 @@ namespace BookStore.Areas.Admin.Controllers
                     {
                         foreach (var image in images)
                         {
-                            string fileNameBefore = image.ProductImage;
-                            string fullPathBefore = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Image", fileNameBefore);
-                            if (System.IO.File.Exists(fullPathBefore))
-                            {
-                                System.IO.File.Delete(fullPathBefore);
-                            }
+                            XoaAnh(image.ProductImage);
                             _context.ProductImages.Remove(image);
                         }
                     }
                     //Xóa hình bìa
                     if (product.ImageCover != null)
                     {
-                        string fileNameBefore = product.ImageCover;
-                        string fullPathBefore = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Image", fileNameBefore);
-                        if (System.IO.File.Exists(fullPathBefore))
-                        {
-                            System.IO.File.Delete(fullPathBefore);
-                        }
+                        XoaAnh(product.ImageCover);
                     }
-
                     _context.Product.Remove(product);
                     _context.SaveChangesAsync();
                     return Content("1");
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     return Content("0");
                 }
-                
             }
             return Content("0");
         }
@@ -303,6 +230,51 @@ namespace BookStore.Areas.Admin.Controllers
         private bool ProductExists(int id)
         {
             return _context.Product.Any(e => e.ProductId == id);
+        }
+        public string UploadAnhBia(IFormFile Ffile)
+        {
+            string fileNameReturn = string.Empty;
+            if (Ffile != null && Ffile.Length != 0)
+            {
+                fileNameReturn = $"{DateTime.Now.Ticks}{Ffile.FileName}";
+                string fullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Image", fileNameReturn);
+                using (var file = new FileStream(fullPath, FileMode.Create))
+                {
+                    Ffile.CopyTo(file);
+                }
+            }
+            return fileNameReturn;
+        }
+        public void UploadAnhMoTa(List<IFormFile> fFiles,int id)
+        {
+            foreach (var myFile in fFiles)
+            {
+                string fileName = $"{DateTime.Now.Ticks}{myFile.FileName}";
+                string fullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Image", fileName);
+                using (var file = new FileStream(fullPath, FileMode.Create))
+                {
+                    myFile.CopyTo(file);
+                    var productImages = new ProductImages()
+                    {
+                        ProductId = id,
+                        ProductImage = fileName
+                    };
+                    _context.ProductImages.Add(productImages);
+                }
+            }
+
+        }
+        public void XoaAnh(string image)
+        {
+            if (image != null)
+            {
+                string fileNameBefore = image;
+                string fullPathBefore = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Image", fileNameBefore);
+                if (System.IO.File.Exists(fullPathBefore))
+                {
+                    System.IO.File.Delete(fullPathBefore);
+                }
+            }
         }
     }
 }

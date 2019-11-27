@@ -83,7 +83,7 @@ namespace BookStore.Controllers
                 HttpContext.Session.SetObject<List<CartItem>>("Cart", cartItems);
                 ViewBag.Success = "success";
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 ViewBag.Success = "error";
             }
@@ -101,7 +101,7 @@ namespace BookStore.Controllers
                 HttpContext.Session.SetObject<List<CartItem>>("Cart", cartItems);
                 ViewBag.Success = "success";
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 ViewBag.Success = "error";
             }
@@ -119,7 +119,7 @@ namespace BookStore.Controllers
                 HttpContext.Session.SetObject<List<CartItem>>("Cart", cartItems);
                 ViewBag.Success = "success";
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 ViewBag.Success = "error";
             }
