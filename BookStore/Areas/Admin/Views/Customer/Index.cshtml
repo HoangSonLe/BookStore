@@ -16,16 +16,8 @@
                 <div class="btn-toolbar pull-right clearfix">
                     <div class="btn-group">
                         <a class="btn btn-circle show-tooltip btnAdd" data-target="#modalDetail" data-toggle="modal" title="Add new record"><i class="fa fa-plus"></i></a>
-                        <a class="btn btn-circle show-tooltip" title="Edit selected" href="#"><i class="fa fa-edit"></i></a>
-                        <a class="btn btn-circle show-tooltip" title="Delete selected" href="#"><i class="fa fa-trash-o"></i></a>
-                    </div>
-                    <div class="btn-group">
-                        <a class="btn btn-circle show-tooltip" title="Print" href="#"><i class="fa fa-print"></i></a>
-                        <a class="btn btn-circle show-tooltip" title="Export to PDF" href="#"><i class="fa fa-file-text-o"></i></a>
-                        <a class="btn btn-circle show-tooltip" title="Export to Exel" href="#"><i class="fa fa-table"></i></a>
-                    </div>
-                    <div class="btn-group">
-                        <a class="btn btn-circle show-tooltip" title="Refresh" href="#"><i class="fa fa-repeat"></i></a>
+                        <a class="btn btn-circle show-tooltip" title="Export to CSV" asp-action="ExportCSVUserList"><i class="fa fa-table"></i></a>
+                        @*<a class="btn btn-circle show-tooltip" title="Export to Exel" asp-action="ExportExcelUserList"><i class="fa fa-table"></i></a>*@
                     </div>
                 </div>
                 <br /><br />

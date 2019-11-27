@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using OfficeOpenXml;
 using System;
 using System.IO;
 using System.Linq;
@@ -172,5 +173,37 @@ namespace BookStore.Areas.Admin.Controllers
             }
             /*----End Delete file from folder*/
         }
+        public IActionResult ExportCSVUserList()
+        {
+            //chuẩn bị dữ liệu xuất
+            var data = _context.Customer.ToList();
+
+            var stream = new MemoryStream();
+
+            using (var package = new ExcelPackage(stream))
+            {
+                var sheet = package.Workbook.Worksheets.Add("Customer");
+                sheet.Cells[1,1].Value= "Email Address";
+                sheet.Cells[1,2].Value= "First Name";
+                sheet.Cells[1,3].Value= "Last Name";
+                sheet.Cells[1,4].Value= "Address";
+                int rowIdx = 2;
+                foreach(var p in data)
+                {
+                    sheet.Cells[rowIdx, 1].Value = p.Email;
+                    sheet.Cells[rowIdx, 2].Value = p.FirstName;
+                    sheet.Cells[rowIdx, 3].Value = p.LastName;
+                    sheet.Cells[rowIdx, 4].Value = p.Address;
+                    rowIdx++;
+                }
+                package.Save();
+            }
+
+            stream.Position = 0;
+            string fileName = $"Customer_{DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss")}.csv";
+
+            return File(stream, "text/csv", fileName);
+        }
+      
     }
 }

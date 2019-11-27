@@ -1,23 +1,28 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Trang chủ";
+    ViewData["Breadcrumbs"] = "";
+    List<Product> highViewProducts = (List<Product>)ViewBag.highViewProducts;
+    List<Product> hotViewProducts = (List<Product>)ViewBag.hotViewProducts;
 }
-@await Html.PartialAsync("_Breadcrumbs")
+<link href="~/css/ProductItem.css" rel="stylesheet" />
+<script src="https://kit.fontawesome.com/aa03f9ec64.js" crossorigin="anonymous"></script>
+
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script><!-- breadcrumbs-area-end -->
 @{
     if (ViewBag.ThongBaoThanhCong != null)
     {
-        var textNotification = ViewBag.ThongBaoThanhCong;
         <script>
             Swal.fire({
                 icon: 'success',
                 title: 'Thành công',
-                text: textNotification,
+                text: "@Html.Raw(ViewBag.ThongBaoThanhCong)",
                 showConfirmButton: false,
                 timer: 1500
             });
         </script>
     }
 }
+@await Html.PartialAsync("_Breadcrumbs")
 
 <!-- banner-area-start -->
 @await Html.PartialAsync("Banner1")
@@ -26,26 +31,51 @@
 @await Html.PartialAsync("Slider")
 <!-- slider-area-end -->
 <!-- product-area-start -->
-@await Html.PartialAsync("ProductList")
+@await Html.PartialAsync("ProductList", highViewProducts)
 <!-- product-area-end -->
-<!-- banner-area-start -->
-@await Html.PartialAsync("Banner2")
-<!-- banner-area-end -->
-<!-- bestseller-area-start -->
-@await Html.PartialAsync("BestSeller")
-<!-- bestseller-area-end -->
-<!-- new-book-area-start -->
-@await Html.PartialAsync("NewBook")
-<!-- new-book-area-start -->
 <!-- banner-static-area-start -->
 @await Html.PartialAsync("Banner3")
 <!-- banner-static-area-end -->
-<!-- most-product-area-start -->
-@await Html.PartialAsync("MostProduct")
-<!-- most-product-area-end -->
+<!-- new-book-area-start -->
+@await Html.PartialAsync("NewBook", hotViewProducts)
+<!-- new-book-area-start -->
 <!-- testimonial-area-start -->
 @await Html.PartialAsync("Testimonial")
 <!-- testimonial-area-end -->
-<!-- social-group-area-start -->
-@await Html.PartialAsync("SocialGroup")
-<!-- social-group-area-end -->
+<!--Modal-->
+<div class="modal fade" id="productModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">x</span></button>
+            </div>
+            <div class="modal-body modalBody">
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script src="~/js/jsScriptByMySelf/UpdateCart.js"></script>
+    <script>
+        $(function () {
+            $(".quickViewModal").on("click", function () {
+                var id = $(this).data("id");
+                $.ajax({
+                    url: "Products/Detail",
+                    type: "GET",
+                    data: {
+                        id: id
+                    },
+                    success: function (data) {
+                        $(".modalBody").html("");
+                        $(".modalBody").html(data);
+                    },
+                    error: function (data) {
+                        alert("error");
+
+                    }
+                });
+            });
+        });
+    </script>
+}

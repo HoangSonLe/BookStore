@@ -20,10 +20,11 @@
             </div>
             <div class="col-lg-offset-2 col-lg-8 col-md-offset-2 col-md-8 col-sm-12 col-xs-12">
                 <div class="billing-fields">
-                    @if (ViewBag.Result != "")
+                    @if (ViewBag.ResultSMS != null)
                     {
-                        <p style="font-style:italic; color:deeppink">Đăng ký thành công. Vui lòng nhập mã code bạn nhận được để hoàn thành bảo mật 2 lớp.</p>
+                        <p style="font-style:italic; color:deeppink">@ViewBag.ResultSMS</p>
                     }
+                    
                     <p style="font-style:italic; color:deeppink">@ViewBag.ResultVerify</p>
                     <form id="verifyForm" asp-action="VerifyFactor" asp-controller="User" method="post" enctype="multipart/form-data">
                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>

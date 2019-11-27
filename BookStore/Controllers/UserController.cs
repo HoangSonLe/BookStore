@@ -42,7 +42,6 @@ namespace BookStore.Controllers
         [AllowAnonymous]
         public IActionResult Login()
         {
-            //var validationResult =  _authy.VerifyTokenAsync("209039477", "8745910").ConfigureAwait(false);
             return View();
         }
    
@@ -64,13 +63,10 @@ namespace BookStore.Controllers
                     ClaimsPrincipal claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
                     await HttpContext.SignInAsync("Customer", claimsPrincipal);
                     HttpContext.Session.SetObject<Customer>("Customer", customer);
-                    ViewBag.ThongBaoThanhCong = "Đăng nhập thành công !!!";
+                    TempData["ThongBao"] = "Đăng nhập thành công";
                 }
                 else if(customer.PhoneNumberConfirmed==true && customer.AuthyId != null)
                 {
-                    ViewBag.CustomerId = customer.CustomerId;
-                    //        //Send SMS success
-                    return View("VerifyUser");
                     // Gửi sms mã xác nhận
                     var sendSMSResponse = await _authy.SendSmsAsync(customer.AuthyId).ConfigureAwait(false);
                     if (sendSMSResponse.StatusCode == HttpStatusCode.OK)
@@ -79,6 +75,7 @@ namespace BookStore.Controllers
                         if (smsVerificationSucceedObject.Success)
                         {
                             ViewBag.CustomerId = customer.CustomerId;
+                            ViewBag.ResultSMS = "Gửi mã thành công!";
                             //Send SMS success
                             return View("VerifyUser");
 
@@ -86,6 +83,7 @@ namespace BookStore.Controllers
                         else
                         {
                             ViewBag.CustomerId = customer.CustomerId;
+                            ViewBag.ResultSMS = "Gửi mã thất bại!";
                             //Fail
                             return View("VerifyUser");
                         }
@@ -99,9 +97,10 @@ namespace BookStore.Controllers
             }
             else
             {
-                ViewBag.ThongBaoLoi = "error";
+                ViewBag.ResultLogin = "Không có tên đăng nhập này!";
                 return View();
-            }            
+            }
+
             if (Url.IsLocalUrl(ReturnUrl))
             {
                 return Redirect(ReturnUrl);
@@ -168,8 +167,9 @@ namespace BookStore.Controllers
                     if (string.IsNullOrEmpty(authyId))
                     {
                         //return Json(new { success = false });
-                        ViewBag.Result = "fail";
-                        return RedirectToAction("Login");
+                        ViewBag.RegisterResult = "Đăng ký thành công";
+                        ViewBag.RegisterSMS = "Xác thực số điện thoại thất bại";
+                        return View("Login");
                     }
                     else
                     {
@@ -211,13 +211,13 @@ namespace BookStore.Controllers
                         }
                         else
                         {
-                            ViewBag.Result = "success";
-                            return RedirectToAction("Login");
+                            ViewBag.RegisterResult = "Đăng ký thành công";
+                            return View("Login");
                         }                        
                     }
                 }
             }
-            ViewBag.Success = "error";
+            ViewBag.RegisterResult = "Trùng tên đăng nhập hoặc mật khẩu";
             return View();
         }
         [HttpPost]
@@ -245,7 +245,7 @@ namespace BookStore.Controllers
                         ClaimsPrincipal claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
                         await HttpContext.SignInAsync("Customer", claimsPrincipal);
                         HttpContext.Session.SetObject<Customer>("Customer", customer);
-                        ViewBag.ThongBaoThanhCong = "Đăng ký thành công. Bảo mật 2 lớp thành công!!!";
+                        TempData["ThongBao"] = "Đăng ký thành công. Bảo mật 2 lớp thành công!!!";
                         return RedirectToAction("Index", "Home");
                     }
                     else

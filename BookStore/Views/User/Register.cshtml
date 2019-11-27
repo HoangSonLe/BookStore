@@ -14,12 +14,13 @@
                     <h2>Đăng ký tài khoản</h2>
                 </div>
             </div>
-            @if (ViewBag.Success == "error")
-            {
-                <p style="font-style:italic; color:deeppink">Tên đăng nhập và mật khẩu đã được sử dụng.</p>
-            }
+           
             <div class="col-lg-offset-2 col-lg-8 col-md-offset-2 col-md-8 col-sm-12 col-xs-12">
                 <div class="billing-fields">
+                    @if (ViewBag.RegisterResult != null)
+                    {
+                        <p style="font-style:italic; color:deeppink">@ViewBag.RegisterResult</p>
+                    }
                     <form id="registerForm" asp-action="Register" asp-controller="User" method="post" enctype="multipart/form-data">
                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                         <div class="row">

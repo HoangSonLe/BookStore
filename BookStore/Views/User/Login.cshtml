@@ -5,18 +5,6 @@
 <!-- breadcrumbs-area-start -->
 @await Html.PartialAsync("_Breadcrumbs")
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script><!-- breadcrumbs-area-end -->
-@if (ViewBag.ThongBaoLoi != null)
-{
-    <script>
-        Swal.fire({
-            icon: 'error',
-            title: 'Lỗi...',
-            text: 'Đăng nhập không thành công!',
-            showConfirmButton: false,
-            timer: 1500
-        });
-    </script>
-}
 <div class="user-login-area mb-70">
     <div class="container">
         <div class="row">
@@ -26,17 +14,17 @@
                 </div>
             </div>
             <div class="col-lg-offset-3 col-lg-6 col-md-offset-3 col-md-6 col-sm-12 col-xs-12">
-                @if (ViewBag.RegisterSuccess != null)
+                @if (ViewBag.RegisterResult != null)
                 {
-                    <p style="font-style:italic; color:deeppink">Đăng ký thành công. Bảo mật 2 lớp thành công.</p>
+                    <p style="font-style:italic; color:deeppink">@ViewBag.RegisterResult</p>
                 }
                 @if (ViewBag.RegisterSMS != null)
                 {
-                    <p style="font-style:italic; color:deeppink">Gửi xác thực thất bại.</p>
+                    <p style="font-style:italic; color:deeppink">@ViewBag.RegisterSMS</p>
                 }
-                @if (ViewBag.ThongBaoLoi != null)
+                @if (ViewBag.ResultLogin != null)
                 {
-                    <p style="font-style:italic; color:deeppink">Không tồn tại tài khoản này.Vui lòng xem lại Username và Password</p>
+                    <p style="font-style:italic; color:deeppink">@ViewBag.ResultLogin</p>
                 }
                 <p style="font-style:italic; color:deeppink">@ViewBag.ResultSMS</p>
                 <div class="login-form">
