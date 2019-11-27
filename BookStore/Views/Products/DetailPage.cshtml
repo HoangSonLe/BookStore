@@ -1,4 +1,5 @@
 ﻿@model Product
+@using BookStore.Helpers;
 @{
     ViewData["Title"] = "DetailPage";
 }
@@ -31,7 +32,7 @@
                                         {
 
                                             <li data-thumb="~/Image/@image.ProductImage">
-                                                <img src="~/Image/@image.ProductImage" alt="img" />
+                                                <img src="~/Image/@image.ProductImage" style="width:200px;height:300px" alt="img" />
                                             </li>
                                         }
                                     }
@@ -62,19 +63,7 @@
                                         <span class="value">@Model.Publisher.PublisherName</span>
                                     </div>
                                 </div>
-                                @*<div class="product-reviews-summary">
-                                        <div class="rating-summary">
-                                            <a href="#"><i class="fa fa-star"></i></a>
-                                            <a href="#"><i class="fa fa-star"></i></a>
-                                            <a href="#"><i class="fa fa-star"></i></a>
-                                            <a href="#"><i class="fa fa-star"></i></a>
-                                            <a href="#"><i class="fa fa-star"></i></a>
-                                        </div>
-                                        <div class="reviews-actions">
-                                            <a href="#">3 Reviews</a>
-                                            <a href="#" class="view">Add Your Review</a>
-                                        </div>
-                                    </div>*@
+
                                 <div class="product-info-price">
                                     <div class="price-final">
                                         <span>@String.Format("{0:0,0 VNĐ}", Model.PromotionPrice)</span>
@@ -115,54 +104,30 @@
                             </div>
                         </div>
                         <div class="tab-pane" id="Reviews">
-                                                    <ul class="media-list">
-                                                        <li class="media">
-                                                            <a href="#" class="pull-left">
-                                                                <img src="https://bootdey.com/img/Content/user_1.jpg" style="width:48px;height:48px" alt="" class="img-circle">
-                                                            </a>
-                                                            <div class="media-body">
-                                                                <span class="text-muted pull-right">
-                                                                    <small class="text-muted">30 min ago</small>
-                                                                </span>
-                                                                <strong class="text-success">Thành Trọng</strong>
-                                                                <p>
-                                                                    Sách đọc rất hay, vô cùng cảm súc<a href="#">#tuyệtvời </a>.
-                                                                </p>
-                                                            </div>
-                                                        </li>
-                                                        <li class="media">
-                                                            <a href="#" class="pull-left">
-                                                                <img src="https://bootdey.com/img/Content/user_2.jpg" style="width:48px;height:48px" alt="" class="img-circle">
-                                                            </a>
-                                                            <div class="media-body">
-                                                                <span class="text-muted pull-right">
-                                                                    <small class="text-muted">1 ngày trước</small>
-                                                                </span>
-                                                                <strong class="text-success">Minh Mít Ướt</strong>
-                                                                <p>
-                                                                    Đọc xong chỉ muốn khóc....huhu <a href="#">#SiêuPhẩm </a>
-                                                                </p>
-                                                            </div>
-                                                        </li>
-                                                        <li class="media">
-                                                            <a href="#" class="pull-left">
-                                                                <img src="https://bootdey.com/img/Content/user_3.jpg" style="width:48px;height:48px" alt="" class="img-circle">
-                                                            </a>
-                                                            <div class="media-body">
-                                                                <span class="text-muted pull-right">
-                                                                    <small class="text-muted">2 tuần trước</small>
-                                                                </span>
-                                                                <strong class="text-success">Kỳ Khó Khăn</strong>
-                                                                <p>
-                                                                    Sách khá hay, không đọc cũng tiếc,đọc qua cũng tiếc :D<a href="#">#hay</a>
-                                                                </p>
-                                                            </div>
-                                                        </li>
-                                                    </ul>
+                            @{
+                                var user = Context.Session.GetObject<Customer>("Customer");
+                                if (user != null)
+                                {
+                                    <div>
+                                        <textarea class="form-control" style="resize:none" placeholder="viết bình luận..." rows="3" id="writeComment"></textarea>
+                                        <br />
+                                        <input type="button" class="btn btn-primary" style="margin-bottom:20px" value="Gửi" />
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div style="margin-bottom:50px">
+                                        <h4> <a asp-controller="User" asp-action="Login">Đăng nhập</a> để có thể bình luận sản phẩm</h4>
+                                    </div>
+                                }
+                            }
 
-                                
-                            </div>
+
+                            <ul class="media-list" id="comments"></ul>
+
+
                         </div>
+                    </div>
                 </div>
                 <!-- product-info-area-end -->
                 <!-- new-book-area-start -->
@@ -206,7 +171,7 @@
                                             <li><a href="#"><i class="fa fa-star"></i></a></li>
                                         </ul>
                                     </div>
-                                    <h4><a href="#">@p.ProductName</a></h4>
+                                    <h4><a href="/@p.Category.UrlFriendly/@p.UrlFriendly">@p.ProductName</a></h4>
                                     <div class="product-price">
                                         <ul>
                                             <li style="font-family:Arial; font-weight:normal;">@String.Format("{0:0,0 VNĐ}", p.PromotionPrice)</li>
@@ -239,194 +204,50 @@
                     </div>
                     <div class="random-area mb-30">
                         <div id="newProducts" class="product-active-2 owl-carousel">
-                            @{ 
+                            @{
                                 IEnumerable<Product> newProducts = ViewBag.newProducts;
                                 int count = 0;
-                                foreach(var p in newProducts)
+                                foreach (var p in newProducts)
                                 {
                                     if (count % 3 == 0)
                                     {
                                         @:<div class="product-total-2">
-                                    }
+                                        }
 
-                                  <div class="single-most-product bd mb-18">
-                                    <div class="most-product-img">
-                                        <a href="#"><img src="~/Image/@p.ImageCover" style="width:80px;height:110px" class="center"  alt="book" /></a>
-                                    </div>
-                                    <div class="most-product-content">
-                                        <div class="product-rating">
-                                            <ul>
-                                                <li><a href="#"><i class="fa fa-star"></i></a></li>
-                                                <li><a href="#"><i class="fa fa-star"></i></a></li>
-                                                <li><a href="#"><i class="fa fa-star"></i></a></li>
-                                                <li><a href="#"><i class="fa fa-star"></i></a></li>
-                                                <li><a href="#"><i class="fa fa-star"></i></a></li>
-                                            </ul>
+                                        <div class="single-most-product bd mb-18">
+                                            <div class="most-product-img">
+                                                <a href="/@p.Category.UrlFriendly/@p.UrlFriendly"><img src="~/Image/@p.ImageCover" style="width:80px;height:110px" class="center" alt="book" /></a>
+                                            </div>
+                                            <div class="most-product-content">
+                                                <div class="product-rating">
+                                                    <ul>
+                                                        <li><a href="#"><i class="fa fa-star"></i></a></li>
+                                                        <li><a href="#"><i class="fa fa-star"></i></a></li>
+                                                        <li><a href="#"><i class="fa fa-star"></i></a></li>
+                                                        <li><a href="#"><i class="fa fa-star"></i></a></li>
+                                                        <li><a href="#"><i class="fa fa-star"></i></a></li>
+                                                    </ul>
+                                                </div>
+                                                <h4><a href="/@p.Category.UrlFriendly/@p.UrlFriendly">@p.ProductName</a></h4>
+                                                <div class="product-price">
+                                                    <ul>
+                                                        <li>@String.Format("{0:0,0 VNĐ}", p.PromotionPrice)</li>
+                                                        <li class="old-price">@String.Format("{0:0,0 VNĐ}", p.Price)</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <h4><a href="#">@p.ProductName</a></h4>
-                                        <div class="product-price">
-                                            <ul>
-                                                <li>@String.Format("{0:0,0 VNĐ}", p.PromotionPrice)</li>
-                                                <li class="old-price">@String.Format("{0:0,0 VNĐ}", p.Price)</li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                                    count++;
-                                                if (count % 3 == 0)
-                                                {
+                                        count++;
+                                        if (count % 3 == 0)
+                                        {
                                         @:</div>
                                     }
                                 }
                             }
-                            @*<div class="product-total-2">
 
-                                <div class="single-most-product bd mb-18">
-                                    <div class="most-product-img">
-                                        <a href="#"><img src="img/product/20.jpg" alt="book" /></a>
-                                    </div>
-                                    <div class="most-product-content">
-                                        <div class="product-rating">
-                                            <ul>
-                                                <li><a href="#"><i class="fa fa-star"></i></a></li>
-                                                <li><a href="#"><i class="fa fa-star"></i></a></li>
-                                                <li><a href="#"><i class="fa fa-star"></i></a></li>
-                                                <li><a href="#"><i class="fa fa-star"></i></a></li>
-                                                <li><a href="#"><i class="fa fa-star"></i></a></li>
-                                            </ul>
-                                        </div>
-                                        <h4><a href="#">Endeavor Daytrip</a></h4>
-                                        <div class="product-price">
-                                            <ul>
-                                                <li>$30.00</li>
-                                                <li class="old-price">$33.00</li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="single-most-product bd mb-18">
-                                    <div class="most-product-img">
-                                        <a href="#"><img src="img/product/21.jpg" alt="book" /></a>
-                                    </div>
-                                    <div class="most-product-content">
-                                        <div class="product-rating">
-                                            <ul>
-                                                <li><a href="#"><i class="fa fa-star"></i></a></li>
-                                                <li><a href="#"><i class="fa fa-star"></i></a></li>
-                                                <li><a href="#"><i class="fa fa-star"></i></a></li>
-                                                <li><a href="#"><i class="fa fa-star"></i></a></li>
-                                                <li><a href="#"><i class="fa fa-star"></i></a></li>
-                                            </ul>
-                                        </div>
-                                        <h4><a href="#">Savvy Shoulder Tote</a></h4>
-                                        <div class="product-price">
-                                            <ul>
-                                                <li>$30.00</li>
-                                                <li class="old-price">$35.00</li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="single-most-product bd-md-18">
-                                    <div class="most-product-img">
-                                        <a href="#"><img src="img/product/22.jpg" alt="book" /></a>
-                                    </div>
-                                    <div class="most-product-content">
-                                        <div class="product-rating">
-                                            <ul>
-                                                <li><a href="#"><i class="fa fa-star"></i></a></li>
-                                                <li><a href="#"><i class="fa fa-star"></i></a></li>
-                                                <li><a href="#"><i class="fa fa-star"></i></a></li>
-                                                <li><a href="#"><i class="fa fa-star"></i></a></li>
-                                                <li><a href="#"><i class="fa fa-star"></i></a></li>
-                                            </ul>
-                                        </div>
-                                        <h4><a href="#">Compete Track Tote</a></h4>
-                                        <div class="product-price">
-                                            <ul>
-                                                <li>$35.00</li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="product-total-2">
-                                <div class="single-most-product bd mb-18">
-                                    <div class="most-product-img">
-                                        <a href="#"><img src="img/product/23.jpg" alt="book" /></a>
-                                    </div>
-                                    <div class="most-product-content">
-                                        <div class="product-rating">
-                                            <ul>
-                                                <li><a href="#"><i class="fa fa-star"></i></a></li>
-                                                <li><a href="#"><i class="fa fa-star"></i></a></li>
-                                                <li><a href="#"><i class="fa fa-star"></i></a></li>
-                                                <li><a href="#"><i class="fa fa-star"></i></a></li>
-                                                <li><a href="#"><i class="fa fa-star"></i></a></li>
-                                            </ul>
-                                        </div>
-                                        <h4><a href="#">Voyage Yoga Bag</a></h4>
-                                        <div class="product-price">
-                                            <ul>
-                                                <li>$30.00</li>
-                                                <li class="old-price">$33.00</li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="single-most-product bd mb-18">
-                                    <div class="most-product-img">
-                                        <a href="#"><img src="img/product/24.jpg" alt="book" /></a>
-                                    </div>
-                                    <div class="most-product-content">
-                                        <div class="product-rating">
-                                            <ul>
-                                                <li><a href="#"><i class="fa fa-star"></i></a></li>
-                                                <li><a href="#"><i class="fa fa-star"></i></a></li>
-                                                <li><a href="#"><i class="fa fa-star"></i></a></li>
-                                                <li><a href="#"><i class="fa fa-star"></i></a></li>
-                                                <li><a href="#"><i class="fa fa-star"></i></a></li>
-                                            </ul>
-                                        </div>
-                                        <h4><a href="#">Impulse Duffle</a></h4>
-                                        <div class="product-price">
-                                            <ul>
-                                                <li>$70.00</li>
-                                                <li class="old-price">$74.00</li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="single-most-product">
-                                    <div class="most-product-img">
-                                        <a href="#"><img src="img/product/22.jpg" alt="book" /></a>
-                                    </div>
-                                    <div class="most-product-content">
-                                        <div class="product-rating">
-                                            <ul>
-                                                <li><a href="#"><i class="fa fa-star"></i></a></li>
-                                                <li><a href="#"><i class="fa fa-star"></i></a></li>
-                                                <li><a href="#"><i class="fa fa-star"></i></a></li>
-                                                <li><a href="#"><i class="fa fa-star"></i></a></li>
-                                                <li><a href="#"><i class="fa fa-star"></i></a></li>
-                                            </ul>
-                                        </div>
-                                        <h4><a href="#">Fusion Backpack</a></h4>
-                                        <div class="product-price">
-                                            <ul>
-                                                <li>$59.00</li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>*@
                         </div>
                     </div>
-                    <div class="banner-area mb-30">
-                        <div class="banner-img-2">
-                            <a href="#"><img src="img/banner/33.jpg" alt="banner" /></a>
-                        </div>
-                    </div>
+
                     <div class="left-title-2 mb-30">
                         <h2>Compare Products</h2>
                         <p>You have no items to compare.</p>
@@ -455,6 +276,31 @@
 @section Scripts{
     <script>
         $(function () {
+           //increasing view count
+            var productID=@Model.ProductId;
+            $.ajax({
+                url: "/Products/IncreaseViewCount",
+                type: "POST",
+                data: {
+                    productID: productID
+                },
+                success: function (data) {
+
+                }
+            });
+
+            $.ajax({
+                url: "/Products/GetComments",
+                type: "GET",
+                data: {
+                    productID: productID
+                },
+                success: function (data) {
+                    $("#comments").html(data);
+                }
+            });
+
+
             $(".quickViewModal").on("click", function () {
                 var id = $(this).data("id");
                 $.ajax({

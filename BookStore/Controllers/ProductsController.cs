@@ -9,6 +9,7 @@ using BookStore.Models;
 using BookStore.Helpers;
 using X.PagedList;
 using Microsoft.AspNetCore.Authorization;
+using BookStore.ModelViews;
 
 namespace BookStore.Controllers
 {
@@ -87,7 +88,7 @@ namespace BookStore.Controllers
 
         [AllowAnonymous]
         [Route("{loai}/{hanghoa}")]
-        public IActionResult DetailPage(string loai, string hanghoa)
+        public async Task<IActionResult> DetailPage(string loai, string hanghoa)
         {
             var category = _context.ProductCategory.SingleOrDefault(p => p.UrlFriendly == loai);
             if (category == null) return BadRequest();
@@ -97,20 +98,24 @@ namespace BookStore.Controllers
                 var product = _context.Product
                             .Include(x => x.ProductImages)
                             .Include(x => x.Publisher)
-                            .Where(p => p.CategoryId == CateID && p.UrlFriendly == hanghoa)
+                            .Where(p => p.CategoryId == CateID && p.UrlFriendly == hanghoa && p.Status==true)
                             .AsNoTracking()
                             .SingleOrDefault();
-                var relativeProduct = _context.Product
+                if (product == null) return BadRequest();
+                //Getting relative products based on publisher and category except it
+                var relativeProduct = await _context.Product
                                      .Include(x => x.Category)
-                                     .Where(p => p.CategoryId == CateID || p.PublisherId == product.PublisherId)
+                                     .Where(p => p.ProductId != product.ProductId && (p.CategoryId == CateID || p.PublisherId == product.PublisherId))
                                      .AsNoTracking()
                                      .OrderByDescending(x=>x.ProductId)
-                                     .Take(6);
-                var newProducts = _context.Product
+                                     .Take(6)
+                                     .ToListAsync();
+                var newProducts = await _context.Product
                                 .Include(x => x.Category)
                                 .AsNoTracking()
                                 .OrderByDescending(x => x.ProductId)
-                                .Take(6);
+                                .Take(6)
+                                .ToListAsync();
                 ViewBag.relative = relativeProduct;
                 ViewBag.newProducts = newProducts;
                 return View(product);
@@ -118,20 +123,83 @@ namespace BookStore.Controllers
         }
 
         [AllowAnonymous]
-        public IActionResult GetUpSellPRoducts(int category, int exceptProID)
+        [HttpPost]
+        public void IncreaseViewCount(int productID)
         {
-            var products = _context.Product
-                                    .Include(x => x.Category)
-                                    .Where(p => p.CategoryId == category && p.ProductId != exceptProID)
-                                    .ToList();
-            return PartialView("UpsellProducts",products);
+            var product = _context.Product.SingleOrDefault(p => p.ProductId == productID);
+            if (product != null)
+            {
+                product.ViewCounts++;
+                _context.Product.Update(product);
+                _context.SaveChanges();
+            }
         }
 
         [AllowAnonymous]
-        public IActionResult GetNewProducts()
+        public IActionResult GetComments(int productID)
         {
-            var products = _context.Product.OrderByDescending(x => x.ProductId).Take(6);
-            return PartialView("NewProducts");
+            var comment = _context.Comment
+                        .AsNoTracking()
+                        .Include(x => x.Customer)
+                        .Include(x => x.Employee)
+                        .Where(p => p.ProductId == productID && p.Status == 1)
+                        .Select(p => new CommentView
+                        {
+                            ID = p.CommentId,
+                            Name = (p.Employee != null) ?
+                                   (p.Employee.FirstName + " " + p.Employee.LastName + " (Nhân Viên)") :
+                                   (p.Customer.FirstName + " " + p.Customer.LastName),
+                            Image = (p.Employee != null) ?
+                                    p.Employee.Image :
+                                    p.Customer.Image,
+                            Context = p.Context,
+                            CustomerID = p.CustomerId,
+                            EmployeeID = p.EmployeeId,
+                            TimeAgo=TimeAgo(p.CreatedDate.Value)
+                        });
+            return PartialView("Comments", comment);
+                            
+        }
+        
+
+        public static string TimeAgo(DateTime dt)
+        {
+            if (dt > DateTime.Now)
+                return "about sometime from now";
+            TimeSpan span = DateTime.Now - dt;
+
+            if (span.Days > 365)
+            {
+                int years = (span.Days / 365);
+                if (span.Days % 365 != 0)
+                    years += 1;
+                return String.Format("{0} năm trước", years);
+            }
+
+            if (span.Days > 30)
+            {
+                int months = (span.Days / 30);
+                if (span.Days % 31 != 0)
+                    months += 1;
+                return String.Format("{0} tháng trước", months);
+            }
+
+            if (span.Days > 0)
+                return String.Format("{0} ngày trước", span.Days);
+
+            if (span.Hours > 0)
+                return String.Format("{0} giờ trước", span.Hours);
+
+            if (span.Minutes > 0)
+                return String.Format("{0} phút trước", span.Minutes);
+
+            if (span.Seconds > 5)
+                return String.Format("{0} giây trước", span.Seconds);
+
+            if (span.Seconds <= 5)
+                return "Mới đây";
+
+            return string.Empty;
         }
 
     }
