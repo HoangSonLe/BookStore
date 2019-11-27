@@ -161,6 +161,35 @@ namespace BookStore.Controllers
                             
         }
         
+        [HttpPost]
+        [AllowAnonymous]
+        public IActionResult AddComment(int ProductID, string Context, int Action)
+        {
+
+            //Checking Session whether it is expired
+            if (HttpContext.Session.GetObject<Customer>("Customer") != null || HttpContext.Session.GetObject<Employee>("Employee") != null)
+            {
+                Customer cus = HttpContext.Session.GetObject<Customer>("Customer");
+                Employee emp = HttpContext.Session.GetObject<Employee>("Employee");
+                if (Action == 1)
+                {
+                    //action add comment
+                    Comment comment = new Comment
+                    {
+                        ProductId = ProductID,
+                        CustomerId = (cus != null) ? cus.CustomerId : emp.EmployeeId,
+                        Context = Context,
+                        CreatedDate = DateTime.Now,
+                        Status = 1
+                    };
+                    _context.Comment.Add(comment);
+                    _context.SaveChanges();
+                }
+                return GetComments(ProductID);
+            }
+            
+            return Content("error");
+        }
 
         public static string TimeAgo(DateTime dt)
         {

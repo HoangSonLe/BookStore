@@ -3,7 +3,13 @@
 @{
     ViewData["Title"] = "DetailPage";
 }
-
+<style>
+    .flex-control-thumbs li img{
+        width:100px;
+        height:120px;
+    }
+.flex-direction-nav a.flex-next::before { content: "\f105"; }
+ </style>
 <!-- product-main-area-start -->
 <style>
     .center {
@@ -25,29 +31,18 @@
                                 <ul class="slides">
                                     @{
                                         IEnumerable<ProductImages> images = Model.ProductImages;
-                                        <li data-thumb="~/Image/@Model.ImageCover">
-                                            <img src="~/Image/@Model.ImageCover" style="width:200px;height:300px" alt="img" />
+                                        <li data-thumb="/Image/@Model.ImageCover">
+                                            <img src="/Image/@Model.ImageCover" style="width:200px;height:300px" alt="img" />
                                         </li>
                                         foreach (var image in images)
                                         {
 
-                                            <li data-thumb="~/Image/@image.ProductImage">
-                                                <img src="~/Image/@image.ProductImage" style="width:200px;height:300px" alt="img" />
+                                        <li data-thumb="/Image/@image.ProductImage">
+                                                <img src="/Image/@image.ProductImage" style="width:200px;height:300px" alt="img" />
                                             </li>
                                         }
                                     }
-                                    @*<li data-thumb="~/Image/naruto.jpg">
-                                            <img src="~/Image/naruto.jpg" alt="woman" />
-                                        </li>
-                                        <li data-thumb="~/Image/naruto.jpg">
-                                            <img src="~/Image/naruto.jpg" alt="woman" />
-                                        </li>
-                                        <li data-thumb="~/Image/naruto.jpg">
-                                            <img src="~/Image/naruto.jpg" alt="woman" />
-                                        </li>
-                                        <li data-thumb="~/Image/naruto.jpg">
-                                            <img src="~/Image/naruto.jpg" alt="woman" />
-                                        </li>*@
+                                   
                                 </ul>
                             </div>
                         </div>
@@ -57,7 +52,7 @@
                                     <h1>@Model.ProductName</h1>
                                 </div>
                                 <div class="product-info-stock-sku">
-                                    <div>Tác giả: </div>
+                                    
                                     <div>
                                         <span>Nhà xuất bản: </span>
                                         <span class="value">@Model.Publisher.PublisherName</span>
@@ -106,12 +101,12 @@
                         <div class="tab-pane" id="Reviews">
                             @{
                                 var user = Context.Session.GetObject<Customer>("Customer");
-                                if (user != null)
+                                if (User.Identity.IsAuthenticated)
                                 {
                                     <div>
                                         <textarea class="form-control" style="resize:none" placeholder="viết bình luận..." rows="3" id="writeComment"></textarea>
                                         <br />
-                                        <input type="button" class="btn btn-primary" style="margin-bottom:20px" value="Gửi" />
+                                        <input type="button" data-id="@Model.ProductId" class="btn btn-primary btnSendComment" style="margin-bottom:20px" value="Gửi" />
                                     </div>
                                 }
                                 else
@@ -147,7 +142,7 @@
                                 <div class=" text-center">
                                     <a href="/@p.Category.UrlFriendly/@p.UrlFriendly">
                                         <div style="text-align:center">
-                                            <img src="~/Image/@p.ImageCover" style="width:160px;height:220px" class="center" alt="book" />
+                                            <img src="/Image/@p.ImageCover" style="width:160px;height:220px" class="center" alt="book" />
                                         </div>
                                     </a>
                                     <div class="quick-view" style="cursor:pointer;">
@@ -321,6 +316,45 @@
             });
         });
 
+        $(".btnSendComment").click(function () {
+            let productID = $(this).data("id");
+            let context = $("#writeComment").val().trim();
+            $.ajax({
+                url: "/Products/AddComment",
+                type: "POST",
+                data: {
+                    ProductID: productID,
+                    context: context,
+                    Action:1
+                },
+                success: function (data) {
+                    if (data == "error") {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Lỗi',
+                            text: 'Đã xảy ra lỗi. Xin vui lòng thử lại sau!',
+                            showConfirmButton: false,
+                            timer: 2000
+                        });
+                    }
+                    else {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Thành công',
+                            text: 'Thêm bình luận thành công!',
+                            showConfirmButton: false,
+                            timer: 2000
+                        });
+                        $("#comments").html("");
+                        $("#comments").html(data);
+                    }
+                },
+                error: function (data) {
+                    alert("error");
+
+                }
+            });
+        })
     </script>
 
 }
