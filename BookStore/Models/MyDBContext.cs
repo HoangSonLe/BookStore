@@ -398,10 +398,6 @@ namespace BookStore.Models
                 entity.HasKey(e => e.RoleId)
                     .HasName("PK__Roles__8AFACE3AB4311356");
 
-                entity.Property(e => e.RoleId)
-                    .HasColumnName("RoleID")
-                    .ValueGeneratedNever();
-
                 entity.Property(e => e.RoleName).HasMaxLength(250);
             });
         }
