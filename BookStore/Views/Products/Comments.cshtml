@@ -1,9 +1,11 @@
 ﻿@model IEnumerable<BookStore.ModelViews.CommentView>
+@using BookStore.Helpers;
+@{ 
+    var cus = Context.Session.GetObject<Customer>("Customer");
+    var emp = Context.Session.GetObject<Employee>("Employee");
+}
 @foreach (var comment in Model)
 {
-    
-        
-    
     <li class="media">
         <a href="#" class="pull-left">
             <img src="~/Image/ImageUser/@comment.Image" style="width:48px;height:48px" alt="" class="img-circle">
@@ -16,6 +18,26 @@
             <p>
                 @comment.Context
             </p>
+            @{if (cus != null)
+                {
+                    if (cus.CustomerId == comment.CustomerID)
+                    {
+                        //This comment belongs to this customer who has logged in this account
+                        <a href="#edit" onclick="Edit('@comment.Context', @comment.ID)" class="o-scroll-up">Chỉnh sửa</a>@:&nbsp;
+                        <a style="cursor:pointer" onclick="Delete(@comment.ID)">Xóa</a>
+                    }
+                }
+                else if (emp != null)
+                {
+                    if (emp.EmployeeId == comment.EmployeeID)
+                    {
+                        //This comment belongs to this employee who has logged in this account
+                        <a href="#edit" onclick="Edit('@comment.Context',@comment.ID)" class="o-scroll-up">Chỉnh sửa</a>@:&nbsp;
+                        <a style="cursor:pointer" onclick="Delete(@comment.ID)">Xóa</a>
+                    }
+                }
+            }
+
         </div>
     </li>
 }

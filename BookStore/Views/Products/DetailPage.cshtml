@@ -85,6 +85,7 @@
                     </div>
                 </div>
                 <!-- product-main-area-end -->
+                <div id="edit"></div>
                 <!-- product-info-area-start -->
                 <div class="product-info-area mt-80">
                     <!-- Nav tabs -->
@@ -107,6 +108,7 @@
                                         <textarea class="form-control" style="resize:none" placeholder="viết bình luận..." rows="3" id="writeComment"></textarea>
                                         <br />
                                         <input type="button" data-id="@Model.ProductId" class="btn btn-primary btnSendComment" style="margin-bottom:20px" value="Gửi" />
+                                        <input type="button" class="btn btn-danger btnCancel" style="margin-bottom:20px; display:none" value="Hủy" />
                                     </div>
                                 }
                                 else
@@ -270,9 +272,12 @@
 </div>
 @section Scripts{
     <script>
+        var action = 1;
+        var commentID = 0;
+        var productID=@Model.ProductId;
         $(function () {
            //increasing view count
-            var productID=@Model.ProductId;
+            
             $.ajax({
                 url: "/Products/IncreaseViewCount",
                 type: "POST",
@@ -319,13 +324,120 @@
         $(".btnSendComment").click(function () {
             let productID = $(this).data("id");
             let context = $("#writeComment").val().trim();
+            if (context.length > 0) {
+                if (action == 2) handleEditComment(context);
+                else {
+                    //Add comment
+                    $.ajax({
+                        url: "/Products/AddComment",
+                        type: "POST",
+                        data: {
+                            ProductID: productID,
+                            Context: context
+                            
+                        },
+                        success: function (data) {
+                            if (data == "error") {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Lỗi',
+                                    text: 'Đã xảy ra lỗi. Xin vui lòng thử lại sau!',
+                                    showConfirmButton: false,
+                                    timer: 2000
+                                });
+                            }
+                            else {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Thành công',
+                                    text: 'Thêm bình luận thành công!',
+                                    showConfirmButton: false,
+                                    timer: 2000
+                                });
+                                $("#writeComment").val("");
+                                $("#comments").html("");
+                                $("#comments").html(data);
+                            }
+                        },
+                        error: function (data) {
+                            alert("error");
+
+                        }
+                    });
+                }
+            }
+        })
+        $(".btnCancel").click(function () {
+            action = 1;
+            $(".btnCancel").css("display", "none");
+            $("#writeComment").val("");
+        })
+
+        function Delete(id) {
+            Swal.fire({
+                html: '<h2>Bạn có chắn muốn xóa bình luận này không?</h2>',
+                text: "Bạn không thể hoàn tác!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Đúng, xóa.!'
+            }).then((result) => {
+                if (result.value) {
+                    $.ajax({
+                        url: "/Products/DeleteComment",
+                        type: "POST",
+                        data: {
+                            CommentID: id,
+                            ProductID: productID
+                        },
+                        success: function (data) {
+                            if (data == "error") {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Lỗi',
+                                    text: 'Đã xảy ra lỗi. Xin vui lòng thử lại sau!',
+                                    showConfirmButton: false,
+                                    timer: 2000
+                                });
+                            }
+                            else {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Thành công',
+                                    text: 'Xóa bình luận thành công!',
+                                    showConfirmButton: false,
+                                    timer: 2000
+                                });
+                                $("#writeComment").val("");
+                                $("#comments").html("");
+                                $("#comments").html(data);
+                                $(".btnCancel").css("display", "none");
+                            }
+                        },
+                        error: function (data) {
+                            alert("error");
+
+                        }
+                    });
+                }
+            });
+            
+       }
+        function Edit(context, id) {
+            action = 2;
+            commentID = id;
+            $(".btnCancel").css("display", "inline");
+            $("#writeComment").val(context);
+        }
+        function handleEditComment(context) {
             $.ajax({
-                url: "/Products/AddComment",
+                url: "/Products/EditComment",
                 type: "POST",
                 data: {
-                    ProductID: productID,
-                    context: context,
-                    Action:1
+                    CommentID: commentID,
+                    Context: context,
+                    ProductID: productID
                 },
                 success: function (data) {
                     if (data == "error") {
@@ -341,12 +453,15 @@
                         Swal.fire({
                             icon: 'success',
                             title: 'Thành công',
-                            text: 'Thêm bình luận thành công!',
+                            text: 'Cập nhật bình luận thành công!',
                             showConfirmButton: false,
                             timer: 2000
                         });
+                        action = 1;
+                        $("#writeComment").val("");
                         $("#comments").html("");
                         $("#comments").html(data);
+                        $(".btnCancel").css("display", "none");
                     }
                 },
                 error: function (data) {
@@ -354,7 +469,7 @@
 
                 }
             });
-        })
+        }
     </script>
 
 }

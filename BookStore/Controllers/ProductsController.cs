@@ -160,10 +160,10 @@ namespace BookStore.Controllers
             return PartialView("Comments", comment);
                             
         }
-        
-        [HttpPost]
+
         [AllowAnonymous]
-        public IActionResult AddComment(int ProductID, string Context, int Action)
+        [HttpPost]
+        public IActionResult AddComment(int ProductID, string Context)
         {
 
             //Checking Session whether it is expired
@@ -171,9 +171,6 @@ namespace BookStore.Controllers
             {
                 Customer cus = HttpContext.Session.GetObject<Customer>("Customer");
                 Employee emp = HttpContext.Session.GetObject<Employee>("Employee");
-                if (Action == 1)
-                {
-                    //action add comment
                     Comment comment = new Comment
                     {
                         ProductId = ProductID,
@@ -184,13 +181,42 @@ namespace BookStore.Controllers
                     };
                     _context.Comment.Add(comment);
                     _context.SaveChanges();
-                }
+                
                 return GetComments(ProductID);
             }
             
             return Content("error");
         }
 
+        [HttpPost]
+        [AllowAnonymous]
+        public IActionResult EditComment(int CommentID, int ProductID, string Context)
+        {
+            var comment = _context.Comment.SingleOrDefault(p => p.CommentId == CommentID);
+            if (comment != null)
+            {
+                comment.Context = Context;
+                comment.ModifiedDate = DateTime.Now;
+                _context.Comment.Update(comment);
+                _context.SaveChanges();
+                return GetComments(ProductID);
+            }
+            return Content("error");
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public IActionResult DeleteComment(int CommentID, int ProductID)
+        {
+            var comment = _context.Comment.SingleOrDefault(p => p.CommentId == CommentID);
+            if (comment != null)
+            {
+                _context.Remove(comment);
+                _context.SaveChanges();
+                return GetComments(ProductID);
+            }
+            return Content("error");
+        }
         public static string TimeAgo(DateTime dt)
         {
             if (dt > DateTime.Now)

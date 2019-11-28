@@ -18,7 +18,7 @@ $('#tableComment tbody').on('click', '.btnDelete', function () {
     var nameItem = $(this).data("name");
     var item = $(this).parents('tr');
     Swal.fire({
-        html: '<h2>Bạn có chắn muốn xóa bình luận của <b>' + nameItem + "</b>?</h2>",
+        html: '<h2>Bạn có chắc chắn muốn xóa bình luận của <b>' + nameItem + "</b>?</h2>",
         text: "Bạn không thể hoàn tác!",
         icon: 'warning',
         showCancelButton: true,
