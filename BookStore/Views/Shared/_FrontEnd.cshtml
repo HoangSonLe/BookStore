@@ -6,8 +6,6 @@
     <title>@ViewData["Title"]</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- Favicon -->
-    <link rel="shortcut icon" type="image/x-icon" href="~/img/favicon.png">
 
     <!-- all css here -->
     <!-- bootstrap v3.3.6 css -->
@@ -30,6 +28,17 @@
     <link rel="stylesheet" href="~/css/responsive.css">
     <!-- modernizr css -->
     <script src="~/js/vendor/modernizr-2.8.3.min.js"></script>
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-153536550-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'UA-153536550-1');
+    </script>
+
 </head>
 <body>
     <!-- header-area-start -->
@@ -38,6 +47,44 @@
     @RenderBody()
     <!-- footer-area-start -->
     @await Html.PartialAsync("_MyFooter")
+    <!-- Load Facebook SDK for JavaScript -->
+    <div id="fb-root"></div>
+    <script>
+        window.fbAsyncInit = function () {
+            FB.init({
+                xfbml: true,
+                version: 'v5.0'
+            });
+        };
+
+        (function (d, s, id) {
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) return;
+            js = d.createElement(s); js.id = id;
+            js.src = 'https://connect.facebook.net/vi_VN/sdk/xfbml.customerchat.js';
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));</script>
+
+    <!-- Your customer chat code -->
+    <div class="fb-customerchat"
+         attribution=setup_tool
+         page_id="104496551020607"
+         logged_in_greeting="Hi! Tôi có thể giúp gì cho bạn?"
+         logged_out_greeting="Hi! Tôi có thể giúp gì cho bạn?">
+    </div>
+    <!--Start of Tawk.to Script-->
+    <script type="text/javascript">
+        var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
+        (function () {
+            var s1 = document.createElement("script"), s0 = document.getElementsByTagName("script")[0];
+            s1.async = true;
+            s1.src = 'https://embed.tawk.to/5ddfd4fbd96992700fc9ba8e/default';
+            s1.charset = 'UTF-8';
+            s1.setAttribute('crossorigin', '*');
+            s0.parentNode.insertBefore(s1, s0);
+        })();
+    </script>
+    <!--End of Tawk.to Script-->
     <div class=”sharethis-inline-share-buttons”>
         <script async src="https://platform-api.sharethis.com/js/sharethis.js#property=5dd8dd6fa9e8ed00126981a4&product=sticky-share-buttons"></script>
     </div>

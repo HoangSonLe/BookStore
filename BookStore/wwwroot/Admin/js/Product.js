@@ -6,11 +6,9 @@
 function onDetailProduct(id){
     //var id = $(this).data("id");
     $.ajax({
-        url: "/Admin/Products/Details",
+        url: "/admin/san-pham/chi-tiet/"+id,
         type: "GET",
-        data: {
-            id: id
-        },
+        
         success: function (data) {
             $("#modalBody").html("");
             $("#modalBody").html(data);

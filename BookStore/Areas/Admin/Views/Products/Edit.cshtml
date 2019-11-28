@@ -26,7 +26,7 @@
             </div>
             <div class="box-content">
                 <div class="table-responsive" style="border:0">
-                    <form asp-action="Edit" method="post" id="formEdit" enctype="multipart/form-data" asp-route-id="@Model.ProductId">
+                    <form asp-action="Edit" method="post" id="formEdit" enctype="multipart/form-data" asp-route-urlfriendly="@Model.UrlFriendly">
                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                         <input type="hidden" asp-for="ProductId" />
                         <input type="hidden" name="ArrDeleteImage" value="," />
