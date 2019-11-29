@@ -1,31 +1,22 @@
-﻿
+﻿@using BookStore.ModelViews;
+
+@model Orders
 @{
 
     ViewData["Breadcrumbs"] = "Thanh Toán";
     ViewData["Title"] = "Thanh Toán";
+    IEnumerable<CartItem> cartItems = ViewBag.cartItems as List<CartItem>;
 }
-@model Orders
+
 <!-- breadcrumbs-area-start -->
 @await Html.PartialAsync("_Breadcrumbs")
 <!-- breadcrumbs-area-end -->
-<!-- entry-header-area-start -->
-<div class="entry-header-area">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="entry-header-title">
-                    <h2>Thanh toán</h2>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- entry-header-area-end -->
+
 <!-- checkout-area-start -->
 <div class="checkout-area mb-70">
     <div class="container">
         <div class="row">
-            <form id="abc" action="#">
+            <form id="InfoOrder">
                 <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                     <div class="checkbox-form">
                         <h3>Chi tiết thanh toán</h3>
@@ -33,25 +24,29 @@
                             <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 ">
                                 <div class="checkout-form-list">
                                     <label>Họ và Tên <span class="required">*</span></label>
-                                    <input type="text" asp-for="Name" placeholder="">
+                                    <input type="text" asp-for="Name" value="@Model.Name" placeholder="" />
+                                    <label id="errorName" style="color:red;display:none ">Vui lòng nhập họ tên người nhận</label>
                                 </div>
                             </div>
                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                 <div class="checkout-form-list">
                                     <label>Địa chỉ nhận hàng <span class="required">*</span></label>
-                                    <input type="text" asp-for="Address" />
+                                    <input type="text" asp-for="Address" value="@Model.Address" />
+                                    <label id="errorAddress" style="color:red;display:none ">Vui lòng nhập địa chỉ nhận hàng</label>
                                 </div>
                             </div>
                             <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                                 <div class="checkout-form-list">
-                                    <label>Địa chỉ email</label>
-                                    <input type="email" asp-for="Email"/>
+                                    <label>Địa chỉ Email</label>
+                                    <input type="email" asp-for="Email" value="@Model.Email" />
+                                    <label id="errorEmail" style="color:red;display:none ">Địa chỉ Email không hợp lệ</label>
                                 </div>
                             </div>
                             <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                                 <div class="checkout-form-list">
                                     <label>Số điện thoại  <span class="required">*</span></label>
-                                    <input type="text" asp-for="Phone" />
+                                    <input type="text" asp-for="Phone" value="@Model.Phone" />
+                                    <label id="errorPhone" style="color:red;display:none ">Vui lòng nhập đúng số điện thoại người nhận hàng</label>
                                 </div>
                             </div>
                         </div>
@@ -78,50 +73,75 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr class="cart_item">
-                                        <td class="product-name">
-                                            Vestibulum suscipit <strong class="product-quantity"></strong>
-                                        </td>
-                                        <td>
-                                            x1
-                                        </td>
-                                        <td class="product-total">
-                                            <span class="amount">£165.00</span>
-                                        </td>
-                                    </tr>
-                                    <tr class="cart_item">
-                                        <td class="product-name">
-                                            Vestibulum suscipit	<strong class="product-quantity"></strong>
-                                        </td>
-                                        <td>
-                                            x1
-                                        </td>
-                                        <td class="product-total">
-                                            <span class="amount">£50.00</span>
-                                        </td>
-                                    </tr>
+                                    @{
+                                        int? amount = 0;
+                                        int? qty = 0;
+                                        double ship = 0;
+                                    }
+                                    @foreach (var item in cartItems)
+                                    {
+                                        amount += item.Price * item.QuantityProduct;
+                                        qty += item.QuantityProduct;
+                                        <tr class="cart_item">
+                                            <td class="product-name">
+                                                @item.ProductName
+                                            </td>
+                                            <td>
+                                                @item.QuantityProduct
+                                            </td>
+                                            <td class="product-total">
+                                                <span class="amount">@String.Format("{0:0,0} VNĐ", item.Price)</span>
+                                            </td>
+                                        </tr>
+                                    }
                                 </tbody>
                                 <tfoot>
                                     <tr class="cart-subtotal">
                                         <th>Thành tiền</th>
-                                        <td></td>
-                                        <td><span class="amount">£215.00</span></td>
+                                        <td><strong class="product-quantity">@qty</strong></td>
+                                        <td><span class="amount">@String.Format("{0:0,0} VNĐ", amount)</span></td>
                                     </tr>
                                     <tr class="shipping">
-                                        <th>Vận chuyển</th>
-                                        <td colspan="2">
-                                            <ul>
-                                                <li>
-                                                    <input type="radio">
-                                                    <label>Miễn phí vận chuyển</label>
-                                                </li>
-                                            </ul>
-                                        </td>
+                                        <th>Phí Vận chuyển</th>
+
+                                        @if (amount < 100000)
+                                        {
+                                            <td colspan="2">
+                                                <ul>
+                                                    <li>
+                                                        <label>Miễn phí vận chuyển</label>
+                                                    </li>
+                                                </ul>
+                                            </td>
+                                        }
+                                        else if (amount >= 100000 && amount <= 500000)
+                                        {
+                                            ship = 12000;
+                                            <td colspan="2">
+                                                <ul>
+                                                    <li>
+                                                        <label>@String.Format("{0:0,0} VNĐ", ship)</label>
+                                                    </li>
+                                                </ul>
+                                            </td>
+                                        }
+                                        else
+                                        {
+                                            ship = 20000;
+                                            <td colspan="2">
+                                                <ul>
+                                                    <li>
+                                                        <label>@String.Format("{0:0,0} VNĐ", ship)</label>
+                                                    </li>
+                                                </ul>
+                                            </td>
+                                        }
+
                                     </tr>
                                     <tr class="order-total">
                                         <th>Tổng tiền</th>
-                                        <td>
-                                            <strong><span class="amount">£215.00</span></strong>
+                                        <td colspan="2" class="product-total">
+                                            <strong><span class="amount">@String.Format("{0:0,0} VNĐ", amount + ship)</span></strong>
                                         </td>
                                     </tr>
                                 </tfoot>
@@ -134,16 +154,11 @@
                                         <div class="panel panel-default">
                                             <div role="tab" id="headingOne">
                                                 <h4 class="panel-title">
-                                                    <input type="radio" name="PayMethod" value="DirectPay" id="ship-box">
+                                                    <input type="radio" checked name="PayMethod" value="DirectPay" id="ship-box">
                                                     <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
                                                         Thanh toán khi nhận hàng
                                                     </a>
                                                 </h4>
-                                            </div>
-                                            <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
-                                                <div class="panel-body">
-                                                    <p>Kiểm tra đơn hàng, rồi thanh toán cho shipper sau khi xác nhận chính xác!</p>
-                                                </div>
                                             </div>
                                         </div>
                                         <div class="panel panel-default">
@@ -151,14 +166,9 @@
                                                 <h4 class="panel-title">
                                                     <input type="radio" name="PayMethod" value="OnePay" id="ship-box">
                                                     <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                                        OnePay
+                                                        OnePay <img src="img/3.png" alt="payment" />
                                                     </a>
                                                 </h4>
-                                            </div>
-                                            <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
-                                                <div class="panel-body">
-                                                    <p>Đây là hình thức thanh toán và giao dịch trực tuyến</p>
-                                                </div>
                                             </div>
                                         </div>
                                         <div class="panel panel-default">
@@ -170,17 +180,12 @@
                                                     </a>
                                                 </h4>
                                             </div>
-                                            <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
-                                                <div class="panel-body">
-                                                    <p>Thanh toán bằng Paypal; Bạn có thể thanh toán bằng thẻ ngân hàng nếu không có tài khoản Paypal</p>
-                                                </div>
-                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="order-button-payment">
-                                <input type="submit" value="Thanh toán">
+                                <input type="submit" id="Payment" value="Thanh toán" />
                             </div>
                         </div>
                     </div>
@@ -190,3 +195,7 @@
     </div>
 </div>
 <!-- checkout-area-end -->
+@section Scripts{
+
+    <script src="~/js/jsScriptByMySelf/Checkout.js"></script>
+}
