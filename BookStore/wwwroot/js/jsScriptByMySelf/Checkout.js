@@ -58,19 +58,10 @@ $("#Payment").click(function (e) {
             window.location = "https://localhost:44300/Paypal/Checkout?" + order;
         }
         else if (payMethod == "OnePay") {
-
+        window.location = "https://localhost:44300/OnePay/OnePayPayment?" + order;
         }
         else if (payMethod == "DirectPay") {
             window.location = "https://localhost:44300/Checkout/Invoice?" + order;
-            //$.ajax({
-            //    url: "/Checkout/Invoice",
-            //    type: "POST",
-            //    data: order,
-            //    success: function (response) {
-            //        $(".checkout-area").html("");
-            //        $(".checkout-area").html(response);
-            //    }
-            //});
         }
     }
 });

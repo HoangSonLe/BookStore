@@ -88,6 +88,10 @@
                 {
                     <p>Thanh toán bằng paypal</p>
                 }
+                else if (Model.PayMethod == "OnePay")
+                {
+                    <p>Thanh toán bằng OnePay</p>
+                }
             </td>
             <td>
                 @if (Model.PayMethod == "DirectPay")
