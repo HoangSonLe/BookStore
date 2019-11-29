@@ -7,6 +7,7 @@ using BookStore.Models;
 using BookStore.ModelViews;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace BookStore.Controllers
 {
@@ -33,7 +34,7 @@ namespace BookStore.Controllers
                 {
                     foreach(var d in data)
                     {
-                        var p = _ctx.Product.Find(d.ProductId);
+                        var p = _ctx.Product.AsNoTracking().SingleOrDefault(o=>o.ProductId==d.ProductId);
                         if(p== null)
                         {
                             data.Remove(d);
@@ -63,7 +64,7 @@ namespace BookStore.Controllers
                 
                 if (cartItem == null)
                 {
-                    Product p = _ctx.Product.Find(id);
+                    Product p = _ctx.Product.AsNoTracking().SingleOrDefault(o=>o.ProductId==id);
                     if (p != null)
                     {
                         cartItems.Add(new CartItem

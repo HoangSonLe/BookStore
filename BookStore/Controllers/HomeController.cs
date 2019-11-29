@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using BookStore.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 
 namespace BookStore.Controllers
 {
@@ -26,8 +27,17 @@ namespace BookStore.Controllers
                 //if(TempData["ThongBao"].ToString() == "LoginSuccess")
                 ViewBag.ThongBaoThanhCong = TempData["ThongBao"].ToString();
             }
-            ViewBag.highViewProducts = _ctx.Product.OrderByDescending(p => p.ViewCounts).Take(10).ToList();
-            ViewBag.hotViewProducts = _ctx.Product.OrderByDescending(p => p.ViewCounts).OrderByDescending(p=>p.Discount!=0).Take(20).ToList();
+            ViewBag.highViewProducts = _ctx.Product.Include(p => p.Category)
+                                                   .OrderByDescending(p => p.ViewCounts)
+                                                   .Take(10)
+                                                   .AsNoTracking()
+                                                   .ToList();
+            ViewBag.hotViewProducts = _ctx.Product.Include(p => p.Category)
+                                                  .OrderByDescending(p => p.ViewCounts)
+                                                  .OrderByDescending(p=>p.Discount!=0)
+                                                  .Take(20)
+                                                  .AsNoTracking()
+                                                  .ToList();
             //ViewBag.topSaleProducts = _ctx.Product.OrderByDescending(p => p.ViewCounts).OrderByDescending(p=>p.Discount!=0).Take(10).ToList();
             return View();
         }

@@ -1,15 +1,22 @@
 ﻿@model Product
 @using BookStore.Helpers;
 @{
-    ViewData["Title"] = "DetailPage";
+    ViewData["Title"] = "Chi tiết";
 }
 <style>
-    .flex-control-thumbs li img{
-        width:100px;
-        height:120px;
+    .flex-control-thumbs li img {
+        width: 100px;
+        height: 120px;
     }
-.flex-direction-nav a.flex-next::before { content: "\f105"; }
- </style>
+
+    .flex-direction-nav a.flex-next::before {
+        content: "\f105";
+    }
+
+    .detail {
+        font-size: 18px;
+    }
+</style>
 <!-- product-main-area-start -->
 <style>
     .center {
@@ -19,6 +26,8 @@
     }
 </style>
 <br />
+<link href="~/css/ProductItem.css" rel="stylesheet" />
+
 <div class="product-main-area mb-70">
     <div class="container">
         <div class="row">
@@ -37,12 +46,12 @@
                                         foreach (var image in images)
                                         {
 
-                                        <li data-thumb="/Image/@image.ProductImage">
+                                            <li data-thumb="/Image/@image.ProductImage">
                                                 <img src="/Image/@image.ProductImage" style="width:200px;height:300px" alt="img" />
                                             </li>
                                         }
                                     }
-                                   
+
                                 </ul>
                             </div>
                         </div>
@@ -51,41 +60,79 @@
                                 <div class="page-title">
                                     <h1>@Model.ProductName</h1>
                                 </div>
-                                <div class="product-info-stock-sku">
-                                    
+                                <div class="product-info-stock-sku detail">
+
                                     <div>
                                         <span>Nhà xuất bản: </span>
                                         <span class="value">@Model.Publisher.PublisherName</span>
+                                    </div>
+                                    <div>
+                                        <span>Thể loại: </span>
+                                        <span class="value">@Model.Category.Name</span>
+                                    </div>
+                                    <div>
+                                        <span>Tình trạng: </span>
+                                        @{
+                                            if (Model.Quantity > 0)
+                                            {
+                                                <span>Còn hàng</span>
+                                            }
+                                            else
+                                            {
+                                                <span>Hết hàng</span>
+                                            }
+                                        }
+                                    </div>
+                                    <div>
+                                        @{
+                                            if (Model.Discount != 0)
+                                            {
+                                                <span>Giảm: </span>
+                                                <span style="font-weight: bold;color: #ff3425;">@Model.Discount%</span>
+                                            }
+                                        }
                                     </div>
                                 </div>
 
                                 <div class="product-info-price">
                                     <div class="price-final">
-                                        <span>@String.Format("{0:0,0 VNĐ}", Model.PromotionPrice)</span>
-                                        <span class="old-price">@String.Format("{0:0,0 VNĐ}", Model.Price)</span>
+                                        @{
+                                            if (Model.PromotionPrice == 0)
+                                            {
+                                                <span>@String.Format("{0:0,0 VNĐ}", Model.Price)</span>
+                                            }
+                                            else
+                                            {
+                                                <span>@String.Format("{0:0,0 VNĐ}", Model.PromotionPrice)</span>
+                                                <span class="old-price">@String.Format("{0:0,0 VNĐ}", Model.Price)</span>
+
+                                            }
+                                        }
+
                                     </div>
+
                                 </div>
                                 <div class="product-add-form">
                                     <form action="#">
                                         <div class="quality-button">
-                                            <input class="qty" type="number" value="1">
+                                            <input class="qty" id="quantityNumber" type="number" value="1">
                                         </div>
-                                        <a href="#">Add to cart</a>
+                                        <a style="cursor:pointer" onclick="onClickAddToCart(@Model.ProductId,$('#quantityNumber').val());">Add to cart</a>
                                     </form>
                                 </div>
-                                <div class="product-social-links">
-                                    <div class="product-addto-links">
-                                        <a href="#"><i class="fa fa-heart"></i></a>
-                                        <a href="#"><i class="fa fa-pie-chart"></i></a>
-                                        <a href="#"><i class="fa fa-envelope-o"></i></a>
-                                    </div>
-                                </div>
+                                @*<div class="product-social-links">
+                                        <div class="product-addto-links">
+                                            <a href="#"><i class="fa fa-heart"></i></a>
+                                            <a href="#"><i class="fa fa-pie-chart"></i></a>
+                                            <a href="#"><i class="fa fa-envelope-o"></i></a>
+                                        </div>
+                                    </div>*@
                             </div>
                         </div>
                     </div>
                 </div>
                 <!-- product-main-area-end -->
-                <div id="edit"></div>
+                <div id="comment"></div>
                 <!-- product-info-area-start -->
                 <div class="product-info-area mt-80">
                     <!-- Nav tabs -->
@@ -120,9 +167,7 @@
                             }
 
 
-                            <ul class="media-list" id="comments"></ul>
-
-
+                            <ul class="media-list" id="comments" data-id="@Model.ProductId"></ul>
                         </div>
                     </div>
                 </div>
@@ -131,16 +176,16 @@
                 <br />
                 <div class="upsell">
                     <div class="section-title text-center mb-30">
-                        <h3>Sản phẩm liên quan</h3>
+                        <h3>Sản phẩm mới nhất</h3>
                     </div>
                     <div class="tab-active-2 owl-carousel ">
                         @{
-                            IEnumerable<Product> relativeProducts = ViewBag.relative;
+                            IEnumerable<Product> newProducts = ViewBag.newProducts;
                         }
-                        @foreach (var p in relativeProducts)
+                        @foreach (var p in newProducts)
                         {
                             <!-- single-product-start -->
-                            <div class="product-wrapper">
+                            <div class="product-wrapper" title="@p.ProductName">
                                 <div class=" text-center">
                                     <a asp-action="DetailPage" asp-route-loai="@p.Category.UrlFriendly" asp-route-hanghoa="@p.UrlFriendly">
                                         <div style="text-align:center">
@@ -159,17 +204,28 @@
                                     </div>
                                 </div>
                                 <div class="product-details text-center">
-                                    <h4><a asp-action="DetailPage" asp-route-loai="@p.Category.UrlFriendly" asp-route-hanghoa="@p.UrlFriendly">@p.ProductName</a></h4>
+                                    <div class="divAreaContent">
+                                        <a asp-action="DetailPage" asp-route-loai="@p.Category.UrlFriendly" asp-route-hanghoa="@p.UrlFriendly">@p.ProductName</a>
+                                    </div>
                                     <div class="product-price">
                                         <ul>
-                                            <li style="font-family:Arial; font-weight:normal;">@String.Format("{0:0,0 VNĐ}", p.PromotionPrice)</li>
-                                            <li class="old-price" style="font-family:Arial; font-weight:normal;">@String.Format("{0:0,0 VNĐ}", p.PromotionPrice)</li>
+                                            @{
+                                                if (p.PromotionPrice == 0)
+                                                {
+                                                    <li style="font-family:Arial; font-weight:normal;">@String.Format("{0:0,0 VNĐ}", p.Price)</li>
+                                                }
+                                                else
+                                                {
+                                                    <li style="font-family:Arial; font-weight:normal;">@String.Format("{0:0,0 VNĐ}", p.PromotionPrice)</li>
+                                                    <li class="old-price" style="font-family:Arial; font-weight:normal;">@String.Format("{0:0,0 VNĐ}", p.PromotionPrice)</li>
+                                                }
+                                            }
                                         </ul>
                                     </div>
                                 </div>
                                 <div class="product-link">
                                     <div class="product-button">
-                                        <a  onclick="onClickAddToCart(@p.ProductId,1)" title="Add to cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
+                                        <a style="cursor:pointer" onclick="onClickAddToCart(@p.ProductId,1);" title="Add to cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
                                     </div>
                                     <div class="add-to-link">
                                         <ul>
@@ -188,14 +244,14 @@
             <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
                 <div class="shop-left">
                     <div class="left-title mb-20">
-                        <h4>Sản phẩm mới</h4>
+                        <h4>Sản phẩm liên quan</h4>
                     </div>
                     <div class="random-area mb-30">
                         <div id="newProducts" class="product-active-2 owl-carousel">
                             @{
-                                IEnumerable<Product> newProducts = ViewBag.newProducts;
+                                IEnumerable<Product> relativeProducts = ViewBag.relativeProducts;
                                 int count = 0;
-                                foreach (var p in newProducts)
+                                foreach (var p in relativeProducts)
                                 {
                                     if (count % 3 == 0)
                                     {
@@ -203,15 +259,27 @@
                                         }
 
                                         <div class="single-most-product bd mb-18">
+
                                             <div class="most-product-img">
-                                                <a asp-action="DetailPage" asp-route-loai="@p.Category.UrlFriendly" asp-route-hanghoa="@p.UrlFriendly"><img src="~/Image/@p.ImageCover" style="width:80px;height:110px" class="center" alt="book" /></a>
+                                                <a href="/@p.Category.UrlFriendly/@p.UrlFriendly"><img src="~/Image/@p.ImageCover" style="width:80px;height:110px" class="center" alt="book" /></a>
                                             </div>
                                             <div class="most-product-content">
-                                                <h4><a asp-action="DetailPage" asp-route-loai="@p.Category.UrlFriendly" asp-route-hanghoa="@p.UrlFriendly">@p.ProductName</a></h4>
+                                                <h4><a href="/@p.Category.UrlFriendly/@p.UrlFriendly">@p.ProductName</a></h4>
                                                 <div class="product-price">
                                                     <ul>
-                                                        <li>@String.Format("{0:0,0 VNĐ}", p.PromotionPrice)</li>
-                                                        <li class="old-price">@String.Format("{0:0,0 VNĐ}", p.Price)</li>
+                                                        @{
+                                                            if (p.PromotionPrice == 0)
+                                                            {
+                                                                <li>@String.Format("{0:0,0 VNĐ}", p.Price)</li>
+                                                            }
+                                                            else
+                                                            {
+                                                                <li style="font-family:Arial; font-weight:normal;">@String.Format("{0:0,0 VNĐ}", p.PromotionPrice)</li>
+                                                                <li class="old-price" style="font-family:Arial; font-weight:normal;">@String.Format("{0:0,0 VNĐ}", p.Price)</li>
+                                                            }
+                                                        }
+
+
                                                     </ul>
                                                 </div>
                                             </div>
@@ -244,203 +312,9 @@
     </div>
 </div>
 @section Scripts{
-    <script>
-        var action = 1;
-        var commentID = 0;
-        var productID=@Model.ProductId;
-        $(function () {
-           //increasing view count
-            
-            $.ajax({
-                url: "/Products/IncreaseViewCount",
-                type: "POST",
-                data: {
-                    productID: productID
-                },
-                success: function (data) {
+    <script src="~/js/jsScriptByMySelf/UpdateCart.js"></script>
+    <script src="~/js/jsScriptByMySelf/detail-page.js"></script>
 
-                }
-            });
-
-            $.ajax({
-                url: "/Products/GetComments",
-                type: "GET",
-                data: {
-                    productID: productID
-                },
-                success: function (data) {
-                    $("#comments").html(data);
-                }
-            });
-
-
-            $(".quickViewModal").on("click", function () {
-                var id = $(this).data("id");
-                $.ajax({
-                    url: "/chi-tiet/" + id,
-                    type: "GET",
-                    success: function (data) {
-                        $(".modalBody").html("");
-                        $(".modalBody").html(data);
-                    },
-                    error: function (data) {
-                        alert("error");
-
-                    }
-                });
-            });
-        });
-
-        $(".btnSendComment").click(function () {
-            let productID = $(this).data("id");
-            let context = $("#writeComment").val().trim();
-            if (context.length > 0) {
-                if (action == 2) handleEditComment(context);
-                else {
-                    //Add comment
-                    $.ajax({
-                        url: "/Products/AddComment",
-                        type: "POST",
-                        data: {
-                            ProductID: productID,
-                            Context: context
-                            
-                        },
-                        success: function (data) {
-                            if (data == "error") {
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Lỗi',
-                                    text: 'Đã xảy ra lỗi. Xin vui lòng thử lại sau!',
-                                    showConfirmButton: false,
-                                    timer: 2000
-                                });
-                            }
-                            else {
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'Thành công',
-                                    text: 'Thêm bình luận thành công!',
-                                    showConfirmButton: false,
-                                    timer: 2000
-                                });
-                                $("#writeComment").val("");
-                                $("#comments").html("");
-                                $("#comments").html(data);
-                            }
-                        },
-                        error: function (data) {
-                            alert("error");
-
-                        }
-                    });
-                }
-            }
-        })
-        $(".btnCancel").click(function () {
-            action = 1;
-            $(".btnCancel").css("display", "none");
-            $("#writeComment").val("");
-        })
-
-        function Delete(id) {
-            Swal.fire({
-                html: '<h2>Bạn có chắn muốn xóa bình luận này không?</h2>',
-                text: "Bạn không thể hoàn tác!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Đúng, xóa.!'
-            }).then((result) => {
-                if (result.value) {
-                    $.ajax({
-                        url: "/Products/DeleteComment",
-                        type: "POST",
-                        data: {
-                            CommentID: id,
-                            ProductID: productID
-                        },
-                        success: function (data) {
-                            if (data == "error") {
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Lỗi',
-                                    text: 'Đã xảy ra lỗi. Xin vui lòng thử lại sau!',
-                                    showConfirmButton: false,
-                                    timer: 2000
-                                });
-                            }
-                            else {
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'Thành công',
-                                    text: 'Xóa bình luận thành công!',
-                                    showConfirmButton: false,
-                                    timer: 2000
-                                });
-                                $("#writeComment").val("");
-                                $("#comments").html("");
-                                $("#comments").html(data);
-                                $(".btnCancel").css("display", "none");
-                            }
-                        },
-                        error: function (data) {
-                            alert("error");
-
-                        }
-                    });
-                }
-            });
-            
-       }
-        function Edit(context, id) {
-            action = 2;
-            commentID = id;
-            $(".btnCancel").css("display", "inline");
-            $("#writeComment").val(context);
-        }
-        function handleEditComment(context) {
-            $.ajax({
-                url: "/Products/EditComment",
-                type: "POST",
-                data: {
-                    CommentID: commentID,
-                    Context: context,
-                    ProductID: productID
-                },
-                success: function (data) {
-                    if (data == "error") {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Lỗi',
-                            text: 'Đã xảy ra lỗi. Xin vui lòng thử lại sau!',
-                            showConfirmButton: false,
-                            timer: 2000
-                        });
-                    }
-                    else {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Thành công',
-                            text: 'Cập nhật bình luận thành công!',
-                            showConfirmButton: false,
-                            timer: 2000
-                        });
-                        action = 1;
-                        $("#writeComment").val("");
-                        $("#comments").html("");
-                        $("#comments").html(data);
-                        $(".btnCancel").css("display", "none");
-                    }
-                },
-                error: function (data) {
-                    alert("error");
-
-                }
-            });
-        }
-    </script>
 
 }
 <!-- product-main-area-end -->

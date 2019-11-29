@@ -57,7 +57,7 @@ namespace BookStore.Controllers
             int pageSize = 12;
             if(currentCategory != null)
             {
-                myDBContext = myDBContext.Where(p => p.Category.UrlFriendly == currentCategory);
+                myDBContext = myDBContext.Where(p => p.Category.UrlFriendly == currentCategory).AsNoTracking();
             }
 
             //ViewBag.Category = from c in _context.ProductCategory where (c.UrlFriendly == currentCategory) select c.CategoryId; ;
@@ -79,6 +79,7 @@ namespace BookStore.Controllers
                 .Include(p => p.Category)
                 .Include(p => p.Publisher)
                 .Include(p=>p.ProductImages)
+                .AsNoTracking()
                 .SingleOrDefault(m => m.ProductId == id);
             if (product == null)
             {
@@ -92,7 +93,7 @@ namespace BookStore.Controllers
         [Route("{loai}/{hanghoa}")]
         public async Task<IActionResult> DetailPage(string loai, string hanghoa)
         {
-            var category = _context.ProductCategory.SingleOrDefault(p => p.UrlFriendly == loai);
+            var category = _context.ProductCategory.AsNoTracking().SingleOrDefault(p => p.UrlFriendly == loai);
             if (category == null) return BadRequest();
             else
             {
@@ -100,6 +101,7 @@ namespace BookStore.Controllers
                 var product = _context.Product
                             .Include(x => x.ProductImages)
                             .Include(x => x.Publisher)
+                            .Include(x=>x.Category)
                             .Where(p => p.CategoryId == CateID && p.UrlFriendly == hanghoa && p.Status==true)
                             .AsNoTracking()
                             .SingleOrDefault();
@@ -118,7 +120,7 @@ namespace BookStore.Controllers
                                 .OrderByDescending(x => x.ProductId)
                                 .Take(6)
                                 .ToListAsync();
-                ViewBag.relative = relativeProduct;
+                ViewBag.relativeProducts = relativeProduct;
                 ViewBag.newProducts = newProducts;
                 return View(product);
             }
@@ -129,6 +131,9 @@ namespace BookStore.Controllers
         public void IncreaseViewCount(int productID)
         {
             var product = _context.Product.SingleOrDefault(p => p.ProductId == productID);
+            //Thêm asnoTacking nó sẽ ko savechange đc
+            //save change ko có thay đổi
+                
             if (product != null)
             {
                 product.ViewCounts++;
@@ -163,8 +168,8 @@ namespace BookStore.Controllers
                             
         }
 
-        [AllowAnonymous]
         [HttpPost]
+        [AllowAnonymous]
         public IActionResult AddComment(int ProductID, string Context)
         {
 
@@ -173,16 +178,23 @@ namespace BookStore.Controllers
             {
                 Customer cus = HttpContext.Session.GetObject<Customer>("Customer");
                 Employee emp = HttpContext.Session.GetObject<Employee>("Employee");
-                    Comment comment = new Comment
-                    {
-                        ProductId = ProductID,
-                        CustomerId = (cus != null) ? cus.CustomerId : emp.EmployeeId,
-                        Context = Context,
-                        CreatedDate = DateTime.Now,
-                        Status = 1
-                    };
-                    _context.Comment.Add(comment);
-                    _context.SaveChanges();
+                Comment comment = new Comment
+                {
+                    ProductId = ProductID,
+                    Context = Context,
+                    CreatedDate = DateTime.Now,
+                    Status = 1
+                };
+                if (cus != null)
+                { 
+                    comment.CustomerId = cus.CustomerId;
+                }
+                else
+                {
+                    comment.EmployeeId = emp.EmployeeId;
+                }
+                _context.Comment.Add(comment);
+                _context.SaveChanges();
                 
                 return GetComments(ProductID);
             }
@@ -219,7 +231,8 @@ namespace BookStore.Controllers
             }
             return Content("error");
         }
-        public static string TimeAgo(DateTime dt)
+
+        public string TimeAgo(DateTime dt)
         {
             if (dt > DateTime.Now)
                 return "about sometime from now";

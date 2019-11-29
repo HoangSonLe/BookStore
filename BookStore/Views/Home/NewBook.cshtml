@@ -35,7 +35,7 @@
                     </div>
                     <div class="product-details text-center">
                         <div class="divAreaContent">
-                            <a href="#">@p.ProductName</a>
+                            <a asp-action="DetailPage" asp-controller="Products" asp-route-loai="@p.Category.UrlFriendly" asp-route-hanghoa="@p.UrlFriendly">@p.ProductName</a>
                         </div>
                         <div class="product-price">
                             <ul>
@@ -60,7 +60,7 @@
                         </div>
                         <div class="add-to-link">
                             <ul>
-                                <li><a href="product-details.html" title="Details"><i class="fa fa-external-link"></i></a></li>
+                                <li><a asp-action="DetailPage" asp-controller="Products" asp-route-loai="@p.Category.UrlFriendly" asp-route-hanghoa="@p.UrlFriendly" title="Details"><i class="fa fa-external-link"></i></a></li>
                             </ul>
                         </div>
                     </div>

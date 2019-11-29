@@ -49,7 +49,7 @@ namespace BookStore.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Login([Bind("UserName", "Password")] LoginViewModel loginViewModel, string ReturnUrl = null)
         {
-            Customer customer = _ctx.Customer.SingleOrDefault(p => p.UserName == loginViewModel.UserName && p.Password == MyHashTool.GetMd5Hash(loginViewModel.Password));
+            Customer customer = _ctx.Customer.AsNoTracking().SingleOrDefault(p => p.UserName == loginViewModel.UserName && p.Password == MyHashTool.GetMd5Hash(loginViewModel.Password));
             if(customer!=null)
             {
                 if (customer.PhoneNumberConfirmed == false)
