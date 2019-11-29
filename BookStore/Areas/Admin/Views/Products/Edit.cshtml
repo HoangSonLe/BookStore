@@ -4,6 +4,11 @@
     ViewData["Child"] = "Edit";
 }
 <link href="~/Admin/css/ProductImage.css" rel="stylesheet" />
+<style>
+    label.error {
+        color: red;
+    }
+</style>
 <div class="row">
     <div class="col-md-12">
         <div class="box">
@@ -26,7 +31,7 @@
             </div>
             <div class="box-content">
                 <div class="table-responsive" style="border:0">
-                    <form asp-action="Edit" method="post" id="formEdit" enctype="multipart/form-data" asp-route-urlfriendly="@Model.UrlFriendly">
+                    <form asp-action="Edit" method="post" id="formProduct" enctype="multipart/form-data" asp-route-urlfriendly="@Model.UrlFriendly">
                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                         <input type="hidden" asp-for="ProductId" />
                         <input type="hidden" name="ArrDeleteImage" value="," />
@@ -198,7 +203,32 @@
     <!-- Modal Caption (Image Text) -->
     <div id="caption"></div>
 </div>
-<script src="~/js/Tools/SlugString.js"></script>
-<script src="https://cdn.ckeditor.com/ckeditor5/15.0.0/classic/ckeditor.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-<script src="~/Admin/js/ProductEdit.js"></script>
+@section Scripts{
+    <script src="~/js/Tools/SlugString.js"></script>
+    <script src="https://cdn.ckeditor.com/ckeditor5/15.0.0/classic/ckeditor.js"></script>
+    <script src="~/Admin/js/ProductTool.js"></script>
+    <script>
+        $(".submitForm").on("click", function (e) {
+            e.preventDefault();
+            $("#formProduct").validate({
+                rules: {
+                    ProductName: { required: true, minlength: 2 },
+                },
+                messages: {
+                    ProductName: { required: "* Bắt buộc", minlength: "Từ 2 kí tự trở lên" }
+                }
+            });
+            if ($(".btnDeleteImageCover").is(":hidden") && $("#fileuploadCover").val() == '') {
+                e.preventDefault();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Vui lòng chọn hình bìa hoặc hoàn tác!',
+                });
+            }
+            else {
+                $("#formProduct").submit();
+            }
+        });
+    </script>
+}

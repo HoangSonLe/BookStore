@@ -17,6 +17,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Net;
 using Newtonsoft.Json;
 using BookStore.Common;
+using AutoMapper;
 
 namespace BookStore.Controllers
 {
@@ -27,13 +28,24 @@ namespace BookStore.Controllers
         private readonly MyDBContext _ctx;
         private readonly IAuthy _authy;
         private readonly ISmsService _smsService;
+        private readonly IMapper _mapper;
 
-
-        public UserController(MyDBContext myDBContext, IAuthy auth, ISmsService smsService)
+        public UserController(MyDBContext myDBContext, IAuthy auth, ISmsService smsService,IMapper mapper)
         {
             _ctx = myDBContext;
             _authy = auth;
             _smsService = smsService;
+            _mapper = mapper;
+        }
+        [AllowAnonymous]
+        public IActionResult CheckUserNameUnique(string UserName)
+        {
+            Customer customerSimilar = _ctx.Customer.AsNoTracking().FirstOrDefault(p => p.UserName == UserName);
+            if (customerSimilar != null)
+            {
+                return Json(false);
+            }
+            return Json(true);
         }
         public IActionResult Index()
         {
@@ -128,11 +140,12 @@ namespace BookStore.Controllers
         }
         [HttpPost]
         [AllowAnonymous]
-        public async Task<IActionResult> Register([Bind("UserName", "Password", "FirstName", "LastName", "Sex", "Address", "Email", "PhoneNumber")] Customer customer,[Bind("TwoFactorCheck")] bool TwoFactorCheck, [Bind("fFile")] IFormFile fFile)
+        public async Task<IActionResult> Register([Bind("UserName", "Password", "FirstName", "LastName", "Sex", "Address", "Email", "PhoneNumber")] UserRegister userRegister,[Bind("TwoFactorCheck")] bool TwoFactorCheck, [Bind("fFile")] IFormFile fFile)
         {
-            Customer customerSimilar = _ctx.Customer.AsNoTracking().FirstOrDefault(p => p.UserName == customer.UserName && p.Password == MyHashTool.GetMd5Hash(customer.Password));
+            Customer customerSimilar = _ctx.Customer.AsNoTracking().FirstOrDefault(p => p.UserName == userRegister.UserName);
             if (customerSimilar == null)
             {
+                Customer customer = _mapper.Map<UserRegister, Customer>(userRegister);
                 if (ModelState.IsValid)
                 {
                     //thiếu check mail, phone,...

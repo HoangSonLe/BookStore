@@ -2,9 +2,12 @@
     ViewData["Title"] = "Đăng ký";
     ViewData["Breadcrumbs"] = "Đăng ký";
 }
-@model BookStore.Models.Customer
+@model BookStore.ModelViews.UserRegister
 <!-- breadcrumbs-area-start -->
 @await Html.PartialAsync("_Breadcrumbs")
+<style>
+    label.error{color:red;}
+</style>
 <!-- breadcrumbs-area-end -->
 <div class="user-login-area mb-70">
     <div class="container">
@@ -14,7 +17,7 @@
                     <h2>Đăng ký tài khoản</h2>
                 </div>
             </div>
-           
+
             <div class="col-lg-offset-2 col-lg-8 col-md-offset-2 col-md-8 col-sm-12 col-xs-12">
                 <div class="billing-fields">
                     @if (ViewBag.RegisterResult != null)
@@ -27,14 +30,14 @@
                             <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                                 <div class="single-register">
                                     <label class="control-label">Họ</label>
-                                    <input asp-for="FirstName" class="form-control" required />
+                                    <input asp-for="FirstName" class="form-control" />
                                     <span asp-validation-for="FirstName" class="text-danger"></span>
                                 </div>
                             </div>
                             <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                                 <div class="single-register">
                                     <label class="control-label">Tên</label>
-                                    <input asp-for="LastName" class="form-control" required />
+                                    <input asp-for="LastName" class="form-control" />
                                     <span asp-validation-for="LastName" class="text-danger"></span>
                                 </div>
                             </div>
@@ -43,14 +46,14 @@
                             <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                                 <div class="single-register">
                                     <label class="control-label">Email</label>
-                                    <input asp-for="Email" class="form-control" required />
+                                    <input asp-for="Email" class="form-control" placeholder="abc@gmail.com" />
                                     <span asp-validation-for="Email" class="text-danger"></span>
                                 </div>
                             </div>
                             <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                                 <div class="single-register">
                                     <label class="control-label">Số điện thoại</label>
-                                    <input asp-for="PhoneNumber" class="form-control" required />
+                                    <input asp-for="PhoneNumber" class="form-control"  />
                                     <span asp-validation-for="PhoneNumber" class="text-danger"></span>
                                 </div>
                             </div>
@@ -69,7 +72,6 @@
                                     <label class="control-label">Hình đại diện</label>
                                     <input id="fileupload" style="display:none" name="fFile" type="file" class="form-control" />
                                     <button id="fileSelect" onclick="changeSelectFile('fileupload', 'fileSelect', event)" class="btn btn-primary" title="Upload các hình mô tả"><i class="fa fa-plus"></i> Upload các hình mô tả</button>
-                                    <span asp-validation-for="Image" class="text-danger"></span>
                                 </div>
                             </div>
                         </div>
@@ -82,17 +84,19 @@
                             <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                                 <div class="single-register">
                                     <label class="control-label">Tên đăng nhập</label>
-                                    <input asp-for="UserName" class="form-control" required />
+                                    <input asp-for="UserName" class="form-control" />
                                     <span asp-validation-for="UserName" class="text-danger"></span>
                                 </div>
                             </div>
                             <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                                 <div class="single-register">
                                     <label class="control-label">Mật khẩu</label>
-                                    <input asp-for="Password" class="form-control" required />
+                                    <input asp-for="Password" class="form-control" />
                                     <span asp-validation-for="Password" class="text-danger"></span>
                                 </div>
                             </div>
+                        </div>
+                        <div class="row">
                             <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                                 <div class="single-register">
                                     <input type="checkbox" name="TwoFactorCheck" value="true" checked> Xác thực 2 lớp bằng số điện thoại<br>
@@ -100,7 +104,7 @@
                             </div>
                         </div>
                         <div class="single-register">
-                            <button type="submit" class="form-control btn-primary submitForm">Register</button>
+                            <button type="submit" class="form-control btn-primary submitForm">Đăng ký</button>
                         </div>
                     </form>
                 </div>
@@ -109,8 +113,23 @@
     </div>
 </div>
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
+    <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
     <script>
+        //B1: Định nghĩa hàm kiểm tra
+        function IsGmail(value, object) {
+            var pattern = /^[a-zA-Z][a-zA-Z0-9]*([\.\-][a-zA-Z0-9]+)*@@gmail.com$/g;
+
+            return this.optional(object) || pattern.test(value);
+        }
+        function IsPhone(value, object) {
+            var pattern = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
+
+            return this.optional(object) || pattern.test(value);
+        }
+
+        //B2: Định nghĩa thuộc tính kiểm tra trong jquery validation
+        $.validator.addMethod("phonenumber", IsPhone, "Không phải số điện thoại");
+        $.validator.addMethod("gmail", IsGmail, "Không phải gmail");
         // Hàm thay thế button click thành input click
         function changeSelectFile(idInput, idButton, e) {
             e.preventDefault();
@@ -120,6 +139,24 @@
         }
 
         $(function () {
+            $("#registerForm").validate({
+                rules: {
+                    FirstName: { required: true, minlength: 2 },
+                    LastName: { required: true, minlength: 2 },
+                    PhoneNumber: { required: true, phonenumber:true },
+                    Email: { required: true, gmail: true },
+                    UserName: { required: true, minlength: 2,remote:"/User/CheckUserNameUnique" },
+                    Password: { required: true, minlength: 2 },
+                },
+                messages: {
+                    FirstName: { required: "* Bắt buộc", minlength: "Từ 2 kí tự trở lên" },
+                    LastName: { required: "* Bắt buộc", minlength: "Từ 2 kí tự trở lên" },
+                    PhoneNumber: { required: "* Bắt buộc", phonenumber: "Không đúng định dạng số điện thoại" },
+                    Email: { required: "* Bắt buộc",gmail: "Không đúng định dạng gmail" },
+                    UserName: { required: "* Bắt buộc", minlength: "Từ 2 kí tự trở lên", remote:"Tên đăng nhập đã được sử dụng" },
+                    Password: { required: "* Bắt buộc", minlength: "Từ 2 kí tự trở lên" },
+                }
+            });
             $('#registerForm').on('keyup keypress', function (e) {
                 var keyCode = e.keyCode || e.which;
                 if (keyCode === 13) {

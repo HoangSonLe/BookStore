@@ -20,7 +20,7 @@
                 <span>Dashboard</span>
             </a>
         </li>
-        <li>
+        @*<li>
             <a href="#" class="dropdown-toggle">
                 <i class="fa fa-desktop"></i>
                 <span>UI Client</span>
@@ -36,19 +36,18 @@
                 <li><a href="ui_slider.html">About</a></li>
             </ul>
             <!-- END Submenu -->
-        </li>
+        </li>*@
         <li>
             <a href="#" class="dropdown-toggle">
                 <i class="fa fa-group"></i>
-                <span>Staff</span>
+                <span>User</span>
                 <b class="arrow fa fa-angle-right"></b>
             </a>
             <!-- BEGIN Submenu -->
             <ul class="submenu">
-                <li><a href="form_layout.html">Department</a></li>
                 <li><a asp-controller="Employee" asp-action="Index">Employee</a></li>
-                <li><a href="form_component.html">Permission</a></li>
-                <li><a href="form_wizard.html">Division</a></li>
+                <li><a asp-controller="Customer" asp-action="Index">Customer</a></li>
+                <li><a asp-controller="Roles" asp-action="Index">Roles</a></li>
             </ul>
             <!-- END Submenu -->
         </li>
@@ -60,7 +59,6 @@
             </a>
             <!-- BEGIN Submenu -->
             <ul class="submenu">
-                <li><a asp-controller="Customer" asp-action="Index">Customer</a></li>
                 <li><a href="table_basic.html">Order</a></li>
                 <li><a asp-controller="Feedback" asp-action="Index">FeedBack</a></li>
                 <li><a asp-controller="Comment" asp-action="Index">Comment</a></li>

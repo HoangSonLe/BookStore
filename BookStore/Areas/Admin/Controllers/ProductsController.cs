@@ -15,6 +15,7 @@ namespace BookStore.Areas.Admin.Controllers
 {
     [Area("Admin")]
     [Authorize(AuthenticationSchemes = "Admin")]
+    [Route("admin/san-pham")]
     public class ProductsController : Controller
     {
         private readonly MyDBContext _context;
@@ -25,7 +26,7 @@ namespace BookStore.Areas.Admin.Controllers
         }
 
         // GET: Admin/Products
-        [Route("admin/san-pham")]
+        [Route("index")]
         public async Task<IActionResult> Index()
         {
             var myDBContext = _context.Product.Include(p => p.Category).Include(p => p.Publisher);
@@ -33,7 +34,7 @@ namespace BookStore.Areas.Admin.Controllers
         }
 
         // GET: Admin/Products/Details/5
-        [Route("/admin/san-pham/chi-tiet/{id}")]
+        [Route("chi-tiet/{id}")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -55,7 +56,7 @@ namespace BookStore.Areas.Admin.Controllers
         }
 
         // GET: Admin/Products/Create
-        [Route("admin/san-pham/tao-moi")]
+        [Route("tao-moi")]
         public IActionResult Create()
         {
             ViewData["CategoryId"] = new SelectList(_context.ProductCategory.Where(p => p.ParentId != null).ToList(), "CategoryId", "Name");
@@ -67,7 +68,7 @@ namespace BookStore.Areas.Admin.Controllers
         // POST: Admin/Products/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Route("admin/san-pham/tao-moi")]
+        [Route("tao-moi")]
         public async Task<IActionResult> Create([Bind("Ffile")] IFormFile Ffile,[Bind(" ProductName,Unit,UrlFriendly,Description,Price,PromotionPrice,IncludeVat,Quantity,CategoryId,PublisherId,Discount,ViewCounts,Status")] Product product, List<IFormFile> fFiles)
         {
             if (ModelState.IsValid)
@@ -95,7 +96,7 @@ namespace BookStore.Areas.Admin.Controllers
         }
         
         // GET: Admin/Products/Edit/5
-        [Route("admin/san-pham/sua/{urlfriendly}")]
+        [Route("{urlfriendly}")]
         public async Task<IActionResult> Edit(string urlfriendly)
         {
             if (urlfriendly == null)
@@ -117,11 +118,9 @@ namespace BookStore.Areas.Admin.Controllers
         }
 
         // POST: Admin/Products/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Route("admin/san-pham/sua/{urlfriendly}")]
+        [Route("{urlfriendly}")]
 
         public async Task<IActionResult> Edit(string urlfriendly, [Bind("Ffile")] IFormFile Ffile, [Bind("ArrDeleteImage")] string ArrDeleteImage, [Bind("ProductId,ProductName,Unit,UrlFriendly,Description,Price,PromotionPrice,IncludeVat,Quantity,CategoryId,PublisherId,Discount,ViewCounts,Status")] Product product, List<IFormFile> fFiles)
         {
@@ -201,6 +200,7 @@ namespace BookStore.Areas.Admin.Controllers
             return View(product);
         }
         [HttpPost]
+        [Route("xoa/{id}")]
         public IActionResult Delete(int id)
         {
             var product = _context.Product.AsNoTracking().SingleOrDefault(p=>p.ProductId==id);

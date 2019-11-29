@@ -6,7 +6,7 @@
 function onDetailProduct(id){
     //var id = $(this).data("id");
     $.ajax({
-        url: "/admin/san-pham/chi-tiet/"+id,
+        url: "chi-tiet/"+id,
         type: "GET",
         
         success: function (data) {
@@ -30,11 +30,8 @@ $('#tablePublishers tbody').on('click', '.btnDelete', function () {
     }).then((result) => {
         if (result.value) {
             $.ajax({
-                url: "/Admin/Products/Delete",
+                url: "xoa/" + idItem,
                 type: "POST",
-                data: {
-                    id: idItem
-                },
                 success: function (data) {
                     if (data == "1") {
                         Swal.fire({

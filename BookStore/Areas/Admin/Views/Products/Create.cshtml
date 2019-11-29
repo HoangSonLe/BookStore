@@ -1,20 +1,25 @@
 ﻿@model BookStore.Models.Product
-@{ 
+@{
     ViewData["Title"] = "Product";
     ViewData["Child"] = "Create";
 }
 <link href="~/Admin/css/ProductImage.css" rel="stylesheet" />
+<style>
+    label.error {
+        color: red;
+    }
+</style>
 <div class="row">
     <div class="col-md-12">
         <div class="box">
-            @if (ViewBag.Message !=null)
+            @if (ViewBag.Message != null)
             {
                 <div class="alert alert-info">
                     <button class="close" data-dismiss="alert">×</button>
                     <h3>@ViewBag.Message</h3>
                 </div>
             }
-            
+
             <div class="box-title">
                 <h3><i class="fa fa-plus"></i>Add Product</h3>
                 <div class="box-tool">
@@ -24,7 +29,7 @@
             </div>
             <div class="box-content">
                 <div class="table-responsive" style="border:0">
-                    <form asp-action="Create" method="post" id="formAdd" enctype="multipart/form-data">
+                    <form asp-action="Create" method="post" id="formProduct" enctype="multipart/form-data">
                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                         <div class="row">
                             <div class="col-lg-6">
@@ -153,8 +158,33 @@
     <!-- Modal Caption (Image Text) -->
     <div id="caption"></div>
 </div>
-<script src="~/js/Tools/SlugString.js"></script>
-<script src="https://cdn.ckeditor.com/ckeditor5/15.0.0/classic/ckeditor.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-<script src="~/Admin/js/ProductAdd.js"></script>
-
+@section Scripts{
+    <script src="~/js/Tools/SlugString.js"></script>
+    <script src="https://cdn.ckeditor.com/ckeditor5/15.0.0/classic/ckeditor.js"></script>
+    <script src="~/Admin/js/ProductTool.js"></script>
+    <script>
+        $(".submitForm").on("click", function (e) {
+            e.preventDefault();
+            //form validation
+            $("#formProduct").validate({
+                rules: {
+                    ProductName: { required: true, minlength: 2 },
+                },
+                messages: {
+                    ProductName: { required: "* Bắt buộc", minlength: "Từ 2 kí tự trở lên" }
+                }
+            });
+            if ($("#fileuploadCover").val() == '') {
+                e.preventDefault();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Vui lòng chọn hình bìa!',
+                });
+            }
+            else {
+                $("#formProduct").submit();
+            }
+        });
+    </script>
+}

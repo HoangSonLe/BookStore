@@ -34,64 +34,46 @@ function changeSelectFile(idInput, idButton, e) {
         fileElem = document.getElementById(idInput);
     fileElem.click();
 }
-$(function () {
-   // Hàm nhập tên chuyển thành url freindly
-    $(".inputName").change(function () {
-        var string = $(this).val();
-        $(".inputUrl").val(ChangeStringToSlug(string));
-    });
+// Hàm nhập tên chuyển thành url freindly
+$(".inputName").change(function () {
+    var string = $(this).val();
+    $(".inputUrl").val(ChangeStringToSlug(string));
+});
 
-    // Hàm nhập % giảm giá chuyển số tiền tương ứng
-    $(".inputDiscount").change(function () {
-        var discount = parseInt($(this).val());
-        var price = parseInt($(".inputPrice").val());
-        $(".inputPromotionPrice").val((price * (100 - discount)) / 100);
-    });
+// Hàm nhập % giảm giá chuyển số tiền tương ứng
+$(".inputDiscount").change(function () {
+    var discount = parseInt($(this).val());
+    var price = parseInt($(".inputPrice").val());
+    $(".inputPromotionPrice").val((price * (100 - discount)) / 100);
+});
 
-    //Hàm tắt enter= submit cho form
-    $('#formEdit').on('keyup keypress', function (e) {
-        var keyCode = e.keyCode || e.which;
-        if (keyCode === 13) {
-            e.preventDefault();
-            return false;
-        }
-    });
-
-    //
-    $(".submitForm").on("click",function (e) {
+//Hàm tắt enter= submit cho form
+$('#formProduct').on('keyup keypress', function (e) {
+    var keyCode = e.keyCode || e.which;
+    if (keyCode === 13) {
         e.preventDefault();
-        if ($(".btnDeleteImageCover").is(":hidden") && $("#fileuploadCover").val() == '') {
-            e.preventDefault();
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'Vui lòng chọn hình bìa hoặc hoàn tác!',
-            });
-        }
-        else {
-            $("#formEdit").submit();
-        }
-    });
-    //Hàm cho bút xóa button trên hình mô tả
-    $(".btnDeleteImage").on("click", function () {
-        var id = $(this).data("id");
-        var str = $("[name='ArrDeleteImage']").val().toString();
-        $("[name='ArrDeleteImage']").val(str + id + ",");
-        $(this).closest("div").remove();
-    });
-     //Hàm cho bút xóa button trên hình bìa
-    $(".btnDeleteImageCover").on("click", function () {
-        var id = $(this).data("id");
-        $(this).closest("div").hide();
-        $(".divAddImageCover").html('<h5>Upload Ảnh Bìa</h5>');
-    });
-    //Hàm undo hình bìa
-    $("#undoDeleteImage").on("click", function (e) {
-        e.preventDefault();
-        $(".btnDeleteImageCover").closest("div").show();
-    });
+        return false;
+    }
+});
 
-})
+//Hàm cho bút xóa button trên hình mô tả
+$(".btnDeleteImage").on("click", function () {
+    var id = $(this).data("id");
+    var str = $("[name='ArrDeleteImage']").val().toString();
+    $("[name='ArrDeleteImage']").val(str + id + ",");
+    $(this).closest("div").remove();
+});
+//Hàm cho bút xóa button trên hình bìa
+$(".btnDeleteImageCover").on("click", function () {
+    var id = $(this).data("id");
+    $(this).closest("div").hide();
+    $(".divAddImageCover").html('<h5>Upload Ảnh Bìa</h5>');
+});
+//Hàm undo hình bìa
+$("#undoDeleteImage").on("click", function (e) {
+    e.preventDefault();
+    $(".btnDeleteImageCover").closest("div").show();
+});
 //Hàm để hiện ảnh phóng to
 function viewImage(image) {
     // Get the modal

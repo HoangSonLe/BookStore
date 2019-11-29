@@ -12,8 +12,7 @@ namespace BookStore.Helpers
     {
         public MappingProfile()
         {
-            //CreateMap<Product, CartItem>()
-            //    .ForMember(d => d.Price, opt => opt.MapFrom(s => (s.Discount == 0) ? s.Price : s.PromotionPrice));
+            CreateMap<Customer, UserRegister>().ReverseMap();
         }
     }
 }

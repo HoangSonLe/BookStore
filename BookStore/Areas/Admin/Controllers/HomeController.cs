@@ -9,14 +9,13 @@ namespace BookStore.Areas.Admin.Controllers
 {
     [Area("Admin")]
     [Authorize(AuthenticationSchemes = "Admin")]
-
+    [Route("admin")]
     public class HomeController : Controller
     {
-        
+        [Route("")]
         public IActionResult Index()
         {
             return View();
-            //return View("~/Areas/Admin/Views/Home/Index.cshtml");
         }
     }
 }
