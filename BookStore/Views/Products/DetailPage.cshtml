@@ -1,0 +1,476 @@
+﻿@model Product
+@using BookStore.Helpers;
+@{
+    ViewData["Title"] = "DetailPage";
+}
+<style>
+    .flex-control-thumbs li img{
+        width:100px;
+        height:120px;
+    }
+.flex-direction-nav a.flex-next::before { content: "\f105"; }
+ </style>
+<!-- product-main-area-start -->
+<style>
+    .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+</style>
+<br />
+<div class="product-main-area mb-70">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
+                <!-- product-main-area-start -->
+                <div class="product-main-area">
+                    <div class="row">
+                        <div class="col-lg-5 col-md-5 col-sm-6 col-xs-12">
+                            <div class="flexslider">
+                                <ul class="slides">
+                                    @{
+                                        IEnumerable<ProductImages> images = Model.ProductImages;
+                                        <li data-thumb="/Image/@Model.ImageCover">
+                                            <img src="/Image/@Model.ImageCover" style="width:200px;height:300px" alt="img" />
+                                        </li>
+                                        foreach (var image in images)
+                                        {
+
+                                        <li data-thumb="/Image/@image.ProductImage">
+                                                <img src="/Image/@image.ProductImage" style="width:200px;height:300px" alt="img" />
+                                            </li>
+                                        }
+                                    }
+                                   
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-lg-7 col-md-7 col-sm-6 col-xs-12">
+                            <div class="product-info-main">
+                                <div class="page-title">
+                                    <h1>@Model.ProductName</h1>
+                                </div>
+                                <div class="product-info-stock-sku">
+                                    
+                                    <div>
+                                        <span>Nhà xuất bản: </span>
+                                        <span class="value">@Model.Publisher.PublisherName</span>
+                                    </div>
+                                </div>
+
+                                <div class="product-info-price">
+                                    <div class="price-final">
+                                        <span>@String.Format("{0:0,0 VNĐ}", Model.PromotionPrice)</span>
+                                        <span class="old-price">@String.Format("{0:0,0 VNĐ}", Model.Price)</span>
+                                    </div>
+                                </div>
+                                <div class="product-add-form">
+                                    <form action="#">
+                                        <div class="quality-button">
+                                            <input class="qty" type="number" value="1">
+                                        </div>
+                                        <a href="#">Add to cart</a>
+                                    </form>
+                                </div>
+                                <div class="product-social-links">
+                                    <div class="product-addto-links">
+                                        <a href="#"><i class="fa fa-heart"></i></a>
+                                        <a href="#"><i class="fa fa-pie-chart"></i></a>
+                                        <a href="#"><i class="fa fa-envelope-o"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- product-main-area-end -->
+                <div id="edit"></div>
+                <!-- product-info-area-start -->
+                <div class="product-info-area mt-80">
+                    <!-- Nav tabs -->
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li class="active"><a href="#Details" data-toggle="tab">Mô tả</a></li>
+                        <li><a href="#Reviews" data-toggle="tab">Bình luận</a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="Details">
+                            <div class="valu">
+                                @Html.Raw(Model.Description)
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="Reviews">
+                            @{
+                                var user = Context.Session.GetObject<Customer>("Customer");
+                                if (User.Identity.IsAuthenticated)
+                                {
+                                    <div>
+                                        <textarea class="form-control" style="resize:none" placeholder="viết bình luận..." rows="3" id="writeComment"></textarea>
+                                        <br />
+                                        <input type="button" data-id="@Model.ProductId" class="btn btn-primary btnSendComment" style="margin-bottom:20px" value="Gửi" />
+                                        <input type="button" class="btn btn-danger btnCancel" style="margin-bottom:20px; display:none" value="Hủy" />
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div style="margin-bottom:50px">
+                                        <h4> <a asp-controller="User" asp-action="Login">Đăng nhập</a> để có thể bình luận sản phẩm</h4>
+                                    </div>
+                                }
+                            }
+
+
+                            <ul class="media-list" id="comments"></ul>
+
+
+                        </div>
+                    </div>
+                </div>
+                <!-- product-info-area-end -->
+                <!-- new-book-area-start -->
+                <br />
+                <div class="upsell">
+                    <div class="section-title text-center mb-30">
+                        <h3>Sản phẩm liên quan</h3>
+                    </div>
+                    <div class="tab-active-2 owl-carousel ">
+                        @{
+                            IEnumerable<Product> relativeProducts = ViewBag.relative;
+                        }
+                        @foreach (var p in relativeProducts)
+                        {
+                            <!-- single-product-start -->
+                            <div class="product-wrapper">
+                                <div class=" text-center">
+                                    <a href="/@p.Category.UrlFriendly/@p.UrlFriendly">
+                                        <div style="text-align:center">
+                                            <img src="/Image/@p.ImageCover" style="width:160px;height:220px" class="center" alt="book" />
+                                        </div>
+                                    </a>
+                                    <div class="quick-view" style="cursor:pointer;">
+                                        <a class="action-view quickViewModal" data-id="@p.ProductId" data-target="#productModal" data-toggle="modal" title="Quick View">
+                                            <i class="fa fa-search-plus"></i>
+                                        </a>
+                                    </div>
+                                    <div class="product-flag">
+                                        <ul>
+                                            <li><span class="sale">new</span></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="product-details text-center">
+                                    <div class="product-rating">
+                                        <ul>
+                                            <li><a href="#"><i class="fa fa-star"></i></a></li>
+                                            <li><a href="#"><i class="fa fa-star"></i></a></li>
+                                            <li><a href="#"><i class="fa fa-star"></i></a></li>
+                                            <li><a href="#"><i class="fa fa-star"></i></a></li>
+                                            <li><a href="#"><i class="fa fa-star"></i></a></li>
+                                        </ul>
+                                    </div>
+                                    <h4><a href="/@p.Category.UrlFriendly/@p.UrlFriendly">@p.ProductName</a></h4>
+                                    <div class="product-price">
+                                        <ul>
+                                            <li style="font-family:Arial; font-weight:normal;">@String.Format("{0:0,0 VNĐ}", p.PromotionPrice)</li>
+                                            <li class="old-price" style="font-family:Arial; font-weight:normal;">@String.Format("{0:0,0 VNĐ}", p.PromotionPrice)</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="product-link">
+                                    <div class="product-button">
+                                        <a href="#" title="Add to cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
+                                    </div>
+                                    <div class="add-to-link">
+                                        <ul>
+                                            <li><a href="/@p.Category.UrlFriendly/@p.UrlFriendly" title="Details"><i class="fa fa-external-link"></i></a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- single-product-end -->
+                        }
+
+                    </div>
+                </div>
+                <!-- new-book-area-start -->
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+                <div class="shop-left">
+                    <div class="left-title mb-20">
+                        <h4>Sản phẩm mới</h4>
+                    </div>
+                    <div class="random-area mb-30">
+                        <div id="newProducts" class="product-active-2 owl-carousel">
+                            @{
+                                IEnumerable<Product> newProducts = ViewBag.newProducts;
+                                int count = 0;
+                                foreach (var p in newProducts)
+                                {
+                                    if (count % 3 == 0)
+                                    {
+                                        @:<div class="product-total-2">
+                                        }
+
+                                        <div class="single-most-product bd mb-18">
+                                            <div class="most-product-img">
+                                                <a href="/@p.Category.UrlFriendly/@p.UrlFriendly"><img src="~/Image/@p.ImageCover" style="width:80px;height:110px" class="center" alt="book" /></a>
+                                            </div>
+                                            <div class="most-product-content">
+                                                <div class="product-rating">
+                                                    <ul>
+                                                        <li><a href="#"><i class="fa fa-star"></i></a></li>
+                                                        <li><a href="#"><i class="fa fa-star"></i></a></li>
+                                                        <li><a href="#"><i class="fa fa-star"></i></a></li>
+                                                        <li><a href="#"><i class="fa fa-star"></i></a></li>
+                                                        <li><a href="#"><i class="fa fa-star"></i></a></li>
+                                                    </ul>
+                                                </div>
+                                                <h4><a href="/@p.Category.UrlFriendly/@p.UrlFriendly">@p.ProductName</a></h4>
+                                                <div class="product-price">
+                                                    <ul>
+                                                        <li>@String.Format("{0:0,0 VNĐ}", p.PromotionPrice)</li>
+                                                        <li class="old-price">@String.Format("{0:0,0 VNĐ}", p.Price)</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        count++;
+                                        if (count % 3 == 0)
+                                        {
+                                        @:</div>
+                                    }
+                                }
+                            }
+
+                        </div>
+                    </div>
+
+                    <div class="left-title-2 mb-30">
+                        <h2>Compare Products</h2>
+                        <p>You have no items to compare.</p>
+                    </div>
+                    <div class="left-title-2">
+                        <h2>My Wish List</h2>
+                        <p>You have no items in your wish list.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Modal-->
+<div class="modal fade" id="productModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">x</span></button>
+            </div>
+            <div class="modal-body modalBody">
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script>
+        var action = 1;
+        var commentID = 0;
+        var productID=@Model.ProductId;
+        $(function () {
+           //increasing view count
+            
+            $.ajax({
+                url: "/Products/IncreaseViewCount",
+                type: "POST",
+                data: {
+                    productID: productID
+                },
+                success: function (data) {
+
+                }
+            });
+
+            $.ajax({
+                url: "/Products/GetComments",
+                type: "GET",
+                data: {
+                    productID: productID
+                },
+                success: function (data) {
+                    $("#comments").html(data);
+                }
+            });
+
+
+            $(".quickViewModal").on("click", function () {
+                var id = $(this).data("id");
+                $.ajax({
+                    url: "/Products/Detail",
+                    type: "GET",
+                    data: {
+                        id: id
+                    },
+                    success: function (data) {
+                        $(".modalBody").html("");
+                        $(".modalBody").html(data);
+                    },
+                    error: function (data) {
+                        alert("error");
+
+                    }
+                });
+            });
+        });
+
+        $(".btnSendComment").click(function () {
+            let productID = $(this).data("id");
+            let context = $("#writeComment").val().trim();
+            if (context.length > 0) {
+                if (action == 2) handleEditComment(context);
+                else {
+                    //Add comment
+                    $.ajax({
+                        url: "/Products/AddComment",
+                        type: "POST",
+                        data: {
+                            ProductID: productID,
+                            Context: context
+                            
+                        },
+                        success: function (data) {
+                            if (data == "error") {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Lỗi',
+                                    text: 'Đã xảy ra lỗi. Xin vui lòng thử lại sau!',
+                                    showConfirmButton: false,
+                                    timer: 2000
+                                });
+                            }
+                            else {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Thành công',
+                                    text: 'Thêm bình luận thành công!',
+                                    showConfirmButton: false,
+                                    timer: 2000
+                                });
+                                $("#writeComment").val("");
+                                $("#comments").html("");
+                                $("#comments").html(data);
+                            }
+                        },
+                        error: function (data) {
+                            alert("error");
+
+                        }
+                    });
+                }
+            }
+        })
+        $(".btnCancel").click(function () {
+            action = 1;
+            $(".btnCancel").css("display", "none");
+            $("#writeComment").val("");
+        })
+
+        function Delete(id) {
+            Swal.fire({
+                html: '<h2>Bạn có chắn muốn xóa bình luận này không?</h2>',
+                text: "Bạn không thể hoàn tác!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Đúng, xóa.!'
+            }).then((result) => {
+                if (result.value) {
+                    $.ajax({
+                        url: "/Products/DeleteComment",
+                        type: "POST",
+                        data: {
+                            CommentID: id,
+                            ProductID: productID
+                        },
+                        success: function (data) {
+                            if (data == "error") {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Lỗi',
+                                    text: 'Đã xảy ra lỗi. Xin vui lòng thử lại sau!',
+                                    showConfirmButton: false,
+                                    timer: 2000
+                                });
+                            }
+                            else {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Thành công',
+                                    text: 'Xóa bình luận thành công!',
+                                    showConfirmButton: false,
+                                    timer: 2000
+                                });
+                                $("#writeComment").val("");
+                                $("#comments").html("");
+                                $("#comments").html(data);
+                                $(".btnCancel").css("display", "none");
+                            }
+                        },
+                        error: function (data) {
+                            alert("error");
+
+                        }
+                    });
+                }
+            });
+            
+       }
+        function Edit(context, id) {
+            action = 2;
+            commentID = id;
+            $(".btnCancel").css("display", "inline");
+            $("#writeComment").val(context);
+        }
+        function handleEditComment(context) {
+            $.ajax({
+                url: "/Products/EditComment",
+                type: "POST",
+                data: {
+                    CommentID: commentID,
+                    Context: context,
+                    ProductID: productID
+                },
+                success: function (data) {
+                    if (data == "error") {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Lỗi',
+                            text: 'Đã xảy ra lỗi. Xin vui lòng thử lại sau!',
+                            showConfirmButton: false,
+                            timer: 2000
+                        });
+                    }
+                    else {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Thành công',
+                            text: 'Cập nhật bình luận thành công!',
+                            showConfirmButton: false,
+                            timer: 2000
+                        });
+                        action = 1;
+                        $("#writeComment").val("");
+                        $("#comments").html("");
+                        $("#comments").html(data);
+                        $(".btnCancel").css("display", "none");
+                    }
+                },
+                error: function (data) {
+                    alert("error");
+
+                }
+            });
+        }
+    </script>
+
+}
+<!-- product-main-area-end -->
