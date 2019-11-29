@@ -61,7 +61,7 @@
             $(".quickViewModal").on("click", function () {
                 var id = $(this).data("id");
                 $.ajax({
-                    url: "/san-pham/chi-tiet/" + id,
+                    url: "/chi-tiet/" + id,
                     type: "GET",
                     success: function (data) {
                         $(".modalBody").html("");

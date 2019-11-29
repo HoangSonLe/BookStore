@@ -91,7 +91,7 @@
                                         </div>
                                         <div class="product-details text-center">
                                             <div class="divAreaContent">
-                                                <a href="#">@p.ProductName</a>
+                                                <a asp-action="DetailPage" asp-route-loai="@p.Category.UrlFriendly" asp-route-hanghoa="@p.UrlFriendly">@p.ProductName</a>
                                             </div>
                                             <div class="product-price">
                                                 <ul>
@@ -165,7 +165,7 @@
             $(".quickViewModal").on("click", function () {
                 var id = $(this).data("id");
                 $.ajax({
-                    url: "/san-pham/chi-tiet/"+id,
+                    url: "/chi-tiet/"+id,
                     type: "GET",
                     success: function (data) {
                         $(".modalBody").html("");

@@ -142,7 +142,7 @@
                             <!-- single-product-start -->
                             <div class="product-wrapper">
                                 <div class=" text-center">
-                                    <a href="/@p.Category.UrlFriendly/@p.UrlFriendly">
+                                    <a asp-action="DetailPage" asp-route-loai="@p.Category.UrlFriendly" asp-route-hanghoa="@p.UrlFriendly">
                                         <div style="text-align:center">
                                             <img src="/Image/@p.ImageCover" style="width:160px;height:220px" class="center" alt="book" />
                                         </div>
@@ -159,16 +159,7 @@
                                     </div>
                                 </div>
                                 <div class="product-details text-center">
-                                    <div class="product-rating">
-                                        <ul>
-                                            <li><a href="#"><i class="fa fa-star"></i></a></li>
-                                            <li><a href="#"><i class="fa fa-star"></i></a></li>
-                                            <li><a href="#"><i class="fa fa-star"></i></a></li>
-                                            <li><a href="#"><i class="fa fa-star"></i></a></li>
-                                            <li><a href="#"><i class="fa fa-star"></i></a></li>
-                                        </ul>
-                                    </div>
-                                    <h4><a href="/@p.Category.UrlFriendly/@p.UrlFriendly">@p.ProductName</a></h4>
+                                    <h4><a asp-action="DetailPage" asp-route-loai="@p.Category.UrlFriendly" asp-route-hanghoa="@p.UrlFriendly">@p.ProductName</a></h4>
                                     <div class="product-price">
                                         <ul>
                                             <li style="font-family:Arial; font-weight:normal;">@String.Format("{0:0,0 VNĐ}", p.PromotionPrice)</li>
@@ -178,11 +169,11 @@
                                 </div>
                                 <div class="product-link">
                                     <div class="product-button">
-                                        <a href="#" title="Add to cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
+                                        <a  onclick="onClickAddToCart(@p.ProductId,1)" title="Add to cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
                                     </div>
                                     <div class="add-to-link">
                                         <ul>
-                                            <li><a href="/@p.Category.UrlFriendly/@p.UrlFriendly" title="Details"><i class="fa fa-external-link"></i></a></li>
+                                            <li><a asp-action="DetailPage" asp-route-loai="@p.Category.UrlFriendly" asp-route-hanghoa="@p.UrlFriendly" title="Details"><i class="fa fa-external-link"></i></a></li>
                                         </ul>
                                     </div>
                                 </div>
@@ -213,19 +204,10 @@
 
                                         <div class="single-most-product bd mb-18">
                                             <div class="most-product-img">
-                                                <a href="/@p.Category.UrlFriendly/@p.UrlFriendly"><img src="~/Image/@p.ImageCover" style="width:80px;height:110px" class="center" alt="book" /></a>
+                                                <a asp-action="DetailPage" asp-route-loai="@p.Category.UrlFriendly" asp-route-hanghoa="@p.UrlFriendly"><img src="~/Image/@p.ImageCover" style="width:80px;height:110px" class="center" alt="book" /></a>
                                             </div>
                                             <div class="most-product-content">
-                                                <div class="product-rating">
-                                                    <ul>
-                                                        <li><a href="#"><i class="fa fa-star"></i></a></li>
-                                                        <li><a href="#"><i class="fa fa-star"></i></a></li>
-                                                        <li><a href="#"><i class="fa fa-star"></i></a></li>
-                                                        <li><a href="#"><i class="fa fa-star"></i></a></li>
-                                                        <li><a href="#"><i class="fa fa-star"></i></a></li>
-                                                    </ul>
-                                                </div>
-                                                <h4><a href="/@p.Category.UrlFriendly/@p.UrlFriendly">@p.ProductName</a></h4>
+                                                <h4><a asp-action="DetailPage" asp-route-loai="@p.Category.UrlFriendly" asp-route-hanghoa="@p.UrlFriendly">@p.ProductName</a></h4>
                                                 <div class="product-price">
                                                     <ul>
                                                         <li>@String.Format("{0:0,0 VNĐ}", p.PromotionPrice)</li>
@@ -243,15 +225,6 @@
                             }
 
                         </div>
-                    </div>
-
-                    <div class="left-title-2 mb-30">
-                        <h2>Compare Products</h2>
-                        <p>You have no items to compare.</p>
-                    </div>
-                    <div class="left-title-2">
-                        <h2>My Wish List</h2>
-                        <p>You have no items in your wish list.</p>
                     </div>
                 </div>
             </div>
@@ -304,11 +277,8 @@
             $(".quickViewModal").on("click", function () {
                 var id = $(this).data("id");
                 $.ajax({
-                    url: "/Products/Detail",
+                    url: "/chi-tiet/" + id,
                     type: "GET",
-                    data: {
-                        id: id
-                    },
                     success: function (data) {
                         $(".modalBody").html("");
                         $(".modalBody").html(data);

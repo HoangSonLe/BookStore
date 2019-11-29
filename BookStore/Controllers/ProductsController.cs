@@ -24,7 +24,7 @@ namespace BookStore.Controllers
         }
         [AllowAnonymous]
         // GET: Products
-        [Route("san-pham/{currentCategory}")]
+        [Route("{currentCategory}")]
         public async Task<IActionResult> Index(string sortOrder,int? pageNumber, string currentCategory)
         {
             ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
@@ -67,7 +67,7 @@ namespace BookStore.Controllers
 
         [AllowAnonymous]
         // GET: Products/Details/5
-        [Route("san-pham/chi-tiet/{id}")]
+        [Route("chi-tiet/{id}")]
         public IActionResult Detail(int? id)
         {
             if (id == null)
