@@ -23,7 +23,7 @@
                     if (cus.CustomerId == comment.CustomerID)
                     {
                         //This comment belongs to this customer who has logged in this account
-                        <a href="#edit" onclick="Edit('@comment.Context', @comment.ID)" class="o-scroll-up">Chỉnh sửa</a>@:&nbsp;
+                        <a href="#comment" onclick="Edit('@comment.Context', @comment.ID)" class="o-scroll-up">Chỉnh sửa</a>@:&nbsp;
                         <a style="cursor:pointer" onclick="Delete(@comment.ID)">Xóa</a>
                     }
                 }
@@ -32,7 +32,7 @@
                     if (emp.EmployeeId == comment.EmployeeID)
                     {
                         //This comment belongs to this employee who has logged in this account
-                        <a href="#edit" onclick="Edit('@comment.Context',@comment.ID)" class="o-scroll-up">Chỉnh sửa</a>@:&nbsp;
+                        <a href="#comment" onclick="Edit('@comment.Context',@comment.ID)" class="o-scroll-up">Chỉnh sửa</a>@:&nbsp;
                         <a style="cursor:pointer" onclick="Delete(@comment.ID)">Xóa</a>
                     }
                 }

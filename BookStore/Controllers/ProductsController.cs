@@ -98,6 +98,7 @@ namespace BookStore.Controllers
                 var product = _context.Product
                             .Include(x => x.ProductImages)
                             .Include(x => x.Publisher)
+                            .Include(x=>x.Category)
                             .Where(p => p.CategoryId == CateID && p.UrlFriendly == hanghoa && p.Status==true)
                             .AsNoTracking()
                             .SingleOrDefault();
@@ -116,7 +117,7 @@ namespace BookStore.Controllers
                                 .OrderByDescending(x => x.ProductId)
                                 .Take(6)
                                 .ToListAsync();
-                ViewBag.relative = relativeProduct;
+                ViewBag.relativeProducts = relativeProduct;
                 ViewBag.newProducts = newProducts;
                 return View(product);
             }
@@ -161,8 +162,8 @@ namespace BookStore.Controllers
                             
         }
 
-        [AllowAnonymous]
         [HttpPost]
+        [AllowAnonymous]
         public IActionResult AddComment(int ProductID, string Context)
         {
 
@@ -171,16 +172,23 @@ namespace BookStore.Controllers
             {
                 Customer cus = HttpContext.Session.GetObject<Customer>("Customer");
                 Employee emp = HttpContext.Session.GetObject<Employee>("Employee");
-                    Comment comment = new Comment
-                    {
-                        ProductId = ProductID,
-                        CustomerId = (cus != null) ? cus.CustomerId : emp.EmployeeId,
-                        Context = Context,
-                        CreatedDate = DateTime.Now,
-                        Status = 1
-                    };
-                    _context.Comment.Add(comment);
-                    _context.SaveChanges();
+                Comment comment = new Comment
+                {
+                    ProductId = ProductID,
+                    Context = Context,
+                    CreatedDate = DateTime.Now,
+                    Status = 1
+                };
+                if (cus != null)
+                { 
+                    comment.CustomerId = cus.CustomerId;
+                }
+                else
+                {
+                    comment.EmployeeId = emp.EmployeeId;
+                }
+                _context.Comment.Add(comment);
+                _context.SaveChanges();
                 
                 return GetComments(ProductID);
             }
@@ -217,7 +225,8 @@ namespace BookStore.Controllers
             }
             return Content("error");
         }
-        public static string TimeAgo(DateTime dt)
+
+        public string TimeAgo(DateTime dt)
         {
             if (dt > DateTime.Now)
                 return "about sometime from now";
