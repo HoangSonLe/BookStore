@@ -69,6 +69,14 @@ namespace BookStore.Controllers
             return View(order);
         }
 
+        [AllowAnonymous]
+        public IActionResult PaymentFailed()
+        {
+            var list = _context.Product.ToList();
+            IEnumerable<Product> model = list.TakeLast(10);
+            return View(model);
+        }
+
         public void DirectPay(Orders order, List<CartItem> CartItems)
         {
             order.CreatedDate = DateTime.Now;
@@ -89,7 +97,7 @@ namespace BookStore.Controllers
                 _context.SaveChanges();
             }
         }
-
+        [AllowAnonymous]
         public IActionResult EmptyCart()
         {
             var list = _context.Product.ToList();
