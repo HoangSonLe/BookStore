@@ -1,0 +1,201 @@
+﻿@using BookStore.ModelViews;
+
+@model Orders
+@{
+
+    ViewData["Breadcrumbs"] = "Thanh Toán";
+    ViewData["Title"] = "Thanh Toán";
+    IEnumerable<CartItem> cartItems = ViewBag.cartItems as List<CartItem>;
+}
+
+<!-- breadcrumbs-area-start -->
+@await Html.PartialAsync("_Breadcrumbs")
+<!-- breadcrumbs-area-end -->
+
+<!-- checkout-area-start -->
+<div class="checkout-area mb-70">
+    <div class="container">
+        <div class="row">
+            <form id="InfoOrder">
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                    <div class="checkbox-form">
+                        <h3>Chi tiết thanh toán</h3>
+                        <div class="row infoOrder">
+                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 ">
+                                <div class="checkout-form-list">
+                                    <label>Họ và Tên <span class="required">*</span></label>
+                                    <input type="text" asp-for="Name" value="@Model.Name" placeholder="" />
+                                    <label id="errorName" style="color:red;display:none ">Vui lòng nhập họ tên người nhận</label>
+                                </div>
+                            </div>
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                <div class="checkout-form-list">
+                                    <label>Địa chỉ nhận hàng <span class="required">*</span></label>
+                                    <input type="text" asp-for="Address" value="@Model.Address" />
+                                    <label id="errorAddress" style="color:red;display:none ">Vui lòng nhập địa chỉ nhận hàng</label>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                <div class="checkout-form-list">
+                                    <label>Địa chỉ Email</label>
+                                    <input type="email" asp-for="Email" value="@Model.Email" />
+                                    <label id="errorEmail" style="color:red;display:none ">Địa chỉ Email không hợp lệ</label>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                <div class="checkout-form-list">
+                                    <label>Số điện thoại  <span class="required">*</span></label>
+                                    <input type="text" asp-for="Phone" value="@Model.Phone" />
+                                    <label id="errorPhone" style="color:red;display:none ">Vui lòng nhập đúng số điện thoại người nhận hàng</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="different-address">
+                            <div class="order-notes">
+                                <div class="checkout-form-list">
+                                    <label>Ghi chú đơn hàng</label>
+                                    <textarea asp-for="Comment" placeholder="Ghi chú về đơn hàng của bạn, ví dụ: ghi chú đặc biệt để giao hàng." rows="10" cols="30" id="checkout-mess"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                    <div class="your-order">
+                        <h3>Hóa đơn của bạn</h3>
+                        <div class="your-order-table table-responsive">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th class="product-name">Sản phẩm</th>
+                                        <th class="product-quantity">Số lượng</th>
+                                        <th class="product-total">Số tiền</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{
+                                        int? amount = 0;
+                                        int? qty = 0;
+                                        double ship = 0;
+                                    }
+                                    @foreach (var item in cartItems)
+                                    {
+                                        amount += item.Price * item.QuantityProduct;
+                                        qty += item.QuantityProduct;
+                                        <tr class="cart_item">
+                                            <td class="product-name">
+                                                @item.ProductName
+                                            </td>
+                                            <td>
+                                                @item.QuantityProduct
+                                            </td>
+                                            <td class="product-total">
+                                                <span class="amount">@String.Format("{0:0,0} VNĐ", item.Price)</span>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                                <tfoot>
+                                    <tr class="cart-subtotal">
+                                        <th>Thành tiền</th>
+                                        <td><strong class="product-quantity">@qty</strong></td>
+                                        <td><span class="amount">@String.Format("{0:0,0} VNĐ", amount)</span></td>
+                                    </tr>
+                                    <tr class="shipping">
+                                        <th>Phí Vận chuyển</th>
+
+                                        @if (amount < 100000)
+                                        {
+                                            <td colspan="2">
+                                                <ul>
+                                                    <li>
+                                                        <label>Miễn phí vận chuyển</label>
+                                                    </li>
+                                                </ul>
+                                            </td>
+                                        }
+                                        else if (amount >= 100000 && amount <= 500000)
+                                        {
+                                            ship = 12000;
+                                            <td colspan="2">
+                                                <ul>
+                                                    <li>
+                                                        <label>@String.Format("{0:0,0} VNĐ", ship)</label>
+                                                    </li>
+                                                </ul>
+                                            </td>
+                                        }
+                                        else
+                                        {
+                                            ship = 20000;
+                                            <td colspan="2">
+                                                <ul>
+                                                    <li>
+                                                        <label>@String.Format("{0:0,0} VNĐ", ship)</label>
+                                                    </li>
+                                                </ul>
+                                            </td>
+                                        }
+
+                                    </tr>
+                                    <tr class="order-total">
+                                        <th>Tổng tiền</th>
+                                        <td colspan="2" class="product-total">
+                                            <strong><span class="amount">@String.Format("{0:0,0} VNĐ", amount + ship)</span></strong>
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                        <div class="payment-method">
+                            <div class="payment-accordion">
+                                <div class="collapses-group">
+                                    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                                        <div class="panel panel-default">
+                                            <div role="tab" id="headingOne">
+                                                <h4 class="panel-title">
+                                                    <input type="radio" checked name="PayMethod" value="DirectPay" id="ship-box">
+                                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                                        Thanh toán khi nhận hàng
+                                                    </a>
+                                                </h4>
+                                            </div>
+                                        </div>
+                                        <div class="panel panel-default">
+                                            <div role="tab" id="headingTwo">
+                                                <h4 class="panel-title">
+                                                    <input type="radio" name="PayMethod" value="OnePay" id="ship-box">
+                                                    <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                                        OnePay <img src="img/3.png" alt="payment" />
+                                                    </a>
+                                                </h4>
+                                            </div>
+                                        </div>
+                                        <div class="panel panel-default">
+                                            <div role="tab" id="headingThree">
+                                                <h4 class="panel-title">
+                                                    <input type="radio" name="PayMethod" value="Paypal" id="ship-box">
+                                                    <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                                        PayPal <img src="img/2.png" alt="payment" />
+                                                    </a>
+                                                </h4>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="order-button-payment">
+                                <input type="submit" id="Payment" value="Thanh toán" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- checkout-area-end -->
+@section Scripts{
+
+    <script src="~/js/jsScriptByMySelf/Checkout.js"></script>
+}

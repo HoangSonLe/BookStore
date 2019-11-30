@@ -1,0 +1,145 @@
+﻿@model Orders
+@{
+    ViewData["Title"] = "Home Page";
+
+    ViewData["Breadcrumbs"] = "Hóa đơn";
+}
+@using BookStore.ModelViews;
+@{
+    IEnumerable<CartItem> cartItems = ViewBag.cartItems as List<CartItem>;
+}
+
+
+@await Html.PartialAsync("_Breadcrumbs")
+
+@{
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+    <script>
+        Swal.fire({
+            icon: 'success',
+            title: 'Thành công',
+            text: "Tạo đơn hàng thành công",
+            showConfirmButton: false,
+            timer: 1500
+        });
+    </script>
+}
+<div class="invoice-box">
+    <table cellpadding="0" cellspacing="0">
+        <tr class="top">
+            <td colspan="3">
+                <table>
+                    <tr>
+                        <td class="title">
+                            <img src="~/img/logo/logo.png" style="width:100%; max-width:300px;">
+                        </td>
+
+                        <td colspan="2">
+                            Hóa đơn #: @Model.OrderId<br>
+                            Ngày tạo: @Model.CreatedDate<br>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+
+        <tr class="information">
+            <td colspan="3">
+                <table>
+                    <tr>
+
+                        <td>
+                            <h3>Nhà Sách Koparion</h3><br>
+                            <label>Địa chỉ:</label><br /> 240 An Duong Vuong F9 D5 Tp HCM VietNam<br />
+                            <label>Số điện thoại:</label><br /> 0123 4567 890<br />
+                            <label>Email:</label><br /> sieunhangaooneplus@gmail.com
+                        </td>
+                        <td colspan="2">
+                            <label style="text-align: left; align-content: flex-start">Họ tên người nhận:</label><br /> @Model.Name<br />
+                            <label style="text-align: left;">Địa chỉ người nhận:</label><br /> @Model.Address<br />
+                            <label style="text-align: left;">Số điện thoại người nhận:</label><br /> @Model.Phone
+                            @if (Model.Email != null)
+                            {
+                                <br /><label style="text-align: left;">Email người nhận:</label><br /> @Model.Email
+                            }
+                        </td>
+
+                    </tr>
+                </table>
+            </td>
+        </tr>
+
+        <tr class="heading">
+            <td colspan="2">
+                Phương Thức Thanh Toán
+            </td>
+            <td>
+                Trạng thái
+            </td>
+        </tr>
+
+        <tr class="details">
+            <td colspan="2">
+                @if (Model.PayMethod == "DirectPay")
+                {
+                    <p>Thanh toán sau khi nhận hàng</p>
+                }
+                else if (Model.PayMethod == "Paypal")
+                {
+                    <p>Thanh toán bằng paypal</p>
+                }
+                else if (Model.PayMethod == "OnePay")
+                {
+                    <p>Thanh toán bằng OnePay</p>
+                }
+            </td>
+            <td>
+                @if (Model.PayMethod == "DirectPay")
+                {
+                    <span class="badge badge-primary" style="background-color:gold;">Chưa thanh toán</span>
+                }
+                else
+                {
+                    <span class="badge badge-success" style="background-color:chartreuse;">Đã thanh toán</span>
+
+                }
+            </td>
+        </tr>
+
+        <tr class="heading">
+            <td colspan="1">
+                Hàng hóa
+            </td>
+            <td style="width: 200px; text-align: left">
+                Số lượng
+            </td>
+            <td style="width: 120px; text-align: left">
+                Giá tiền
+            </td>
+        </tr>
+        @foreach (var item in cartItems)
+        {
+            <tr class="item">
+                <td>
+                    @item.ProductName
+                </td>
+                <td style="width: 200px; text-align: left">
+                    @item.QuantityProduct
+                </td>
+                <td style="width: 120px; text-align: center">
+                    @(String.Format("{0:0,0} VNĐ", item.Price * item.QuantityProduct))
+                </td>
+            </tr>
+        }
+
+
+        <tr class="total">
+
+            <th colspan="3" style="text-align: right">
+                Total: @String.Format("{0:0,0} VNĐ", Model.Total)
+            </th>
+        </tr>
+    </table>
+</div>
+<br />
+<br />

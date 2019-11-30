@@ -34,13 +34,14 @@ namespace BookStore.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Server=.;Database=MyDB;Trusted_Connection=True;");
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
+                optionsBuilder.UseSqlServer("Server=.\\SQLExpress;Database=MyDB;Trusted_Connection=True;");
             }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.HasAnnotation("ProductVersion", "2.2.4-servicing-10062");
+            modelBuilder.HasAnnotation("ProductVersion", "2.2.6-servicing-10079");
 
             modelBuilder.Entity<About>(entity =>
             {
@@ -73,19 +74,19 @@ namespace BookStore.Models
                     .WithMany(p => p.Comment)
                     .HasForeignKey(d => d.CustomerId)
                     .OnDelete(DeleteBehavior.Cascade)
-                    .HasConstraintName("FK__Comment__Custome__2D27B809");
+                    .HasConstraintName("FK__Comment__Custome__36B12243");
 
                 entity.HasOne(d => d.Employee)
                     .WithMany(p => p.Comment)
                     .HasForeignKey(d => d.EmployeeId)
                     .OnDelete(DeleteBehavior.Cascade)
-                    .HasConstraintName("FK__Comment__Employe__2E1BDC42");
+                    .HasConstraintName("FK__Comment__Employe__37A5467C");
 
                 entity.HasOne(d => d.Product)
                     .WithMany(p => p.Comment)
                     .HasForeignKey(d => d.ProductId)
                     .OnDelete(DeleteBehavior.Cascade)
-                    .HasConstraintName("FK__Comment__Product__2F10007B");
+                    .HasConstraintName("FK__Comment__Product__38996AB5");
             });
 
             modelBuilder.Entity<Contact>(entity =>
@@ -132,7 +133,7 @@ namespace BookStore.Models
                 entity.HasOne(d => d.RoleNavigation)
                     .WithMany(p => p.Customer)
                     .HasForeignKey(d => d.Role)
-                    .HasConstraintName("FK__Customer__Role__300424B4");
+                    .HasConstraintName("FK__Customer__Role__398D8EEE");
             });
 
             modelBuilder.Entity<Employee>(entity =>
@@ -174,12 +175,12 @@ namespace BookStore.Models
                 entity.HasOne(d => d.Manager)
                     .WithMany(p => p.InverseManager)
                     .HasForeignKey(d => d.ManagerId)
-                    .HasConstraintName("FK__Employee__Manage__30F848ED");
+                    .HasConstraintName("FK__Employee__Manage__3A81B327");
 
                 entity.HasOne(d => d.RoleNavigation)
                     .WithMany(p => p.Employee)
                     .HasForeignKey(d => d.Role)
-                    .HasConstraintName("FK__Employee__Role__31EC6D26");
+                    .HasConstraintName("FK__Employee__Role__3B75D760");
             });
 
             modelBuilder.Entity<Feedback>(entity =>
@@ -210,7 +211,7 @@ namespace BookStore.Models
                     .WithMany(p => p.Feedback)
                     .HasForeignKey(d => d.EmployeeId)
                     .OnDelete(DeleteBehavior.Cascade)
-                    .HasConstraintName("FK__Feedback__Employ__32E0915F");
+                    .HasConstraintName("FK__Feedback__Employ__3C69FB99");
             });
 
             modelBuilder.Entity<OrderDetail>(entity =>
@@ -225,18 +226,18 @@ namespace BookStore.Models
                     .WithMany(p => p.OrderDetail)
                     .HasForeignKey(d => d.OrderId)
                     .OnDelete(DeleteBehavior.Cascade)
-                    .HasConstraintName("FK__OrderDeta__Order__33D4B598");
+                    .HasConstraintName("FK__OrderDeta__Order__3D5E1FD2");
 
                 entity.HasOne(d => d.Product)
                     .WithMany(p => p.OrderDetail)
                     .HasForeignKey(d => d.ProductId)
-                    .HasConstraintName("FK__OrderDeta__Produ__34C8D9D1");
+                    .HasConstraintName("FK__OrderDeta__Produ__3E52440B");
             });
 
             modelBuilder.Entity<Orders>(entity =>
             {
                 entity.HasKey(e => e.OrderId)
-                    .HasName("PK__Orders__C3905BAF0834D60E");
+                    .HasName("PK__Orders__C3905BAF1A14E395");
 
                 entity.Property(e => e.OrderId).HasColumnName("OrderID");
 
@@ -248,6 +249,10 @@ namespace BookStore.Models
 
                 entity.Property(e => e.CustomerId).HasColumnName("CustomerID");
 
+                entity.Property(e => e.Email)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
                 entity.Property(e => e.EmployeeId).HasColumnName("EmployeeID");
 
                 entity.Property(e => e.Name).HasMaxLength(50);
@@ -255,6 +260,10 @@ namespace BookStore.Models
                 entity.Property(e => e.PayMethod)
                     .HasMaxLength(50)
                     .HasDefaultValueSql("(N'Cash')");
+
+                entity.Property(e => e.Phone)
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
 
                 entity.Property(e => e.ShipDate).HasColumnType("datetime");
 
@@ -265,13 +274,13 @@ namespace BookStore.Models
                 entity.HasOne(d => d.Customer)
                     .WithMany(p => p.Orders)
                     .HasForeignKey(d => d.CustomerId)
-                    .HasConstraintName("FK__Orders__Customer__35BCFE0A");
+                    .HasConstraintName("FK__Orders__Customer__3F466844");
 
                 entity.HasOne(d => d.Employee)
                     .WithMany(p => p.Orders)
                     .HasForeignKey(d => d.EmployeeId)
                     .OnDelete(DeleteBehavior.Cascade)
-                    .HasConstraintName("FK__Orders__Employee__36B12243");
+                    .HasConstraintName("FK__Orders__Employee__403A8C7D");
             });
 
             modelBuilder.Entity<Product>(entity =>
@@ -302,19 +311,19 @@ namespace BookStore.Models
                     .WithMany(p => p.Product)
                     .HasForeignKey(d => d.CategoryId)
                     .OnDelete(DeleteBehavior.Cascade)
-                    .HasConstraintName("FK__Product__Categor__37A5467C");
+                    .HasConstraintName("FK__Product__Categor__412EB0B6");
 
                 entity.HasOne(d => d.Publisher)
                     .WithMany(p => p.Product)
                     .HasForeignKey(d => d.PublisherId)
                     .OnDelete(DeleteBehavior.Cascade)
-                    .HasConstraintName("FK__Product__Publish__38996AB5");
+                    .HasConstraintName("FK__Product__Publish__4222D4EF");
             });
 
             modelBuilder.Entity<ProductCategory>(entity =>
             {
                 entity.HasKey(e => e.CategoryId)
-                    .HasName("PK__ProductC__19093A2BDBB06A92");
+                    .HasName("PK__ProductC__19093A2B22AA2996");
 
                 entity.Property(e => e.CategoryId).HasColumnName("CategoryID");
 
@@ -329,7 +338,7 @@ namespace BookStore.Models
                 entity.HasOne(d => d.Parent)
                     .WithMany(p => p.InverseParent)
                     .HasForeignKey(d => d.ParentId)
-                    .HasConstraintName("FK__ProductCa__Paren__398D8EEE");
+                    .HasConstraintName("FK__ProductCa__Paren__4316F928");
             });
 
             modelBuilder.Entity<ProductImages>(entity =>
@@ -345,7 +354,7 @@ namespace BookStore.Models
                 entity.HasOne(d => d.Product)
                     .WithMany(p => p.ProductImages)
                     .HasForeignKey(d => d.ProductId)
-                    .HasConstraintName("FK__ProductIm__Produ__3A81B327");
+                    .HasConstraintName("FK__ProductIm__Produ__440B1D61");
             });
 
             modelBuilder.Entity<ProductLike>(entity =>
@@ -362,19 +371,19 @@ namespace BookStore.Models
                     .WithMany(p => p.ProductLike)
                     .HasForeignKey(d => d.CustomerId)
                     .OnDelete(DeleteBehavior.Cascade)
-                    .HasConstraintName("FK__ProductLi__Custo__3B75D760");
+                    .HasConstraintName("FK__ProductLi__Custo__44FF419A");
 
                 entity.HasOne(d => d.Product)
                     .WithMany(p => p.ProductLike)
                     .HasForeignKey(d => d.ProductId)
                     .OnDelete(DeleteBehavior.Cascade)
-                    .HasConstraintName("FK__ProductLi__Produ__3C69FB99");
+                    .HasConstraintName("FK__ProductLi__Produ__45F365D3");
             });
 
             modelBuilder.Entity<Publishers>(entity =>
             {
                 entity.HasKey(e => e.PublisherId)
-                    .HasName("PK__Publishe__4C657E4B6D5B84B6");
+                    .HasName("PK__Publishe__4C657E4B2F10007B");
 
                 entity.Property(e => e.PublisherId).HasColumnName("PublisherID");
 
@@ -396,7 +405,7 @@ namespace BookStore.Models
             modelBuilder.Entity<Roles>(entity =>
             {
                 entity.HasKey(e => e.RoleId)
-                    .HasName("PK__Roles__8AFACE3AB4311356");
+                    .HasName("PK__Roles__8AFACE3A32E0915F");
 
                 entity.Property(e => e.RoleName).HasMaxLength(250);
             });
