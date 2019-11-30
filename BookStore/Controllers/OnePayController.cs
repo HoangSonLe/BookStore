@@ -64,11 +64,6 @@ namespace BookStore.Controllers
             // Thong tin them ve khach hang. De trong neu khong co thong tin
             conn.AddDigitalOrderField("vpc_Customer_Phone", order.Phone);
             conn.AddDigitalOrderField("vpc_Customer_Email", order.Email);
-            //conn.AddDigitalOrderField("vpc_Customer_Id", "" + user.TaiKhoanId);
-
-            // Dia chi IP cua khach hang
-            //var ipAddress = _accessor.HttpContext.Connection.RemoteIpAddress.ToString();
-            //conn.AddDigitalOrderField("vpc_TicketNo", ipAddress);
 
             // Chuyen huong trinh duyet sang cong thanh toan
             string url = conn.Create3PartyQueryString();

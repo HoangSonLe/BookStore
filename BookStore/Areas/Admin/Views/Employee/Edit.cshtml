@@ -18,7 +18,7 @@
                         }
                         else
                         {
-                            <img id="image_upload_preview" src="~/img/Employee/@Model.Image" style="width: 200px; height: 200px;" class="avatar img-circle" alt="avatar">
+                            <img id="image_upload_preview" src="~/Image/Employee/@Model.Image" style="width: 200px; height: 200px;" class="avatar img-circle" alt="avatar">
                         }
 
                         <h6>Upload a different photo...</h6>
@@ -90,17 +90,17 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label>Active</label>
+                            <label>Kích hoạt</label>
                             <select class="form-control" asp-for="IsActive">
                                 @if (Model.IsActive == true)
                                 {
-                                    <option selected value="true">True</option>
-                                    <option value="false">False</option>
+                                    <option selected value="true">Đã kích hoạt</option>
+                                    <option value="false">Chưa kích hoạt</option>
                                 }
                                 else
                                 {
-                                    <option selected value="false">False</option>
-                                    <option value="true">True</option>
+                                    <option selected value="false">Chưa kích hoạt</option>
+                                    <option value="true">Đã kích hoạt</option>
                                 }
                             </select>
                         </div>
@@ -142,8 +142,8 @@
         </div>
     </div>
     <div class="modal-footer">
-        <button type="submit" data-id="@Model.EmployeeId" class="btn btn-primary btnEditSaveChange">Save Change</button>
-        <button type="reset" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        <button type="submit" data-id="@Model.EmployeeId" class="btn btn-primary btnEditSaveChange">Lưu</button>
+        <button type="reset" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
     </div>
 </form>
 

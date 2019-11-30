@@ -113,8 +113,8 @@ namespace BookStore.Controllers
                 },
                 RedirectUrls = new RedirectUrls()
                 {
-                    CancelUrl = "https://localhost:44300/Paypal/Fail",
-                    ReturnUrl = "https://localhost:44300/Paypal/Success"
+                    CancelUrl = "http://mybookstore.somee.com//Paypal/Fail",
+                    ReturnUrl = "http://mybookstore.somee.com//Paypal/Success"
                 },
                 Payer = new Payer()
                 {
@@ -169,10 +169,10 @@ namespace BookStore.Controllers
             return RedirectToAction("Invoice", "Checkout", order);
         }
 
-        public string Fail()
+        public IActionResult Fail()
         {
             //Tạo đơn hàng trong CSDL với trạng thái : Chưa thanh toán, phương thức:
-            return "Thanh Toán Thất Bại";
+            return RedirectToAction("PaymentFailed", "Checkout");
         }
     }
 }

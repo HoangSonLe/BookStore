@@ -155,8 +155,8 @@ namespace BookStore.Areas.Admin.Controllers
         private void MoveImage(string NameImage)
         {
             /*----Start Move file from one folder to another folder*/
-            var sourcePath = "wwwroot/img/Tmp/" + NameImage;
-            var destinationPath = "wwwroot/img/Customer/" + NameImage;
+            var sourcePath = "wwwroot/Image/TmpCustomer/" + NameImage;
+            var destinationPath = "wwwroot/Image/Customer/" + NameImage;
             if (System.IO.File.Exists(sourcePath))
             {
                 System.IO.File.Move(sourcePath, destinationPath);
@@ -164,7 +164,7 @@ namespace BookStore.Areas.Admin.Controllers
             /*----End Move file from one folder to another folder*/
 
             /*----Start Delete file from folder*/
-            var path = "wwwroot/img/Tmp/";
+            var path = "wwwroot/Image/TmpCustomer/";
             System.IO.DirectoryInfo di = new DirectoryInfo(path);
 
             foreach (FileInfo file in di.GetFiles())
