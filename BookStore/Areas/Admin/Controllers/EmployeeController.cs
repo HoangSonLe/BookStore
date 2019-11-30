@@ -93,7 +93,7 @@ namespace BookStore.Areas.Admin.Controllers
             {
                 return BadRequest();
             }
-            ViewData["RoleId"] = new SelectList(_context.Roles, "RoleId", "RoleName", id);
+            ViewBag.Role = _context.Roles.Find(id).RoleName;
             return PartialView(employee);
         }
         
