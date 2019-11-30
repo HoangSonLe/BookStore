@@ -216,6 +216,7 @@ $('#tableCustomers tbody').on('click', '.btnDelete', function () {
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
+        cancelButtonText: 'Hủy',
         confirmButtonText: 'Đúng, xóa.!'
     }).then((result) => {
         if (result.value) {
