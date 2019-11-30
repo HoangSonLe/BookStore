@@ -32,7 +32,7 @@ namespace BookStore.Controllers
             ViewData["PriceSortParm"] = sortOrder == "Price" ? "price_desc" : "Price";
 
             ViewData["CurrentCategory"] = !String.IsNullOrEmpty(currentCategory) ? currentCategory : "";
-            var myDBContext = _context.Product.Include(p => p.Category).Include(p => p.Publisher).AsQueryable();
+            var myDBContext = _context.Product.Include(p => p.Category).Include(p => p.Publisher).Where(p => p.Status == true).AsQueryable();
             switch (sortOrder)
             {
                 case "name_desc":
@@ -57,7 +57,7 @@ namespace BookStore.Controllers
             int pageSize = 12;
             if(currentCategory != null)
             {
-                myDBContext = myDBContext.Where(p => p.Category.UrlFriendly == currentCategory).AsNoTracking();
+                myDBContext = myDBContext.Where(p => p.Category.UrlFriendly == currentCategory).Where(p => p.Status == true).AsNoTracking();
             }
 
             //ViewBag.Category = from c in _context.ProductCategory where (c.UrlFriendly == currentCategory) select c.CategoryId; ;
@@ -110,12 +110,14 @@ namespace BookStore.Controllers
                 var relativeProduct = await _context.Product
                                      .Include(x => x.Category)
                                      .Where(p => p.ProductId != product.ProductId && (p.CategoryId == CateID || p.PublisherId == product.PublisherId))
+                                     .Where(p => p.Status == true)
                                      .AsNoTracking()
                                      .OrderByDescending(x=>x.ProductId)
                                      .Take(6)
                                      .ToListAsync();
                 var newProducts = await _context.Product
                                 .Include(x => x.Category)
+                                .Where(p => p.Status == true)
                                 .AsNoTracking()
                                 .OrderByDescending(x => x.ProductId)
                                 .Take(6)

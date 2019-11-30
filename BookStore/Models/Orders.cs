@@ -15,9 +15,9 @@ namespace BookStore.Models
         public int? EmployeeId { get; set; }
         public string Name { get; set; }
         public string Address { get; set; }
-        public string Email { get; set; }
-        public string Phone { get; set; }
         public string PayMethod { get; set; }
+        public string Phone { get; set; }
+        public string Email { get; set; }
         public string ShipMethod { get; set; }
         public double? ShipCost { get; set; }
         public string Comment { get; set; }

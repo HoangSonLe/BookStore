@@ -5,6 +5,13 @@
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="wwwroot\Image\ImageUser\**" />
+    <Content Remove="wwwroot\Image\ImageUser\**" />
+    <EmbeddedResource Remove="wwwroot\Image\ImageUser\**" />
+    <None Remove="wwwroot\Image\ImageUser\**" />
+  </ItemGroup>
+
 
   <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />
@@ -20,7 +27,12 @@
 
 
   <ItemGroup>
-    <Folder Include="wwwroot\Image\ImageUser\" />
+    <Folder Include="wwwroot\Image\Customer\" />
+    <Folder Include="wwwroot\Image\Employee\" />
+    <Folder Include="wwwroot\Image\TmpEmployee\" />
+    <Folder Include="wwwroot\Image\TmpCustomer\" />
+    <Folder Include="wwwroot\Image\Publisher\" />
+    <Folder Include="wwwroot\Image\Product\" />
   </ItemGroup>
 
 </Project>

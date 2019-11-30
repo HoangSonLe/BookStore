@@ -17,7 +17,7 @@
                             totalCart = totalCart + (float)p.QuantityProduct*p.Price;
                             <div class="single-cart">
                                 <div class="cart-img">
-                                    <a asp-action="DetailPage" asp-controller="Products" asp-route-id="@p.ProductId"><img src="~/Image/@p.ImageCover" alt="@p.ProductName" /></a>
+                                    <a asp-action="DetailPage" asp-controller="Products" asp-route-id="@p.ProductId"><img src="~/Image/Product/@p.ImageCover" alt="@p.ProductName" /></a>
                                 </div>
                                 <div class="cart-info">
                                     <h5><a asp-action="DetailPage" asp-controller="Products" asp-route-id="@p.ProductId">@p.ProductName</a></h5>

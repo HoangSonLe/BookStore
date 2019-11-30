@@ -139,7 +139,7 @@
                                 @if (Model.ImageCover != null)
                                 {
                                     <div class="form-group" style="display: inline-block;">
-                                        <img id="@Model.ProductId" onclick="viewImage(@Model.ProductId)" src="~/Image/@Model.ImageCover" alt="@Model.ImageCover" style="border:2px solid black; height:150px; width:150px;" />
+                                        <img id="@Model.ProductId" onclick="viewImage(@Model.ProductId)" src="~/Image/Product/@Model.ImageCover" alt="@Model.ImageCover" style="border:2px solid black; height:150px; width:150px;" />
                                         <a data-id="@Model.ImageCover " class="btn btn-danger btn-circle btnDeleteImageCover" style="position:relative; top:-70px; left:-20px;"><i class="fa fa-times"></i></a>
                                     </div>
                                 }
@@ -159,7 +159,7 @@
                                 @foreach (var p in ViewBag.ProductImages)
                                 {
                                     <div class="form-group" style="display: inline-block;">
-                                        <img id="@p.ProductImagesId" onclick="viewImage(@p.ProductImagesId)" src="~/Image/@p.ProductImage" alt="@p.ProductImage" style="border:2px solid black; height:150px; width:150px;" />
+                                        <img id="@p.ProductImagesId" onclick="viewImage(@p.ProductImagesId)" src="~/Image/Product/@p.ProductImage" alt="@p.ProductImage" style="border:2px solid black; height:150px; width:150px;" />
                                         <a data-id="@p.ProductImagesId " class="btn btn-danger btn-circle btnDeleteImage" style="position:relative; top:-70px; left:-20px;"><i class="fa fa-times"></i></a>
                                     </div>
                                 }

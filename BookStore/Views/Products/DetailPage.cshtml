@@ -40,14 +40,14 @@
                                 <ul class="slides">
                                     @{
                                         IEnumerable<ProductImages> images = Model.ProductImages;
-                                        <li data-thumb="/Image/@Model.ImageCover">
-                                            <img src="/Image/@Model.ImageCover" style="width:200px;height:300px" alt="img" />
+                                        <li data-thumb="~/Image/Product/@Model.ImageCover">
+                                            <img src="~/Image/Product/@Model.ImageCover" style="width:200px;height:300px" alt="img" />
                                         </li>
                                         foreach (var image in images)
                                         {
 
-                                            <li data-thumb="/Image/@image.ProductImage">
-                                                <img src="/Image/@image.ProductImage" style="width:200px;height:300px" alt="img" />
+                                            <li data-thumb="~/Image/Product/@image.ProductImage">
+                                                <img src="~/Image/Product/@image.ProductImage" style="width:200px;height:300px" alt="img" />
                                             </li>
                                         }
                                     }
@@ -189,7 +189,7 @@
                                 <div class=" text-center">
                                     <a asp-action="DetailPage" asp-route-loai="@p.Category.UrlFriendly" asp-route-hanghoa="@p.UrlFriendly">
                                         <div style="text-align:center">
-                                            <img src="/Image/@p.ImageCover" style="width:160px;height:220px" class="center" alt="book" />
+                                            <img src="~/Image/Product/@p.ImageCover" style="width:160px;height:220px" class="center" alt="book" />
                                         </div>
                                     </a>
                                     <div class="quick-view" style="cursor:pointer;">
@@ -261,7 +261,7 @@
                                         <div class="single-most-product bd mb-18">
 
                                             <div class="most-product-img">
-                                                <a href="/@p.Category.UrlFriendly/@p.UrlFriendly"><img src="~/Image/@p.ImageCover" style="width:80px;height:110px" class="center" alt="book" /></a>
+                                                <a href="/@p.Category.UrlFriendly/@p.UrlFriendly"><img src="~/Image/Product/@p.ImageCover" style="width:80px;height:110px" class="center" alt="book" /></a>
                                             </div>
                                             <div class="most-product-content">
                                                 <h4><a href="/@p.Category.UrlFriendly/@p.UrlFriendly">@p.ProductName</a></h4>

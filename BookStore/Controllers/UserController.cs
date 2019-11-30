@@ -150,18 +150,16 @@ namespace BookStore.Controllers
                 {
                     //thiếu check mail, phone,...
                     customer.Password = MyHashTool.GetMd5Hash(customer.Password);
-                    //thêm và xóa ảnh đại diện
-                    if (fFile != null && fFile.Length != 0)
+                    //thêm ảnh đại diện
+                    string fileName = UploadAnh(fFile);
+                    if (fileName != null)
                     {
-                        string fileName = $"{DateTime.Now.Ticks}{fFile.FileName}";
-                        string fullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Image", "ImageUser", fileName);
-                        using (var file = new FileStream(fullPath, FileMode.Create))
-                        {
-                            customer.Image = fileName;
-                            fFile.CopyTo(file);
-                        }
+                        customer.Image = fileName;
                     }
-                    customer.CreatedDate = DateTime.Now;
+                    else
+                    {
+                        customer.Image = "";
+                    }
                     customer.IsActive = true;
                     Roles role = _ctx.Roles.AsNoTracking().SingleOrDefault(p => p.RoleName == "Customer");
                     customer.Role = role.RoleId;
@@ -276,6 +274,20 @@ namespace BookStore.Controllers
             ViewBag.CustomerId = CustomerId;
             //Fail
             return View("VerifyUser");
+        }
+        public string UploadAnh(IFormFile fFile)
+        {
+            if (fFile != null && fFile.Length != 0)
+            {
+                string fileName = $"{DateTime.Now.Ticks}{fFile.FileName}";
+                string fullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Image", "Customer", fileName);
+                using (var file = new FileStream(fullPath, FileMode.Create))
+                {
+                    fFile.CopyTo(file);
+                    return fileName;
+                }
+            }
+            return null;
         }
 
     }

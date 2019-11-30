@@ -246,7 +246,7 @@ namespace BookStore.Areas.Admin.Controllers
             if (Ffile != null && Ffile.Length != 0)
             {
                 fileNameReturn = $"{DateTime.Now.Ticks}{Ffile.FileName}";
-                string fullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Image", fileNameReturn);
+                string fullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Image", "Product", fileNameReturn);
                 using (var file = new FileStream(fullPath, FileMode.Create))
                 {
                     Ffile.CopyTo(file);
@@ -259,7 +259,7 @@ namespace BookStore.Areas.Admin.Controllers
             foreach (var myFile in fFiles)
             {
                 string fileName = $"{DateTime.Now.Ticks}{myFile.FileName}";
-                string fullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Image", fileName);
+                string fullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Image","Product", fileName);
                 using (var file = new FileStream(fullPath, FileMode.Create))
                 {
                     myFile.CopyTo(file);
@@ -278,7 +278,7 @@ namespace BookStore.Areas.Admin.Controllers
             if (image != null)
             {
                 string fileNameBefore = image;
-                string fullPathBefore = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Image", fileNameBefore);
+                string fullPathBefore = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Image","Product", fileNameBefore);
                 if (System.IO.File.Exists(fullPathBefore))
                 {
                     System.IO.File.Delete(fullPathBefore);

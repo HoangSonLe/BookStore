@@ -9,7 +9,6 @@ namespace BookStore.Models
         {
             Comment = new HashSet<Comment>();
             Orders = new HashSet<Orders>();
-            ProductLike = new HashSet<ProductLike>();
         }
 
         public int CustomerId { get; set; }
@@ -32,6 +31,5 @@ namespace BookStore.Models
         public virtual Roles RoleNavigation { get; set; }
         public virtual ICollection<Comment> Comment { get; set; }
         public virtual ICollection<Orders> Orders { get; set; }
-        public virtual ICollection<ProductLike> ProductLike { get; set; }
     }
 }

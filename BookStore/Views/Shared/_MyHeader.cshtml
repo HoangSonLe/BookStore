@@ -9,7 +9,7 @@
                     <div class="account-area text-right">
                         <ul>
                             @{
-                                if (User.Identity.IsAuthenticated)
+                                if (User.Identity.IsAuthenticated && User.IsInRole("Customer"))
                                 {
                                     <li><a href="register.html">@User.Identity.Name</a></li>
                                     <li><a asp-action="Logout" asp-controller="User">Đăng xuất</a></li>

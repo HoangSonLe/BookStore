@@ -31,12 +31,14 @@ namespace BookStore.Controllers
                                                    .OrderByDescending(p => p.ViewCounts)
                                                    .Take(10)
                                                    .AsNoTracking()
+                                                   .Where(p=>p.Status==true)
                                                    .ToList();
             ViewBag.hotViewProducts = _ctx.Product.Include(p => p.Category)
                                                   .OrderByDescending(p => p.ViewCounts)
                                                   .OrderByDescending(p=>p.Discount!=0)
                                                   .Take(20)
                                                   .AsNoTracking()
+                                                  .Where(p => p.Status == true)
                                                   .ToList();
             //ViewBag.topSaleProducts = _ctx.Product.OrderByDescending(p => p.ViewCounts).OrderByDescending(p=>p.Discount!=0).Take(10).ToList();
             return View();

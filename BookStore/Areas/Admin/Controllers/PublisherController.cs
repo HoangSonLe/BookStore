@@ -42,7 +42,7 @@ namespace BookStore.Areas.Admin.Controllers
                 _ctx.SaveChanges();
                 //delete old logo
                 string logoBefore = publisher.Logo;
-                string fullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Image", logoBefore);
+                string fullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Image", "Publisher", logoBefore);
                 if (System.IO.File.Exists(fullPath))
                 {
                     System.IO.File.Delete(fullPath);
@@ -71,7 +71,7 @@ namespace BookStore.Areas.Admin.Controllers
                     _ctx.Publishers.Update(publisher);
                     //delete old logo
                     string logoBefore = pub.Logo;
-                    string fullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Image", logoBefore);
+                    string fullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Image","Publisher", logoBefore);
                     if (System.IO.File.Exists(fullPath))
                     {
                         System.IO.File.Delete(fullPath);
@@ -97,7 +97,7 @@ namespace BookStore.Areas.Admin.Controllers
         public string UploadFile(IFormFile img)
         {
             string fileName = $"{DateTime.Now.Ticks}{img.FileName}";
-            string fullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot" ,"Image", fileName);
+            string fullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot" ,"Image", "Publisher", fileName);
             using (var f = new FileStream(fullPath, FileMode.Create))
             {
                 img.CopyTo(f);
