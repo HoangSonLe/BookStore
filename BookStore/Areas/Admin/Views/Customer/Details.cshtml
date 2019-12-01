@@ -1,5 +1,7 @@
 ﻿@{
     Layout = null;
+    ViewData["Title"] = "Home";
+    ViewData["Child"] = "Detail";
 }
 
 @model Customer
@@ -76,7 +78,7 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label>Xác thực số điện thoại</label>
-                            @{check = Model.IsActive == true ? "Đã xác thực" : "Chưa xác thực";}
+                            @{check = Model.IsActive == true ? "Bật xác thực" : "Không bật xác thực";}
                             <input readonly="" class="form-control" type="text" value="@check" />
                         </div>
                     </div>

@@ -45,7 +45,7 @@ namespace BookStore.Areas.Admin.Controllers
             ViewData["RoleId"] = new SelectList(Roles, "RoleId", "RoleName", info.Role);
             ViewData["ManageId"] = new SelectList(Managers, "EmployeeId", "Name", info.Role);
 
-            return View(emp);
+            return PartialView(emp);
         }
 
         [HttpPost]
@@ -85,15 +85,24 @@ namespace BookStore.Areas.Admin.Controllers
             }
 
             var employee = await _context.Employee
-                .Include(e => e.RoleNavigation)
-                .Include(e => e.Manager)
                 .FirstOrDefaultAsync(e => e.EmployeeId == id);
 
             if (employee == null)
             {
                 return BadRequest();
             }
-            ViewBag.Role = _context.Roles.Find(id).RoleName;
+            ViewBag.Role = _context.Roles
+                .FirstOrDefault(e => e.RoleId == employee.Role).RoleName;
+            var manager = _context.Employee.FirstOrDefault(e => e.EmployeeId == employee.ManagerId);
+            if(manager != null)
+            {
+                ViewBag.Manager = manager.FirstName + " " + manager.LastName;
+            }
+            else
+            {
+                ViewBag.Manager = "";
+            }
+
             return PartialView(employee);
         }
         
@@ -173,9 +182,9 @@ namespace BookStore.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> GetManagers(int role)
+        public async Task<IActionResult> GetManagers(int role, int? idEmployee)
         {
-            var Managers = await _context.Employee.Where(m => m.Role < role).Select(m => new { EmployeeId = m.EmployeeId, Name = m.FirstName + " " + m.LastName }).ToListAsync();
+            var Managers = await _context.Employee.Where(m => m.Role < role && m.EmployeeId != idEmployee).Select(m => new { EmployeeId = m.EmployeeId, Name = m.FirstName + " " + m.LastName }).ToListAsync();
 
             ViewData["ManageId"] = new SelectList(Managers, "EmployeeId", "Name");
             return View();

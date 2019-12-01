@@ -110,13 +110,13 @@
                             <select class="form-control" asp-for="PhoneNumberConfirmed">
                                 @if (Model.PhoneNumberConfirmed == true)
                                 {
-                                    <option selected value="true">Đã xác thực</option>
-                                    <option value="false">Chưa xác thực</option>
+                                    <option selected value="true">Bật xác thực</option>
+                                    <option value="false">Không bật xác thực</option>
                                 }
                                 else
                                 {
-                                    <option selected value="false">Chưa xác thực</option>
-                                    <option value="true">Đã xác thực</option>
+                                    <option selected value="false">Bật xác thực</option>
+                                    <option value="true">Không bật xác thực</option>
                                 }
                             </select>
                         </div>

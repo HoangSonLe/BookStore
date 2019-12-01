@@ -28,13 +28,14 @@ async function ReadImage(input) {
 }
 
 $("#Role").change(function () {
-    var id = $("#Role").val();
-    console.log(id);
+    var role = $("#Role").val();
+    var id = $("#Role").data("id");
     $.ajax({
         url: "/Admin/Employee/GetManagers",
         type: "POST",
         data: {
-            role: id
+            role: role,
+            idEmployee: id
         },
         success: function (data) {
             $(".ManagerList").html("")

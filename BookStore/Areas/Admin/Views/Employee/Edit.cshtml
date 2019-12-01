@@ -116,7 +116,7 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label>Cấp bậc</label>
-                            <select class="form-control" asp-for="Role" asp-items="ViewBag.RoleId"></select>
+                            <select class="form-control" data-id="@Model.EmployeeId" asp-for="Role" asp-items="ViewBag.RoleId"></select>
                         </div>
                     </div>
                     <div class="col-md-6">
