@@ -193,8 +193,8 @@ namespace BookStore.Areas.Admin.Controllers
         private void MoveImage(string NameImage)
         {
             /*----Start Move file from one folder to another folder*/
-            var sourcePath = "wwwroot/img/TmpEmployee/" + NameImage;
-            var destinationPath = "wwwroot/img/Employee/" + NameImage;
+            var sourcePath = "wwwroot/Image/TmpEmployee/" + NameImage;
+            var destinationPath = "wwwroot/Image/Employee/" + NameImage;
             if (System.IO.File.Exists(sourcePath))
             {
                 System.IO.File.Move(sourcePath, destinationPath);
@@ -202,7 +202,7 @@ namespace BookStore.Areas.Admin.Controllers
             /*----End Move file from one folder to another folder*/
 
             /*----Start Delete file from folder*/
-            var path = "wwwroot/img/TmpEmployee/";
+            var path = "wwwroot/Image/TmpEmployee/";
             System.IO.DirectoryInfo di = new DirectoryInfo(path);
 
             foreach (FileInfo file in di.GetFiles())

@@ -73,13 +73,12 @@ function validate(data) {
         isValid = false;
     }
     //validate password
-    let patternPassword = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/;
-    if (patternPassword.test(Password)) {
-        $("#errorPassword").css('display', 'none');
-    }
-    else {
+    if (Password[0] == "'") {
         isValid = false;
         $("#errorPassword").css('display', 'block');
+    }
+    else {
+        $("#errorPassword").css('display', 'none');
     }
 
     //validate phone

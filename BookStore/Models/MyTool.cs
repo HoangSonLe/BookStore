@@ -16,7 +16,7 @@ namespace BookStore.Models
             if (fHinh != null)
             {
                 fileNameReturn = $"_{DateTime.Now.Ticks}{fHinh.FileName}";
-                var fileName = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "img", folder, fileNameReturn);
+                var fileName = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Image", folder, fileNameReturn);
                 using (var file = new FileStream(fileName, FileMode.Create))
                 {
                     fHinh.CopyTo(file);

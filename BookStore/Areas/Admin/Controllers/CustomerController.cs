@@ -101,7 +101,7 @@ namespace BookStore.Areas.Admin.Controllers
         {
             if (file != null)
             {
-                var name = MyTool.UploadHinh(file, "Tmp");
+                var name = MyTool.UploadHinh(file, "TmpCustomer");
                 return Ok(new { name = name });
             }
             return Ok();
