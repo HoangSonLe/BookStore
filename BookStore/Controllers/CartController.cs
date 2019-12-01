@@ -64,13 +64,15 @@ namespace BookStore.Controllers
                 
                 if (cartItem == null)
                 {
-                    Product p = _ctx.Product.AsNoTracking().SingleOrDefault(o=>o.ProductId==id);
+                    Product p = _ctx.Product.Include(o=>o.Category).AsNoTracking().SingleOrDefault(o=>o.ProductId==id);
                     if (p != null)
                     {
                         cartItems.Add(new CartItem
                         {
                             ProductId = p.ProductId,
                             ProductName = p.ProductName,
+                            UrlFriendly=p.UrlFriendly,
+                            CategoryNameUrl=p.Category.UrlFriendly,
                             Price = (p.Discount == 0) ? p.Price : p.PromotionPrice,
                             ImageCover = p.ImageCover,
                             QuantityProduct = quantity,

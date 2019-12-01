@@ -67,10 +67,10 @@ namespace BookStore.Controllers
 
         [AllowAnonymous]
         // GET: Products/Details/5
-        [Route("chi-tiet/{id}")]
-        public IActionResult Detail(int? id)
+        [Route("chi-tiet/{urlfriendly}")]
+        public IActionResult Detail(string urlfriendly)
         {
-            if (id == null)
+            if (urlfriendly == null)
             {
                 return NotFound();
             }
@@ -80,7 +80,7 @@ namespace BookStore.Controllers
                 .Include(p => p.Publisher)
                 .Include(p=>p.ProductImages)
                 .AsNoTracking()
-                .SingleOrDefault(m => m.ProductId == id);
+                .SingleOrDefault(m => m.UrlFriendly == urlfriendly && m.Status==true);
             if (product == null)
             {
                 return NotFound();

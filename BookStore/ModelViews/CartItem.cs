@@ -10,6 +10,8 @@ namespace BookStore.ModelViews
     {
         public int ProductId { get; set; }
         public string ProductName { get; set; }
+        public string UrlFriendly { get; set; }
+        public string CategoryNameUrl { get; set; }
         public int? Price { get; set; }
         public string ImageCover { get; set; }
         public int QuantityProduct { get; set; }

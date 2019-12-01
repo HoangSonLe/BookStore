@@ -27,9 +27,9 @@ var productID = $("#comments").data("id");
 
     //Show modal 
     $(".quickViewModal").on("click", function () {
-        var id = $(this).data("id");
+        var urlfriendly = $(this).data("urlfriendly");
         $.ajax({
-            url: "/chi-tiet/" + id,
+            url: "/chi-tiet/" + urlfriendly,
             type: "GET",
             success: function (data) {
                 $(".modalBody").html("");

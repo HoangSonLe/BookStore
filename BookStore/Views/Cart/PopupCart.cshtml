@@ -17,10 +17,10 @@
                             totalCart = totalCart + (float)p.QuantityProduct * p.Price;
                             <div class="single-cart">
                                 <div class="cart-img">
-                                    <a asp-action="DetailPage" asp-controller="Products" asp-route-id="@p.ProductId"><img src="~/Image/Product/@p.ImageCover" alt="@p.ProductName" /></a>
+                                    <a asp-action="DetailPage" asp-controller="Products" asp-route-loai="@p.CategoryNameUrl" asp-route-hanghoa="@p.UrlFriendly"><img src="~/Image/Product/@p.ImageCover" alt="@p.ProductName" /></a>
                                 </div>
                                 <div class="cart-info">
-                                    <h5><a asp-action="DetailPage" asp-controller="Products" asp-route-id="@p.ProductId">@p.ProductName</a></h5>
+                                    <h5><a asp-action="DetailPage" asp-controller="Products" asp-route-loai="@p.CategoryNameUrl" asp-route-hanghoa="@p.UrlFriendly">@p.ProductName</a></h5>
                                     @{
                                         var price = String.Format("{0:0,0} VNĐ", p.Price);
                                     }
@@ -32,14 +32,14 @@
                     }
                 </div>
                 <div class="cart-totals">
-                    @{ 
+                    @{
                         var totalCartString = String.Format("{0:0,0} VNĐ", totalCart);
                     }
-                    <h5 style="font-family:Arial;">Total <span style="font-family:Arial;">@totalCartString</span></h5>
+                    <h5 style="font-family:Arial;">Tổng tiền: <span style="font-family:Arial;">@totalCartString</span></h5>
                 </div>
                 <div class="cart-bottom">
-                    <a class="view-cart" asp-controller="Cart" asp-action="Index">view cart</a>
-                    <a href="checkout.html">Check out</a>
+                    <a class="view-cart" asp-action="Index" asp-controller="Cart">Xem Giỏ Hàng</a>
+                    <a asp-action="Index" asp-controller="Checkout">Thanh Toán</a>
                 </div>
             </div>
         </li>

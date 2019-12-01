@@ -28,11 +28,11 @@
                         <!-- single-product-start -->
                         <div class="product-wrapper mb-40" title="@p.ProductName">
                             <div class="product-img">
-                                <a href="#">
+                                <a asp-action="DetailPage" asp-controller="Products" asp-route-loai="@p.Category.UrlFriendly" asp-route-hanghoa="@p.UrlFriendly" title="Details">
                                     <img src="~/Image/Product/@p.ImageCover" alt="@p.ImageCover" class="primary" style="margin:5px;height:220px;width:160px; text-align:center;" />
                                 </a>
                                 <div class="quick-view" style="cursor:pointer;">
-                                    <a class="action-view quickViewModal" data-id="@p.ProductId" data-target="#productModal" data-toggle="modal" title="Quick View">
+                                    <a class="action-view quickViewModal" data-urlfriendly="@p.UrlFriendly" data-target="#productModal" data-toggle="modal" title="Quick View">
                                         <i class="fa fa-search-plus"></i>
                                     </a>
                                 </div>

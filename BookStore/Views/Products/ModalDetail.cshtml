@@ -4,25 +4,25 @@
         <div class="modal-tab">
             <div class="product-details-large tab-content">
                 <div class="tab-pane active">
-                    <img src="~/Image/@Model.ImageCover" alt="@Model.ImageCover" />
+                    <img src="~/Image/Product/@Model.ImageCover" alt="@Model.ImageCover" />
                 </div>
                 @if (Model.ProductImages.Count > 0)
                 {
                     @foreach (var p in Model.ProductImages)
                     {
                         <div class="tab-pane" id="@p.ProductImagesId">
-                            <img src="~/Image/@p.ProductImage" alt="@p.ProductImage" />
+                            <img src="~/Image/Product/@p.ProductImage" alt="@p.ProductImage" />
                         </div>
                     }
                 }
             </div>
             <div class="product-details-small quickview-active owl-carousel">
-                <a class="active" href="#@Model.ImageCover"><img src="~/Image/@Model.ImageCover" alt="@Model.ImageCover" /></a>
+                <a class="active" href="#@Model.ImageCover"><img src="~/Image/Product/@Model.ImageCover" alt="@Model.ImageCover" /></a>
                 @if (Model.ProductImages.Count > 0)
                 {
                     @foreach (var p in Model.ProductImages)
                     {
-                        <a href="#@p.ProductImagesId"><img src="~/Image/@p.ProductImagesId" alt="@Model.ProductImages" /></a>
+                        <a href="#@p.ProductImage"><img src="~/Image/Product/@p.ProductImage" alt="@Model.ProductImages" /></a>
                     }
                 }
             </div>

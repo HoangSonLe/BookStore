@@ -40,14 +40,14 @@
                                 <ul class="slides">
                                     @{
                                         IEnumerable<ProductImages> images = Model.ProductImages;
-                                        <li data-thumb="~/Image/Product/@Model.ImageCover">
-                                            <img src="~/Image/Product/@Model.ImageCover" style="width:200px;height:300px" alt="img" />
+                                        <li data-thumb="/Image/Product/@Model.ImageCover">
+                                            <img src="/Image/Product/@Model.ImageCover" style="width:200px;height:300px" alt="img" />
                                         </li>
                                         foreach (var image in images)
                                         {
 
-                                            <li data-thumb="~/Image/Product/@image.ProductImage">
-                                                <img src="~/Image/Product/@image.ProductImage" style="width:200px;height:300px" alt="img" />
+                                            <li data-thumb="/Image/Product/@image.ProductImage">
+                                                <img src="/Image/Product/@image.ProductImage" style="width:200px;height:300px" alt="img" />
                                             </li>
                                         }
                                     }
@@ -60,17 +60,16 @@
                                 <div class="page-title">
                                     <h1>@Model.ProductName</h1>
                                 </div>
-                                <div class="product-info-stock-sku detail">
-
-                                    <div>
+                                <div class="product-info-stock-sku detail" style="margin-left:15px;">
+                                    <div class="mb-10">
                                         <span>Nhà xuất bản: </span>
                                         <span class="value">@Model.Publisher.PublisherName</span>
                                     </div>
-                                    <div>
+                                    <div class="mb-10">
                                         <span>Thể loại: </span>
                                         <span class="value">@Model.Category.Name</span>
                                     </div>
-                                    <div>
+                                    <div class="mb-10">
                                         <span>Tình trạng: </span>
                                         @{
                                             if (Model.Quantity > 0)
@@ -83,7 +82,7 @@
                                             }
                                         }
                                     </div>
-                                    <div>
+                                    <div class="mb-10">
                                         @{
                                             if (Model.Discount != 0)
                                             {
@@ -93,18 +92,17 @@
                                         }
                                     </div>
                                 </div>
-
-                                <div class="product-info-price">
+                                <div class="product-info-price" style="margin:15px 0px 15px 15px">
                                     <div class="price-final">
                                         @{
                                             if (Model.PromotionPrice == 0)
                                             {
-                                                <span>@String.Format("{0:0,0 VNĐ}", Model.Price)</span>
+                                                <span style="font-family:Arial; font-weight:normal;">@String.Format("{0:0,0 VNĐ}", Model.Price)</span>
                                             }
                                             else
                                             {
-                                                <span>@String.Format("{0:0,0 VNĐ}", Model.PromotionPrice)</span>
-                                                <span class="old-price">@String.Format("{0:0,0 VNĐ}", Model.Price)</span>
+                                                <span style="font-family:Arial; font-weight:normal;">@String.Format("{0:0,0 VNĐ}", Model.PromotionPrice)</span>
+                                                <span class="old-price" style="font-family:Arial; font-weight:normal;">@String.Format("{0:0,0 VNĐ}", Model.Price)</span>
 
                                             }
                                         }
@@ -120,13 +118,15 @@
                                         <a style="cursor:pointer" onclick="onClickAddToCart(@Model.ProductId,$('#quantityNumber').val());">Add to cart</a>
                                     </form>
                                 </div>
-                                @*<div class="product-social-links">
-                                        <div class="product-addto-links">
-                                            <a href="#"><i class="fa fa-heart"></i></a>
-                                            <a href="#"><i class="fa fa-pie-chart"></i></a>
-                                            <a href="#"><i class="fa fa-envelope-o"></i></a>
-                                        </div>
-                                    </div>*@
+                                <div class="product-social-links">
+                                    <div class="product-addto-links">
+                                        <!-- Load Facebook SDK for JavaScript -->
+                                        <div id="fb-root"></div>
+                                        <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v5.0"></script>
+                                        <div class="fb-like" style="margin-bottom:5px;" data-href="https://www.facebook.com/Koparion-Book-Shop-104496551020607/" data-width="" data-layout="standard" data-action="like" data-size="small" data-show-faces="true" data-share="false"></div>
+                                        <div class="fb-share-button" data-href="http://mybookstore.somee.com/@Model.Category.UrlFriendly/@Model.UrlFriendly" data-layout="button_count" data-size="small"><a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdevelopers.facebook.com%2Fdocs%2Fplugins%2F&amp;src=sdkpreparse" class="fb-xfbml-parse-ignore">Share</a></div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -193,7 +193,7 @@
                                         </div>
                                     </a>
                                     <div class="quick-view" style="cursor:pointer;">
-                                        <a class="action-view quickViewModal" data-id="@p.ProductId" data-target="#productModal" data-toggle="modal" title="Quick View">
+                                        <a class="action-view quickViewModal" data-urlfriendly="@p.UrlFriendly" data-target="#productModal" data-toggle="modal" title="Quick View">
                                             <i class="fa fa-search-plus"></i>
                                         </a>
                                     </div>
