@@ -1,7 +1,9 @@
 ﻿@model Product
 @using BookStore.Helpers;
 @{
-    ViewData["Title"] = "Chi tiết";
+    ViewData["Title"] = Model.ProductName;
+    ViewData["Decsription"] = Model.Description.Substring(0, 100);
+    ViewData["canonical"] = Model.Category.UrlFriendly + "/" + Model.UrlFriendly;
 }
 <style>
     .flex-control-thumbs li img {
@@ -58,7 +60,9 @@
                         <div class="col-lg-7 col-md-7 col-sm-6 col-xs-12">
                             <div class="product-info-main">
                                 <div class="page-title">
-                                    <h1>@Model.ProductName</h1>
+                                    <div itemscope itemtype="http://schema.org/Book">
+                                        <h1 itemprop="name">@Model.ProductName</h1>
+                                    </div>
                                 </div>
                                 <div class="product-info-stock-sku detail" style="margin-left:15px;">
                                     <div class="mb-10">
@@ -143,7 +147,7 @@
                     <div class="tab-content">
                         <div class="tab-pane active" id="Details">
                             <div class="valu">
-                                @Html.Raw(Model.Description)
+                                @Html.Raw(Model.Description) @Html.Raw(Model.Description)
                             </div>
                         </div>
                         <div class="tab-pane" id="Reviews">

@@ -102,7 +102,7 @@ namespace BookStore.Controllers
                             .Include(x => x.ProductImages)
                             .Include(x => x.Publisher)
                             .Include(x=>x.Category)
-                            .Where(p => p.CategoryId == CateID && p.UrlFriendly == hanghoa && p.Status==true)
+                            .Where(p => p.CategoryId == CateID && (p.UrlFriendly == hanghoa || p.ProductId + "-" + p.UrlFriendly == hanghoa) && p.Status==true)
                             .AsNoTracking()
                             .SingleOrDefault();
                 if (product == null) return BadRequest();
