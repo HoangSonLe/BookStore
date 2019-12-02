@@ -1,0 +1,161 @@
+﻿@model BookStore.Models.Orders
+
+@{
+    IEnumerable<OrderDetail> OrderDetails = ViewBag.orderDetails as List<OrderDetail>;
+}
+<style>
+    img.img-thumbnail {
+        max-width: 200px;
+        max-height: 200px;
+    }
+</style>
+
+<div class="container">
+
+    <ul class="nav nav-tabs">
+        <li class="active">
+            <a data-toggle="tab" href="#home">Thông tin</a>
+        </li>
+        <li>
+            <a data-toggle="tab" href="#menu1">Chi tiết</a>
+        </li>
+        <li>
+            <a data-toggle="tab" href="#menu2">Tình trạng</a>
+        </li>
+    </ul>
+
+    <div class="tab-content">
+        <div id="home" class="tab-pane fade in active">
+            <h3>Thông tin đơn hàng</h3>
+            <table class="table">
+                <thead class="thead-light">
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Hình ảnh</th>
+                        <th scope="col">Tên sản phẩm</th>
+                        <th scope="col">Giá</th>
+                        <th scope="col">Số lượng</th>
+                        <th scope="col">Discount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{ var count = 1;}
+                    @foreach (var item in OrderDetails)
+                    {
+                        <tr>
+                            <th scope="row">@(count++)</th>
+                            <td>
+                                <img src="~/Image/Product/@item.Product.ImageCover" class="img-thumbnail">
+                            </td>
+                            <td>@item.Product.ProductName</td>
+                            <td>@item.Price VND</td>
+                            <td>@item.Quantity</td>
+                            <td>@item.Discount %</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div id="menu1" class="tab-pane fade">
+            <div class="container row">
+                <div class="col-xs-8">
+                    <div class="row">
+                        <div class="col-xs-6 mt-3">
+                            <div class="form-group">
+                                <h4 class="text-danger">Đơn hàng <span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></h4>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label">Mã đơn hàng</label>
+                                <div class="col-sm-8">
+                                    <span class="label label-info">@Model.OrderId</span>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label">Ngày tạo</label>
+                                <div class="col-sm-8">
+                                    @Model.CreatedDate
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label">Nhân viên bán hàng</label>
+                                <div class="col-sm-8">
+                                    <span class="label label-success">Không có data</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-6 mt-3">
+                            <div class="form-group">
+                                <h4 class="text-danger">Khách hàng <span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></h4>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label">Họ và tên</label>
+                                <div class="col-sm-8">
+                                    <p class="text-primary">@Model.Name</p>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label">Điện thoại</label>
+                                <div class="col-sm-8">
+                                    0332072362
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label">Địa chỉ</label>
+                                <div class="col-sm-8">
+                                    @Model.Address
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label">Ghi chú của Khách</label>
+                                <div class="col-sm-8">
+                                    <textarea class="form-control" cols="5" rows="3">@Model.Comment</textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-4 mt-3">
+                    <div class="form-group">
+                        <h4 class="text-danger">Thanh toán <span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></h4>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-5 col-form-label">Phương thức thanh toán</label>
+                        <div class="col-sm-7">
+                            @Model.PayMethod
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-5 col-form-label">Phí vận chuyển</label>
+                        <div class="col-sm-7">
+                            @Model.ShipCost <b>VND</b>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-5 col-form-label">Tổng tiền</label>
+                        <div class="col-sm-7">
+                            <input type="text" class="form-control" value="@Model.Total VND" readonly="">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="menu2" class="tab-pane fade">
+            <h3>Tình trạng đơn hàng</h3>
+            <div class="alert alert-success" role="alert">
+                Trạng thái đơn hàng:
+                @if (Model.OrderStatus == 1)
+                {
+                    <strong>
+                        Đã thanh toán
+                    </strong>
+                }
+                else
+                {
+                    <strong>Chưa thanh toán</strong>
+                }
+            </div>
+            <div class="alert alert-info" role="alert">Ngày giao hàng dự kiến: @Model.ShipDate</div>
+            <div class="alert alert-warning" role="alert">Phương thức vận chuyển: @Model.ShipMethod</div>
+        </div>
+    </div>
+</div>
