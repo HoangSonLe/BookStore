@@ -373,5 +373,176 @@ namespace BookStore.Controllers
             }
             return 0;
         }
+        [HttpPost]
+        public IActionResult UploadImage([FromForm]IFormFile file)
+        {
+            var cus = HttpContext.Session.GetObject<Customer>("Customer");
+            var emp = HttpContext.Session.GetObject<Employee>("Employee");
+            string folder = "";
+            if (cus != null)
+            {
+                folder = cus.CustomerId + "-" + cus.Role;
+            }
+            else
+            {
+                folder = emp.EmployeeId + "-" + emp.Role;
+            }
+            if (file != null)
+            {
+                var name = UploadHinh(file, folder);
+                return Ok(new { name = name });
+            }
+            return Ok();
+        }
+        private void MoveImage(string NameImage)
+        {
+            
+            var cus = HttpContext.Session.GetObject<Customer>("Customer");
+            var emp = HttpContext.Session.GetObject<Employee>("Employee");
+            string tmpFolder = "";
+            string destinationFolder = "";
+            string oldImagePath = "";
+            if (cus != null)
+            {
+                tmpFolder = cus.CustomerId + "-" + cus.Role;
+                destinationFolder = "Customer";
+                if (!string.IsNullOrEmpty(cus.Image))
+                {
+                    oldImagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Image", destinationFolder, cus.Image);
+                }
+            }
+            else
+            {
+                tmpFolder = emp.EmployeeId + "-" + emp.Role;
+                destinationFolder = "Employee";
+                if (!string.IsNullOrEmpty(emp.Image))
+                {
+                    oldImagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Image", destinationFolder, emp.Image);
+
+                }
+            }
+
+            /*----Start Move file from one folder to another folder*/
+            var sourcePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Image", tmpFolder, NameImage);
+            var destinationPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Image", destinationFolder, NameImage);
+            if (System.IO.File.Exists(sourcePath))
+            {
+                System.IO.File.Move(sourcePath, destinationPath);
+            }
+            /*----End Move file from one folder to another folder*/
+
+            /*----Start Delete file from folder*/
+            var dir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Image", tmpFolder);
+            System.IO.DirectoryInfo di = new DirectoryInfo(dir);
+
+            foreach (FileInfo file in di.GetFiles())
+            {
+                file.Delete();
+            }
+            /*----End Delete file from folder*/
+
+            /*----Delete Old Image-----------*/
+            if (System.IO.File.Exists(oldImagePath))
+            {
+                System.IO.File.Delete(oldImagePath);
+            }
+
+        }
+
+        [HttpPost]
+        public IActionResult UpdateInfo(UserProfileView profile, string NameImage)
+        {
+            //Lấy session để biết người này là employee hay customer
+            var cus = HttpContext.Session.GetObject<Customer>("Customer");
+            var emp = HttpContext.Session.GetObject<Employee>("Employee");
+            
+            if (cus != null)
+            {
+                if (!string.IsNullOrEmpty(NameImage))
+                {
+                    MoveImage(NameImage);//Move Image and delete OldImage
+                }
+                var customer = _ctx.Customer.SingleOrDefault(p => p.CustomerId == cus.CustomerId);
+                customer.FirstName = profile.FirstName;
+                customer.LastName = profile.LastName;
+                customer.Address = profile.Address;
+                customer.Email = profile.Email;
+                customer.Sex = profile.Sex;
+                customer.PhoneNumber = profile.Phone;
+                customer.PhoneNumberConfirmed = profile.PhoneNumberConfirmed;
+                if (!string.IsNullOrEmpty(NameImage)) customer.Image = NameImage;
+
+                //Update SQL
+                _ctx.Customer.Update(customer);
+                _ctx.SaveChanges();
+                var claims = new List<Claim>
+                                            {
+                                                new Claim(ClaimTypes.Name,customer.FirstName + " " + customer.LastName),
+                                                new Claim(ClaimTypes.Role, "Customer")
+                                            };
+                ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, "Customer");
+                ClaimsPrincipal claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+                HttpContext.SignInAsync("Customer", claimsPrincipal);
+
+                //Update Session
+                HttpContext.Session.SetObject<Customer>("Customer", customer);
+
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(NameImage))
+                {
+                    MoveImage(NameImage);//Move Image and delete OldImage
+                }
+                var employee = _ctx.Employee.SingleOrDefault(p => p.EmployeeId == emp.EmployeeId);
+                employee.FirstName = profile.FirstName;
+                employee.LastName = profile.LastName;
+                employee.Address = profile.Address;
+                employee.IdentityCardNumber = profile.IdentityCardNumber;
+                employee.BirthDate = profile.BirthDate;
+                employee.Email = profile.Email;
+                employee.Sex = profile.Sex;
+                employee.Phone = profile.Phone;
+                if (!string.IsNullOrEmpty(NameImage)) employee.Image = NameImage;
+                //Update SQL
+                _ctx.Employee.Update(employee);
+                _ctx.SaveChanges();
+                //Update Session
+                HttpContext.Session.SetObject<Employee>("Employee", employee);
+
+                //
+                var claims = new List<Claim>
+                {
+                   new Claim(ClaimTypes.Name,employee.FirstName + " " + employee.LastName),
+                   new Claim(ClaimTypes.Role, employee.Role.ToString())
+                };
+                ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, "Admin");
+                ClaimsPrincipal claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+                HttpContext.SignInAsync("Admin", claimsPrincipal);
+            }
+            
+            return this.Ok();
+        }
+
+        public string UploadHinh(IFormFile fHinh, string folder)
+        {
+            string fileNameReturn = string.Empty;
+            if (fHinh != null)
+            {
+                fileNameReturn = $"_{DateTime.Now.Ticks}{fHinh.FileName}";
+                var dir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Image", folder);
+                // Kiểm tra thư mục có tồn tại ko
+                // nếu ko tồn tại thì tạo mới
+                if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
+
+                var fileName = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Image", folder,fileNameReturn);
+
+                using (var file = new FileStream(fileName, FileMode.Create))
+                {
+                    fHinh.CopyTo(file);
+                }
+            }
+            return fileNameReturn;
+        }
     }
 }

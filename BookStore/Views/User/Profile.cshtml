@@ -2,11 +2,15 @@
 @model BookStore.ModelViews.UserProfileView
 
 @{
-    //string image = "";
-    //if (Model.Role == 1)
-    //{
-    //    image=
-    //}
+    string image = "";
+    if (Model.Role == 1)
+    {
+        image = "Customer/" + Model.Image;
+    }
+    else
+    {
+        image = "Employee/" + Model.Image;
+    }
 }
 <!-- Begin modal change password -->
 <div class="modal fade" id="smallShoes" tabindex="-1" role="dialog" aria-labelledby="modalLabelSmall" aria-hidden="true">
@@ -50,7 +54,7 @@
 <!-- end modal change password -->
 <div class="container" style="min-height:360px">
     <br />
-    <h2>Xin chào</h2>
+    <h2 id="hi">Xin chào @Model.LastName</h2>
     <ul class="nav nav-tabs">
         <li class="active"><a data-toggle="tab" href="#profile">Thông tin</a></li>
         <li><a data-toggle="tab" href="#order">Đơn hàng</a></li>
@@ -66,16 +70,15 @@
                         <div class="col-md-4">
                             <div class="form-group">
                                 <div class="text-center">
-                                    <img id="image_upload_preview" src="https://cdn1.iconfinder.com/data/icons/navigation-elements/512/user-login-man-human-body-mobile-person-512.png" style="width: 200px; height: 200px;" class="avatar img-circle" alt="avatar">
 
-                                    @*@if (String.IsNullOrEmpty(Model.Image))
+                                    @if (String.IsNullOrEmpty(Model.Image))
                                         {
                                             <img id="image_upload_preview" src="https://cdn1.iconfinder.com/data/icons/navigation-elements/512/user-login-man-human-body-mobile-person-512.png" style="width: 200px; height: 200px;" class="avatar img-circle" alt="avatar">
                                         }
                                         else
                                         {
-                                            <img id="image_upload_preview" src="~/img/Customer/@Model.Image" style="width: 200px; height: 200px;" class="avatar img-circle" alt="avatar">
-                                        }*@
+                                            <img id="image_upload_preview" src="~/Image/@image" style="width: 200px; height: 200px;" class="avatar img-circle" alt="avatar">
+                                        }
 
                                     <h6>Upload a different photo...</h6>
                                     <input type="file" name="file" class="form-control" asp-for="Image" onchange="ReadImage(this)">
@@ -106,7 +109,7 @@
                                     <div class="form-group">
                                         <label>Tên khách hàng</label>
                                         <input type="text" class="form-control" asp-for="LastName" required placeholder="Nhập tên">
-                                        <label id="errorFirstName" style="color:red;display:none ">Vui lòng nhập tên khách hàng</label>
+                                        <label id="errorLastName" style="color:red;display:none ">Vui lòng nhập tên khách hàng</label>
                                     </div>
                                 </div>
                             </div>
@@ -114,8 +117,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label>Tài khoản</label>
-                                        <input type="text" class="form-control" asp-for="UserName" />
-                                        <label id="errorUserName" style="color:red;display:none ">Vui lòng nhập tài khoản khách hàng</label>
+                                        <input type="text" class="form-control" asp-for="UserName" readonly />
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -162,13 +164,15 @@
                                         <div class="form-group">
                                             <label>CMND</label>
                                             <input type="text" class="form-control" asp-for="IdentityCardNumber" required>
+                                            <label id="errorCMND" style="color:red;display:none ">CMND không hợp lệ</label>
+
                                         </div>
 
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label>Ngày sinh</label>
-                                            <input class="form-control" asp-for="BirthDate" required>
+                                            <input class="form-control" type="date" asp-for="BirthDate" required>
                                         </div>
                                     </div>
                                 </div>
@@ -204,7 +208,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button @*data-id="@Model.CustomerId" *@ class="btn btn-primary btnCreate">Cập nhật</button>
+                    <button data-id="@Model.UserID"  class="btn btn-primary btnUpdate">Cập nhật</button>
                     <button  type="button" class="btn btn-success" data-toggle="modal" data-target="#smallShoes">Đổi mật khẩu</button>
                 </div>
             </form>
@@ -246,7 +250,7 @@
                                 @o.ShipMethod
                             </td>
                             <td>
-                                @o.ShipCost
+                                @String.Format("{0:0,0 VNĐ}", o.ShipCost)
                             </td>
 
                             <td>
@@ -269,7 +273,7 @@
                                 @o.ShipDate
                             </td>
                             <td>
-                                @o.Total
+                                @String.Format("{0:0,0 VNĐ}", @o.Total)
                             </td>
                             <td>
                                 <button class="btn btn-primary btnDetail" data-id="@o.OrderId" data-target="#orderDetail" data-toggle="modal"><i class="fa fa-eye"></i> Chi tiết</button>
@@ -304,15 +308,7 @@
                         </tr>
                     </thead>
                     <tbody id="listOrderDetail">
-                        <tr>
-                            <th scope="row">2</th>
-                            <td>
-                                <img src="https://via.placeholder.com/150x150" style="width:60px;height:80px" class="img-fluid img-thumbnail" alt="...">
-                            </td>
-                            <td>Jacob</td>
-                            <td>Thornton</td>
-                            <td>fat</td>
-                        </tr>
+                       
                     </tbody>
                 </table>
                 <!--
@@ -365,7 +361,7 @@
                                     showConfirmButton: false,
                                     timer: 2000
                                 });
-                                
+                               
                             }
                             else {
                                 $("#oPass").text("Mật khẩu cũ không đúng");
@@ -401,6 +397,131 @@
                 return isValid;
             }
         })
+        var NameImage = "";
+
+        async function ReadImage(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    $('#image_upload_preview').attr('src', e.target.result).width('200').height('200'); // setting ur image here		
+                };
+                reader.readAsDataURL(input.files[0]);
+                var data = new FormData();
+                data.append('file', input.files[0], input.files[0].name);
+                $.ajax({
+                    url: "/User/UploadImage",
+                    type: "POST",
+                    data: data,
+                    contentType: false,
+                    processData: false,
+                    success: function (message) {
+                        NameImage = message.name;
+                    },
+                    error: function () {
+                        alert("there was error uploading files!");
+                    }
+                });
+            }
+        }
+        function validateInfo(data) {
+
+            let isValid = true;
+            let LastName = data.find('input[name="LastName"]').val();
+            let Address = data.find('input[name="Address"]').val();
+            let Phone = data.find('input[name="Phone"]').val();
+            let Email = data.find('input[name="Email"]').val();
+            
+            //validate lastname
+            if (LastName.length > 0) {
+                $("#errorLastName").css('display', 'none');
+            }
+            else {
+                $("#errorLastName").css('display', 'block');
+                isValid = false;
+            }
+            
+            
+            //validate address
+            if (Address.length > 0) {
+                $("#errorAddress").css('display', 'none');
+            }
+            else {
+                $("#errorAddress").css('display', 'block');
+                isValid = false;
+            }
+
+            //validate phone
+            let pattern = /0[3789][0-9]{8}$/;
+            if (pattern.test(Phone)) {
+                $("#errorPhoneNumber").css('display', 'none');
+            }
+            else {
+                $("#errorPhoneNumber").css('display', 'block');
+                isValid = false;
+            }
+
+            //validate email
+            let patternEmail = /^[a-z][a-z0-9_\.]{3,32}@@[a-z0-9]{2,}(\.[a-z0-9]{2,4}){1,2}$/gm;
+            if (patternEmail.test(Email)) {
+                $("#errorEmail").css('display', 'none');
+            }
+            else {
+                isValid = false;
+                $("#errorEmail").css('display', 'block');
+            }
+            let IDCard = data.find('input[name="IdentityCardNumber"]');
+            if (IDCard.length>0) {
+                let CMND = IDCard.val();
+                //validate IdentityCard
+                let patternCMND = /^[0-9]{9}$/;
+                if (patternCMND.test(CMND)) {
+                    $("#errorCMND").css('display', 'none');
+                }
+                else {
+                    isValid = false;
+                    $("#errorCMND").css('display', 'block');
+                }
+            }
+            return isValid;
+        }
+
+        $(".btnUpdate").click(function (e) {
+            e.preventDefault();
+            var customer = $("#formAdd").serialize();
+            var nameImage = "&NameImage=" + NameImage;
+            if (validateInfo($("#formAdd"))) {
+                $.ajax({
+                    url: "/User/UpdateInfo",
+                    type: "POST",
+                    data: customer + nameImage,
+                    success: function (data) {
+                        
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Thành công!',
+                            text: 'Cập nhật thông tin thành công!',
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                        
+                    },
+                    error: function () {
+                        Swal.fire({
+                            icon: 'fail',
+                            title: 'Thất bại!',
+                            text: 'Cập nhật thông tin thất bại!',
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                    }
+                });
+            }
+            nameImage = "";
+            let FirstName = $("#formAdd").find('input[name="FirstName"]').val();
+            let LastName = $("#formAdd").find('input[name="LastName"]').val();
+            $("#hi").text("Xin chào " + LastName);
+            $("#fullName").text(FirstName + " " + LastName);
+         })
         
     </script>
 }

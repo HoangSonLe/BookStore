@@ -11,7 +11,7 @@
                             @{
                                 if (User.Identity.IsAuthenticated)
                                 {
-                                    <li><a asp-action="Profile" asp-controller="User">@User.Identity.Name</a></li>
+                                    <li><a asp-action="Profile" asp-controller="User" id="fullName">@User.Identity.Name</a></li>
                                     <li><a asp-action="Logout" asp-controller="User">Đăng xuất</a></li>
                                 }
                                 else
