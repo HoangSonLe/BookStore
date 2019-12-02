@@ -1,6 +1,6 @@
 ﻿var table = $('#tableCustomers').DataTable();
 var NameImage = "";
-
+var NameFolder = "";
 async function ReadImage(input) {
     if (input.files && input.files[0]) {
         var reader = new FileReader();
@@ -18,6 +18,7 @@ async function ReadImage(input) {
             processData: false,
             success: function (message) {
                 NameImage = message.name;
+                NameFolder = message.folder;
             },
             error: function () {
                 alert("there was error uploading files!");
@@ -53,13 +54,12 @@ function validate(data) {
         isValid = false;
     }
     //validate password
-    let patternPassword = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/;
-    if (patternPassword.test(Password)) {
-        $("#errorPassword").css('display', 'none');
-    }
-    else {
+    if (Password[0] == "'") {
         isValid = false;
         $("#errorPassword").css('display', 'block');
+    }
+    else {
+        $("#errorPassword").css('display', 'none');
     }
     //validate address
     if (Address.length > 0) {
@@ -108,10 +108,11 @@ $(".btnCreate").on('click', function (e) {
     if (validate($("#formAdd"))) {
         var customer = $("#formAdd").serialize();
         var nameImage = "&NameImage=" + NameImage;
+        var nameFolder = "&NameFolder=" + NameFolder;
         $.ajax({
             url: "/Admin/Customer/Add",
             type: "POST",
-            data: customer + nameImage,
+            data: customer + nameImage + nameFolder,
             success: function (data) {
                 Swal.fire({
                     icon: 'success',
@@ -176,10 +177,12 @@ $(".btnEditSaveChange").click(function (e) {
     if (validate($("#formEdit"))) {
         var customer = $("#formEdit").serialize();
         var nameImage = "&NameImage=" + NameImage;
+        var nameFolder = "&NameFolder=" + NameFolder;
+        console.log(nameFolder);
         $.ajax({
             url: "/Admin/Customer/Edit",
             type: "POST",
-            data: customer + nameImage,
+            data: customer + nameImage + nameFolder,
             success: function (data) {
                 Swal.fire({
                     icon: 'success',

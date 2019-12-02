@@ -51,7 +51,7 @@
                         <div class="form-group">
                             <label>Tên nhân viên</label>
                             <input type="hidden" class="form-control inputName" asp-for="EmployeeId" value="@Model.EmployeeId">
-                            <input type="text" class="form-control" readonly= asp-for="FirstName" value="@Model.FirstName" required placeholder="Nhập tên">
+                            <input type="text" class="form-control" readonly="" asp-for="FirstName" value="@Model.FirstName" required placeholder="Nhập tên">
                             <label id="errorFirstName" style="color:red;display:none ">Vui lòng nhập tên nhân viên</label>
                         </div>
                     </div>
@@ -102,25 +102,7 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label>Quản lý bởi</label>
-                            <select class="form-control" disabled asp-for="ManagerId">
-                                @{
-                                    IEnumerable<Employee> managers = ViewBag.Managers as List<Employee>;
-                                }
-                                @if (managers != null)
-                                {
-                                    foreach (var item in managers)
-                                    {
-                                        if (item.EmployeeId == Model.EmployeeId)
-                                        {
-                                            <option selected value="@item.EmployeeId">@item.FirstName @item.LastName</option>
-                                        }
-                                        else
-                                        {
-                                            <option value="@item.EmployeeId">@item.FirstName @item.LastName</option>
-                                        }
-                                    }
-                                }
-                            </select>
+                            <input readonly="" class="form-control" type="text" value="@ViewBag.Manager" />
                         </div>
                     </div>
                 </div>
@@ -143,6 +125,4 @@
         <button class="btn btn-secondary" data-dismiss="modal">Hủy</button>
     </div>
 </form>
-
-<script src="~/Admin/js/Employee.js"></script>
 

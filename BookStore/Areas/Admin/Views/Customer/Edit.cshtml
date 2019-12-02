@@ -78,10 +78,7 @@
                             <label>Mật khẩu</label>
                             <input type="password" class="form-control" asp-for="Password" value="@Model.Password" placeholder="Nhập mật khẩu">
                             <label id="errorPassword" style="color:red;display:none ">
-                                Mật khẩu có ít nhất 1 chữ số <br />
-                                Mật khẩu có ít nhất 1 chữ thường <br />
-                                Mật khẩu có ít nhất 1 chữ in hoa <br />
-                                Mật khẩu phải có ít nhất 8 kí tự
+                                Xin vui lòng dùng mật khẩu khác
                             </label>
                         </div>
                     </div>
@@ -110,13 +107,13 @@
                             <select class="form-control" asp-for="PhoneNumberConfirmed">
                                 @if (Model.PhoneNumberConfirmed == true)
                                 {
-                                    <option selected value="true">Đã xác thực</option>
-                                    <option value="false">Chưa xác thực</option>
+                                    <option selected value="true">Bật xác thực</option>
+                                    <option value="false">Không bật xác thực</option>
                                 }
                                 else
                                 {
-                                    <option selected value="false">Chưa xác thực</option>
-                                    <option value="true">Đã xác thực</option>
+                                    <option selected value="false">Bật xác thực</option>
+                                    <option value="true">Không bật xác thực</option>
                                 }
                             </select>
                         </div>

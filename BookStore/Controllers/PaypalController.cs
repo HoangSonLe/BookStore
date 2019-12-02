@@ -172,6 +172,9 @@ namespace BookStore.Controllers
         public IActionResult Fail()
         {
             //Tạo đơn hàng trong CSDL với trạng thái : Chưa thanh toán, phương thức:
+            Orders order = _context.Orders.FirstOrDefault(o => o.OrderId == IdLasted);
+            order.OrderStatus = (int?)0;
+            _context.SaveChanges();
             return RedirectToAction("PaymentFailed", "Checkout");
         }
     }

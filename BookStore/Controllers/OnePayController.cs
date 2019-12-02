@@ -103,18 +103,18 @@ namespace BookStore.Controllers
             conn.SetSecureSecret(VPCRequest.SECURE_SECRET);
             // Xu ly tham so tra ve va kiem tra chuoi du lieu ma hoa
             var hashvalidateResult = conn.Process3PartyResponse(HttpContext.Request.Query);
-            string result = "";
+            Orders order = _context.Orders.FirstOrDefault(o => o.OrderId == IdLasted);
             if (hashvalidateResult == "CORRECTED" && vpc_TxnResponseCode.Trim() == "0")
             {
-                Orders order = _context.Orders.FirstOrDefault(o => o.OrderId == IdLasted);
                 order.OrderStatus = (int?)1;
                 _context.SaveChanges();
                 return RedirectToAction("Invoice", "Checkout", order);
             }
             else if (hashvalidateResult == "INVALIDATED" && vpc_TxnResponseCode.Trim() == "0")
             {
-                result = "Giao dịch đang chờ xử lý";
             }
+            order.OrderStatus = (int?)0;
+            _context.SaveChanges();
             return RedirectToAction("PaymentFailed", "Checkout");
         }
     }
