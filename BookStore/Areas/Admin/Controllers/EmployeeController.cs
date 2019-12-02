@@ -49,7 +49,7 @@ namespace BookStore.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Add(Employee employee, string NameImage)
+        public async Task<IActionResult> Add(Employee employee, string NameImage, string NameFolder)
         {
             if (ModelState.IsValid && employee != null)
             {
@@ -57,7 +57,7 @@ namespace BookStore.Areas.Admin.Controllers
                 
                 if (!check)
                 {
-                    MoveImage(NameImage);
+                    MyTool.MoveImage("Employee", NameImage, NameFolder);
                     employee.Image = NameImage;
                     employee.CreatedDate = DateTime.Now;
                     _context.Employee.Add(employee);
@@ -135,7 +135,7 @@ namespace BookStore.Areas.Admin.Controllers
             return View(employee);
         }
         [HttpPost]
-        public async Task<IActionResult> Edit(Employee employee, string NameImage)
+        public async Task<IActionResult> Edit(Employee employee, string NameImage, string NameFolder)
         {
             if (ModelState.IsValid)
             {
@@ -147,7 +147,7 @@ namespace BookStore.Areas.Admin.Controllers
                     {
                         employee.Password = MyHashTool.GetMd5Hash(employee.Password);
                     }
-                    MoveImage(NameImage);
+                    MyTool.MoveImage("Employee", NameImage, NameFolder);
                     employee.Image = NameImage;
                     _context.Update(employee);
                     await _context.SaveChangesAsync();
@@ -190,37 +190,20 @@ namespace BookStore.Areas.Admin.Controllers
             return View();
         }
 
-        private void MoveImage(string NameImage)
-        {
-            /*----Start Move file from one folder to another folder*/
-            var sourcePath = "wwwroot/Image/TmpEmployee/" + NameImage;
-            var destinationPath = "wwwroot/Image/Employee/" + NameImage;
-            if (System.IO.File.Exists(sourcePath))
-            {
-                System.IO.File.Move(sourcePath, destinationPath);
-            }
-            /*----End Move file from one folder to another folder*/
-
-            /*----Start Delete file from folder*/
-            var path = "wwwroot/Image/TmpEmployee/";
-            System.IO.DirectoryInfo di = new DirectoryInfo(path);
-
-            foreach (FileInfo file in di.GetFiles())
-            {
-                file.Delete();
-            }
-            /*----End Delete file from folder*/
-        }
 
         [HttpPost]
         public IActionResult UploadImage([FromForm]IFormFile file)
         {
             if (file != null)
             {
-                var name = MyTool.UploadHinh(file, "TmpEmployee");
-                return Ok(new { name = name });
+                var info = HttpContext.Session.GetObject<Employee>("Employee");
+                var folder = info.EmployeeId + "_" + info.Role;
+                var pathString = "wwwroot/Image/" + folder;
+                Directory.CreateDirectory(pathString);
+                var name = MyTool.UploadHinh(file, folder);
+                return Ok(new { name = name, folder = folder });
             }
-            return Ok();
+            return BadRequest();
         }
     }
 }

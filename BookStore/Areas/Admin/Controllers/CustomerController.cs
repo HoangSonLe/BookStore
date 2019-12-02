@@ -35,14 +35,14 @@ namespace BookStore.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Add(Customer customer, string NameImage)
+        public async Task<IActionResult> Add(Customer customer, string NameImage, string NameFolder)
         {
             if (ModelState.IsValid && customer != null)
             {
                 bool check = _context.Customer.Any(c => c.UserName == customer.UserName);
                 if (!check)
                 {
-                    MoveImage(NameImage);
+                    MyTool.MoveImage("Customer", NameImage, NameFolder);
                     customer.Image = NameImage;
                     customer.CreatedDate = DateTime.Now;
                     _context.Customer.Add(customer);
@@ -101,16 +101,20 @@ namespace BookStore.Areas.Admin.Controllers
         {
             if (file != null)
             {
-                var name = MyTool.UploadHinh(file, "TmpCustomer");
-                return Ok(new { name = name });
+                var info = HttpContext.Session.GetObject<Employee>("Employee");
+                var folder = info.EmployeeId + "_" + info.Role;
+                var pathString = "wwwroot/Image/" + folder;
+                Directory.CreateDirectory(pathString);
+                var name = MyTool.UploadHinh(file, folder);
+                return Ok(new { name = name, folder = folder });
             }
-            return Ok();
+            return BadRequest();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(Customer customer, string NameImage)
+        public async Task<IActionResult> Edit(Customer customer, string NameImage, string NameFolder)
         {
-            MoveImage(NameImage);
+            MyTool.MoveImage("Customer", NameImage, NameFolder);
 
             var cus = await _context.Customer.AsNoTracking().SingleOrDefaultAsync(e => e.CustomerId == customer.CustomerId);
 
@@ -151,26 +155,5 @@ namespace BookStore.Areas.Admin.Controllers
             return _context.Customer.Any(c => c.CustomerId == id);
         }
 
-        private void MoveImage(string NameImage)
-        {
-            /*----Start Move file from one folder to another folder*/
-            var sourcePath = "wwwroot/Image/TmpCustomer/" + NameImage;
-            var destinationPath = "wwwroot/Image/Customer/" + NameImage;
-            if (System.IO.File.Exists(sourcePath))
-            {
-                System.IO.File.Move(sourcePath, destinationPath);
-            }
-            /*----End Move file from one folder to another folder*/
-
-            /*----Start Delete file from folder*/
-            var path = "wwwroot/Image/TmpCustomer/";
-            System.IO.DirectoryInfo di = new DirectoryInfo(path);
-
-            foreach (FileInfo file in di.GetFiles())
-            {
-                file.Delete();
-            }
-            /*----End Delete file from folder*/
-        }
     }
 }

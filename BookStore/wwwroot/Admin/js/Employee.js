@@ -1,6 +1,6 @@
 ﻿var table = $('#tableEmployees').DataTable();
 var NameImage = "";
-
+var NameFolder = "";
 async function ReadImage(input) {
     if (input.files && input.files[0]) {
         
@@ -19,6 +19,7 @@ async function ReadImage(input) {
                 };
                 reader.readAsDataURL(input.files[0]);
                 NameImage = message.name;
+                NameFolder = message.folder;
             },
             error: function () {
                 alert("there was error uploading files!");
@@ -134,10 +135,11 @@ $(".btnCreate").on('click', function (e) {
     if (validate($("#formAdd"))) {
         var employee = $("#formAdd").serialize();
         var nameImage = "&NameImage=" + NameImage;
+        var nameFolder = "&NameFolder=" + NameFolder;
         $.ajax({
             url: "/Admin/Employee/Add",
             type: "POST",
-            data: employee + nameImage,
+            data: employee + nameImage + nameFolder,
             success: function (data) {
                 Swal.fire({
                     icon: 'success',
@@ -224,10 +226,11 @@ $(".btnEditSaveChange").click(function (e) {
     if (validate($("#formEdit"))) {
         let employee = $("#formEdit").serialize();
         let nameImage = "&NameImage=" + NameImage;
+        var nameFolder = "&NameFolder=" + NameFolder;
         $.ajax({
             url: "/Admin/Employee/Edit",
             type: "POST",
-            data: employee + nameImage,
+            data: employee + nameImage + nameFolder,
             success: function (data) {
                 Swal.fire({
                     icon: 'success',

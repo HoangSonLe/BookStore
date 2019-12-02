@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace BookStore.Models
 {
-    public class MyTool
+    public static class MyTool
     {
         public static string UploadHinh(IFormFile fHinh, string folder)
         {
@@ -23,6 +23,38 @@ namespace BookStore.Models
                 }
             }
             return fileNameReturn;
+        }
+
+        public static void MoveImage(string Unit, string NameImage, string NameFolder)
+        {
+            /*----Start Move file from one folder to another folder*/
+            var sourcePath = "wwwroot/Image/" + NameFolder + "/" + NameImage;
+            var destinationPath = "wwwroot/Image/"+Unit + "/" + NameImage;
+            if (System.IO.File.Exists(sourcePath))
+            {
+                System.IO.File.Move(sourcePath, destinationPath);
+            }
+            /*----End Move file from one folder to another folder*/
+
+            /*----Start Delete folder*/
+            DeleteFolder(NameFolder);
+            /*----End Delete folder*/
+        }
+
+        public static void DeleteFolder(string NameFolder)
+        {
+            if (NameFolder != null)
+            {
+
+                /*----Start Delete folder*/
+                var path = "wwwroot/Image/" + NameFolder;
+                if (Directory.Exists(path))
+                {
+
+                    Directory.Delete(path, true);
+                }
+                /*----End Delete folder*/
+            }
         }
     }
 
