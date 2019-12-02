@@ -11,7 +11,7 @@
                             @{
                                 if (User.Identity.IsAuthenticated && User.IsInRole("Customer"))
                                 {
-                                    <li><a href="register.html">@User.Identity.Name</a></li>
+                                    <li><a asp-action="Profile" asp-controller="User" id="fullName">@User.Identity.Name</a></li>
                                     <li><a asp-action="Logout" asp-controller="User">Đăng xuất</a></li>
                                 }
                                 else
