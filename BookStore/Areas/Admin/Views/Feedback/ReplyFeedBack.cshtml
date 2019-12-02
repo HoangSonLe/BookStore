@@ -1,0 +1,71 @@
+﻿@{
+    ViewData["Title"] = "Feedback";
+    ViewData["Child"] = "Reply";
+}
+@model Feedback
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script><!-- breadcrumbs-area-end -->
+@{
+    if (ViewBag.Result != null)
+    {
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Thành công',
+                text: "@Html.Raw(ViewBag.Result)",
+                showConfirmButton: false,
+                timer: 1500
+            });
+        </script>
+    }
+}
+<link rel="stylesheet" type="text/css" href="~/Admin/assets/bootstrap-wysihtml5/bootstrap-wysihtml5.css" />
+<div class="box box-green">
+    <div class="box-title">
+        <h3><i class="fa fa-puzzle-piece"></i> Nội dung</h3>
+        <div class="box-tool">
+            <a data-action="collapse" href="#"><i class="fa fa-chevron-up"></i></a>
+            <a data-action="close" href="#"><i class="fa fa-times"></i></a>
+        </div>
+    </div>
+    <div class="box-content">
+        <div class="form-group">
+            <b>Tên người gửi: </b>
+            @Model.Name
+        </div>
+        <div class="form-group">
+            <b>Email người gửi: </b>
+            @Model.Email
+        </div>
+        <div class="form-group">
+            <b>Tiêu đề: </b>
+            @Model.ContextSubject
+        </div>
+        <div class="form-group">
+            <b>Ngày gửi: </b>
+            @Model.CreatedDate
+        </div>
+        <div class="form-group">
+            <b>Nội dung: </b><br>
+            <div style="overflow-y: auto; max-height:100px">
+                @Model.ContextMessage
+            </div>
+        </div>
+    </div>
+</div>
+<div>
+    <form class="mail-compose form-horizontal" asp-controller="Feedback" asp-action="ReplyFeedBack" method="post">
+        <input type="hidden" name="FeedbackId" value="@Model.FeedbackId" />
+        <p><input type="text" placeholder="To" value="@Model.Email" class="form-control" /></p>
+        <p><input type="text" placeholder="Subject" class="form-control" name="ReplySubject" value="@Model.ReplySubject" required /></p>
+        <p><textarea class="form-control wysihtml5" rows="6" name="ReplyContext">@Model.ReplyContext</textarea></p>
+        <p>
+            <button type="submit" class="btn btn-primary"><i class="fa fa-rocket"></i> Send</button>
+            <button type="button" class="btn">Cancel</button>
+        </p>
+    </form>
+</div>
+@section Scripts{
+    <script type="text/javascript" src="~/Admin/assets/bootstrap-wysihtml5/wysihtml5-0.3.0.js"></script>
+    <script type="text/javascript" src="~/Admin/assets/bootstrap-wysihtml5/bootstrap-wysihtml5.js"></script>
+}

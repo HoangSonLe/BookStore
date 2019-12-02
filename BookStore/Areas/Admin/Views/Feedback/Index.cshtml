@@ -91,6 +91,7 @@
                                 <td class="text-center">
                                     <div class="btn-group">
                                         <p>
+                                            <a class="btn btn-success" asp-action="ReplyFeedBack" asp-controller="Feedback" asp-route-id="@p.FeedbackId"><i class="fa fa-envelope"></i> Reply</a>
                                             <button class="btn btn-primary btnDetail" data-id="@p.FeedbackId" data-target="#modalDetail" data-toggle="modal"><i class="fa fa-eye"></i> Detail</button>
                                             <button class="btn btn-danger btnDelete" data-id="@p.FeedbackId" data-name="@p.Name"><i class="fa fa-trash-o"></i> Delete</button>
                                         </p>

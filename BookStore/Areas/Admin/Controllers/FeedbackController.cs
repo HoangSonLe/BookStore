@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BookStore.Helpers;
 using BookStore.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -92,6 +93,44 @@ namespace BookStore.Areas.Admin.Controllers
                     }
             }
             return PartialView("Datatable", fb);
+        }
+       
+        public IActionResult ReplyFeedBack(int? id)
+        {
+            Feedback feedback = _ctx.Feedback.AsNoTracking().SingleOrDefault(p => p.FeedbackId == id);
+            return View(feedback);
+        }
+        [HttpPost]
+        public IActionResult ReplyFeedBack([Bind("FeedbackId")] int? id, [Bind("ReplySubject")] string ReplySubject, [Bind("ReplyContext")] string ReplyContext)
+        {
+            Feedback feedback = _ctx.Feedback.SingleOrDefault(p => p.FeedbackId == id);
+            if (feedback == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                var emp = HttpContext.Session.GetObject<Employee>("Employee");
+                if (emp != null)
+                {
+                    feedback.EmployeeId = emp.EmployeeId;
+                    feedback.ReplyDone = true;
+                    feedback.ReplySubject = ReplySubject;
+                    feedback.ReplyContext = ReplyContext;
+                    feedback.ReplyDate = DateTime.Now;
+                    GoogleMailer.Send(feedback.Email, ReplySubject, ReplyContext);
+                    _ctx.Update(feedback);
+                    _ctx.SaveChanges();
+                }
+                else
+                {
+                    TempData["ReturnUrl"] = "/Admin/Feedback/ReplyFeedBack/"+id;
+                    return RedirectToAction("Index", "Login");
+                }
+                
+            }
+            ViewBag.Result = "Phản hồi thành công!!!";
+            return View(feedback);
         }
     }
 }

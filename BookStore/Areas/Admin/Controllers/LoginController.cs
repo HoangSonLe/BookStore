@@ -24,6 +24,10 @@ namespace BookStore.Areas.Admin.Controllers
         [AllowAnonymous]
         public IActionResult Index()
         {
+            if (TempData["ReturnUrl"] != null)
+            {
+                ViewBag.ReturnUrl = TempData["ReturnUrl"].ToString();
+            }
             return View();
         }
         [HttpPost,AllowAnonymous]

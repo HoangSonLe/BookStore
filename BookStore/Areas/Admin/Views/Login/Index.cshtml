@@ -24,7 +24,7 @@
     <!-- BEGIN Main Content -->
     <div class="login-wrapper">
         <!-- BEGIN Login Form -->
-        <form id="form-login" asp-action="Index" method="post">
+        <form id="form-login" asp-action="Index" asp-route-ReturnUrl="@ViewBag.ReturnUrl" method="post">
             <h3>Login to your account</h3>
             <hr />
             <div class="form-group">

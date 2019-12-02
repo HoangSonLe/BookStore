@@ -16,6 +16,8 @@ namespace BookStore.Models
         public int? EmployeeId { get; set; }
         public string ReplyContext { get; set; }
         public DateTime? ReplyDate { get; set; }
+        public string ReplySubject { get; set; }
+        public bool? ReplyDone { get; set; }
 
         public virtual Employee Employee { get; set; }
     }

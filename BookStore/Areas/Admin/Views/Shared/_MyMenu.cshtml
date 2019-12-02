@@ -86,10 +86,17 @@
             </a>
         </li>
         <li>
-            <a href="gallery.html">
+            <a href="#" class="dropdown-toggle">
                 <i class="fa fa-bar-chart-o"></i>
                 <span>Statistic</span>
+                <b class="arrow fa fa-angle-right"></b>
             </a>
+            <!-- BEGIN Submenu -->
+            <ul class="submenu">
+                <li><a asp-action="Order" asp-controller="Chart">Order</a></li>
+                <li><a asp-action="Product">Product</a></li>
+            </ul>
+            <!-- END Submenu -->
         </li>
     </ul>
     <!-- END Navlist -->

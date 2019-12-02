@@ -1,0 +1,134 @@
+﻿@model BookStore.Areas.ModelViews.OrderViewModel
+<link rel="stylesheet" type="text/css" href="~/Admin/assets/bootstrap-datepicker/css/datepicker.css" />
+@{
+    ViewData["Title"] = "Chart";
+    ViewData["Child"] = "Order";
+}
+<div class="row">
+    <div class="col-md-12">
+        <div class="box">
+            <div class="box-title">
+                <h3><i class="fa fa-table"></i> Dynamic Table</h3>
+                <div class="box-tool">
+                    <a data-action="collapse" href="#"><i class="fa fa-chevron-up"></i></a>
+                    <a data-action="close" href="#"><i class="fa fa-times"></i></a>
+                </div>
+            </div>
+            <div class="box-content">
+                <div class="btn-toolbar pull-right clearfix">
+                    <div class="col-md-12 p-0">
+                        <form asp-action="Index" method="post">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="col-sm-4 col-lg-3 control-label" style="padding:0px;">Loại biểu đồ</label>
+                                    <div class="col-sm-8 col-lg-9 controls" style="padding:0px;">
+                                        <select class="form-control" data-placeholder="Chọn loại" name="typeChart" tabindex="1">
+                                            @switch (Model.TypeChart)
+                                            {
+                                                case "splineArea":
+                                                    <option value="line">Biểu đồ đường</option>
+                                                    <option selected value="splineArea">Biểu đồ đường vực</option>
+                                                    <option value="column">Biểu đồ cột</option>
+                                                    break;
+                                                case "column":
+                                                    <option value="line">Biểu đồ đường</option>
+                                                    <option value="splineArea">Biểu đồ đường vực</option>
+                                                    <option selected value="column">Biểu đồ cột</option>
+                                                    break;
+                                                default:
+                                                    <option selected value="line">Biểu đồ đường</option>
+                                                    <option value="splineArea">Biểu đồ đường vực</option>
+                                                    <option value="column">Biểu đồ cột</option>
+                                                    break;
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="input-group date date-picker" data-date="12-02-2012" data-date-format="dd-mm-yyyy" data-date-viewmode="years">
+                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                    <input class="form-control date-picker" name="startDate" size="16" type="text" value="@Model.StartDate">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="input-group date date-picker" data-date="12-02-2012" data-date-format="dd-mm-yyyy" data-date-viewmode="years">
+                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                    <input class="form-control date-picker" name="endDate" size="16" type="text" value="@Model.EndDate">
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <button type="submit" class="btn btn-primary"><i class="fa fa-signal"></i> Lọc</button>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+                <br /><br />
+                <div class="clearfix"></div>
+                <div class="table-responsive bodyContent" style="border:0">
+                    <div id="chartContainer" style="height: 300px; width: 100%; margin-top:20px;">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script type="text/javascript" src="~/Admin/assets/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
+    <script src="~/Admin/js/Canvasjs.js"></script>
+    <script>
+        $(function () {
+            if (@Model.StartDate != "") {
+                const data=@Html.Raw(Json.Serialize(Model.orderItems));
+                var arr = new Array();
+                var i = data[0].thang - 1;
+                data.forEach(function print(e) {
+                    while (i != (e.thang - 1)) {
+                        //nếu tháng tiếp là tháng 1 thì năm + 1
+                        if ((e.thang - 1) == 0) {
+                            arr.push({ x: new Date(e.nam + 1, e.thang - 1, 1), y: null, lineColor: "red"});
+                        }
+                        arr.push({ x: new Date(e.nam, e.thang - 1, 1), y: null, lineColor: "red" });
+                        ++i;
+                    }
+                    arr.push({ x: new Date(e.nam, e.thang - 1, 1), y: e.tong, lineColor: "red" });
+                    ++i;
+                    if (i > 11) i = 0;
+                });
+                var chart = new CanvasJS.Chart("chartContainer",
+                    {
+                        title: {
+                            text: "Biểu đồ hóa đơn từ " + @Html.Raw(Json.Serialize(Model.StartDate)) + " đến " + @Html.Raw(Json.Serialize(Model.EndDate)),
+                            fontWeight: "bold",
+                            fontFamily: "arial"
+                        },
+                        axisX: {
+                            title: "Thời gian",
+                            fontWeight: "bold",
+                            fontFamily: "arial",
+                            valueFormatString: "MMM",
+                            interval: 1,
+                            intervalType: "month"
+                        },
+                        axisY: {
+                            title: "Số lượng",
+                            fontWeight: "bold",
+                            fontFamily: "arial",
+                            includeZero: false
+
+                        },
+                        data: [
+                            {
+                                type: @Html.Raw(Json.Serialize(Model.TypeChart)),
+                                connectNullData: true,
+                                dataPoints: arr
+                            }
+                        ]
+                    });
+                chart.render();
+                }
+        });
+    </script>
+
+}

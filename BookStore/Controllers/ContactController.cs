@@ -38,6 +38,7 @@ namespace BookStore.Controllers
                     ContextSubject = subject,
                     ContextMessage = message,
                     Reply = (radioCheckReply == 0) ? false : true,
+                    ReplyDone = false,
                     CreatedDate = DateTime.Now
                 };
                 _ctx.Add(feedback);
