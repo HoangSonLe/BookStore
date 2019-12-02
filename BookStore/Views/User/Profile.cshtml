@@ -1,0 +1,407 @@
+﻿
+@model BookStore.ModelViews.UserProfileView
+
+@{
+    //string image = "";
+    //if (Model.Role == 1)
+    //{
+    //    image=
+    //}
+}
+<!-- Begin modal change password -->
+<div class="modal fade" id="smallShoes" tabindex="-1" role="dialog" aria-labelledby="modalLabelSmall" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="modalLabelSmall">Thay đổi mật khẩu</h4>
+            </div>
+
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label>Mật khẩu cũ:</label>
+                        <input type="password" id="oldPass" class="form-control" name="oldPass">
+                        <p style="color:red" id="oPass"></p>
+                    </div>
+                    <div class="form-group">
+                        <label>Mật khẩu mới:</label>
+                        <input type="password" id="newPass" class="form-control" name="newPass">
+                        <p style="color:red" id="nPass"></p>
+                    </div>
+                    <div class="form-group">
+                        <label>Xác nhận mật khẩu mới:</label>
+                        <input type="password" id="confirmNewPass" class="form-control" name="confirmPass">
+                        <p style="color:red" id="confirm"></p>
+                    </div>
+
+                    <button type="button" class="btn btn-success" id="btnChangePass">Lưu thay đổi</button>
+                    <button class="btn btn-secondary" data-dismiss="modal" >Đóng</button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- end modal change password -->
+<div class="container" style="min-height:360px">
+    <br />
+    <h2>Xin chào</h2>
+    <ul class="nav nav-tabs">
+        <li class="active"><a data-toggle="tab" href="#profile">Thông tin</a></li>
+        <li><a data-toggle="tab" href="#order">Đơn hàng</a></li>
+
+    </ul>
+
+    <div class="tab-content">
+        <div id="profile" class="tab-pane fade in active">
+            <form id="formAdd" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <br />
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <div class="text-center">
+                                    <img id="image_upload_preview" src="https://cdn1.iconfinder.com/data/icons/navigation-elements/512/user-login-man-human-body-mobile-person-512.png" style="width: 200px; height: 200px;" class="avatar img-circle" alt="avatar">
+
+                                    @*@if (String.IsNullOrEmpty(Model.Image))
+                                        {
+                                            <img id="image_upload_preview" src="https://cdn1.iconfinder.com/data/icons/navigation-elements/512/user-login-man-human-body-mobile-person-512.png" style="width: 200px; height: 200px;" class="avatar img-circle" alt="avatar">
+                                        }
+                                        else
+                                        {
+                                            <img id="image_upload_preview" src="~/img/Customer/@Model.Image" style="width: 200px; height: 200px;" class="avatar img-circle" alt="avatar">
+                                        }*@
+
+                                    <h6>Upload a different photo...</h6>
+                                    <input type="file" name="file" class="form-control" asp-for="Image" onchange="ReadImage(this)">
+                                </div>
+                            </div>
+                            @if (Model.Role == 2)
+                            {
+                                <div class="form-group">
+                                    <label>Người quản lý</label>
+                                    <input type="text" class="form-control" asp-for="ManagerName" required readonly>
+                                </div>
+                            }
+                            <br />
+
+
+
+
+                        </div>
+                        <div class="col-md-8">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Họ khách hàng</label>
+                                        <input type="text" class="form-control" asp-for="FirstName" required placeholder="Nhập họ">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Tên khách hàng</label>
+                                        <input type="text" class="form-control" asp-for="LastName" required placeholder="Nhập tên">
+                                        <label id="errorFirstName" style="color:red;display:none ">Vui lòng nhập tên khách hàng</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Tài khoản</label>
+                                        <input type="text" class="form-control" asp-for="UserName" />
+                                        <label id="errorUserName" style="color:red;display:none ">Vui lòng nhập tài khoản khách hàng</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Email</label>
+                                        <input type="text" class="form-control" asp-for="Email" placeholder="Nhập email">
+                                        <label id="errorEmail" style="color:red;display:none ">Địa chỉ Email không hợp lệ</label>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Giới tính</label>
+                                        <select class="form-control" asp-for="Sex">
+
+                                            @if (Model.Sex == true)
+                                            {
+                                                <option selected value="true">Nam</option>
+                                                <option value="false">Nữ</option>
+                                            }
+                                            else
+                                            {
+                                                <option selected value="false">Nữ</option>
+                                                <option value="true">Nam</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Số điện thoại</label>
+                                        <input type="text" class="form-control" asp-for="Phone" placeholder="Nhập số điện thoại">
+                                        <label id="errorPhoneNumber" style="color:red;display:none ">Số điện thoại không hợp lệ</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            @if (Model.Role == 2)
+                            {
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>CMND</label>
+                                            <input type="text" class="form-control" asp-for="IdentityCardNumber" required>
+                                        </div>
+
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Ngày sinh</label>
+                                            <input class="form-control" asp-for="BirthDate" required>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            <div class="form-group">
+                                <label>Địa chỉ</label>
+                                <input type="text" class="form-control" asp-for="Address" placeholder="Nhập địa chỉ">
+                                <label id="errorAddress" style="color:red;display:none ">Vui lòng nhập địa chỉ khách hàng</label>
+                            </div>
+                            @{
+                                if (Model.Role == 1)
+                                {
+                                    <div class="form-group">
+                                        <label>Bảo mật 2 lớp</label>
+                                        <select class="form-control" asp-for="PhoneNumberConfirmed">
+                                            @if (Model.PhoneNumberConfirmed == true)
+                                            {
+                                                <option selected value="true">Bật xác thực</option>
+                                                <option value="false">Tắt xác thực</option>
+                                            }
+                                            else
+                                            {
+                                                <option selected value="false">Tắt xác thực</option>
+                                                <option value="true">Bật xác thực</option>
+                                            }
+                                        </select>
+                                    </div>
+                                }
+                            }
+
+                        </div>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button @*data-id="@Model.CustomerId" *@ class="btn btn-primary btnCreate">Cập nhật</button>
+                    <button  type="button" class="btn btn-success" data-toggle="modal" data-target="#smallShoes">Đổi mật khẩu</button>
+                </div>
+            </form>
+        </div>
+
+
+
+
+
+
+        <div id="order" class="tab-pane fade">
+
+            <table class="table">
+                <thead class="thead-light">
+                    <tr>
+                        <th scope="col">Mã đơn hàng</th>
+                        <th scope="col">P.Thức Thanh Toán</th>
+                        <th scope="col">P.Thức vận chuyển</th>
+                        <th scope="col">Phí vận chuyển</th>
+                        <th scope="col">Trạng thái</th>
+                        <th scope="col">Ngày đặt</th>
+                        <th scope="col">Ngày giao</th>
+                        <th scope="col">Tổng tiền</th>
+                        <th scope="col">-</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        var orders = ViewBag.Orders as IEnumerable<Orders>;
+                    }
+                    @foreach (Orders o in orders)
+                    {
+                        <tr>
+                            <th>@o.OrderId</th>
+                            <td>
+                                Paypal
+                            </td>
+                            <td>
+                                @o.ShipMethod
+                            </td>
+                            <td>
+                                @o.ShipCost
+                            </td>
+
+                            <td>
+                                @{
+                                    if (o.OrderStatus == 0)
+                                    {
+                                        <text> Chưa thanh toán </text>
+                                    }
+                                    else if (o.OrderStatus == 1)
+                                    {
+                                        <text> Đã thanh toán</text>
+                                    }
+
+                                }
+                            </td>
+                            <td>
+                                @o.CreatedDate
+                            </td>
+                            <td>
+                                @o.ShipDate
+                            </td>
+                            <td>
+                                @o.Total
+                            </td>
+                            <td>
+                                <button class="btn btn-primary btnDetail" data-id="@o.OrderId" data-target="#orderDetail" data-toggle="modal"><i class="fa fa-eye"></i> Chi tiết</button>
+
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
+<div class="modal fade  bd-example-modal-lg" id="orderDetail" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="exampleModalLabel">Chi tiết đơn hàng</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="detail">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th scope="col">Hình ảnh</th>
+                            <th scope="col">Sản phẩm</th>
+                            <th scope="col">Đơn giá</th>
+                            <th scope="col">Số lượng</th>
+                            <th scope="col">Discount</th>
+                        </tr>
+                    </thead>
+                    <tbody id="listOrderDetail">
+                        <tr>
+                            <th scope="row">2</th>
+                            <td>
+                                <img src="https://via.placeholder.com/150x150" style="width:60px;height:80px" class="img-fluid img-thumbnail" alt="...">
+                            </td>
+                            <td>Jacob</td>
+                            <td>Thornton</td>
+                            <td>fat</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <!--
+                    Show modal
+                 -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $(".btnDetail").click(function () {
+                var orderID = $(this).data("id");
+                $.ajax({
+                    url: "/User/GetOrderDetail",
+                    type: "GET",
+                    data: {
+                        OrderID: orderID
+                    },
+                    success: function (data) {
+                        $("#listOrderDetail").html("");
+                        $("#listOrderDetail").html(data);
+                    }
+                })
+            })
+            $("#btnChangePass").click(function () {
+                let oldPass = $("#oldPass").val();
+                let newPass = $("#newPass").val();
+                let confirm = $("#confirmNewPass").val();
+                if (validate(oldPass, newPass, confirm)) {
+                    $.ajax({
+                        url: "/User/ChangePassword",
+                        type: "POST",
+                        data: {
+                            OldPass: oldPass,
+                            NewPass: newPass
+                        },
+                        success: function (data) {
+                            if (data == 1) {
+                                
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Thành công!',
+                                    text: 'Thay đổi mật khẩu thành công!',
+                                    showConfirmButton: false,
+                                    timer: 2000
+                                });
+                                
+                            }
+                            else {
+                                $("#oPass").text("Mật khẩu cũ không đúng");
+                            }
+
+                        }
+                    })
+                }
+            })
+            function validate(oldPass, newPass, confirm) {
+                let isValid = true;
+                if (oldPass.length < 2) {
+                    $("#oPass").text("Mật khẩu phải từ 2 kí tự trở lên");
+                    isValid = false;
+                }
+                else {
+                    $("#oPass").text("");
+                }
+                if (newPass.length < 2) {
+                    $("#nPass").text("Mật khẩu phải từ 2 kí tự trở lên");
+                    isValid = false;
+                }
+                else {
+                    $("#nPass").text("");
+                    if (newPass != confirm) {
+                        $("#confirm").text("Xác nhận mật khẩu không đúng với mật khẩu mới");
+                        isValid = false;
+                    }
+                    else {
+                        $("#confirm").text("");
+                    }
+                }
+                return isValid;
+            }
+        })
+        
+    </script>
+}
+

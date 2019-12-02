@@ -278,5 +278,100 @@ namespace BookStore.Controllers
             return View("VerifyUser");
         }
 
+        public IActionResult Profile()
+        {   
+            //Getting session
+            var cus = HttpContext.Session.GetObject<Customer>("Customer");
+            var emp = HttpContext.Session.GetObject<Employee>("Employee");
+            if (cus != null)
+            {
+                var user = new UserProfileView
+                {
+                    UserID = cus.CustomerId,
+                    UserName = cus.UserName,
+                    Password = cus.Password,
+                    FirstName = cus.FirstName,
+                    LastName = cus.LastName,
+                    Address = cus.Address,
+                    Email = cus.Email,
+                    Sex = cus.Sex,
+                    Phone = cus.PhoneNumber,
+                    PhoneNumberConfirmed = cus.PhoneNumberConfirmed,
+                    Image = cus.Image,
+                    Role = 1
+                };
+                ViewBag.Orders = _ctx.Orders.AsNoTracking().Where(p => p.CustomerId == cus.CustomerId);
+                return View(user);
+            }
+            else if (emp != null)
+            {
+                var manager = _ctx.Employee.SingleOrDefault(p => p.EmployeeId == emp.ManagerId);
+                string name = "";
+                if (manager!=null) name = manager.FirstName + " " + manager.LastName;
+                var user = new UserProfileView
+                {
+                    UserID = emp.EmployeeId,
+                    UserName = emp.UserName,
+                    Password = emp.Password,
+                    FirstName = emp.FirstName,
+                    LastName = emp.LastName,
+                    Address = emp.Address,
+                    IdentityCardNumber = emp.IdentityCardNumber,
+                    BirthDate = emp.BirthDate,
+                    ManagerName = name,
+                    Email = emp.Email,
+                    Sex = emp.Sex,
+                    Phone = emp.Phone,
+                    Image = emp.Image,
+                    Role=2
+                };
+                ViewBag.Orders = _ctx.Orders.AsNoTracking().Where(p => p.EmployeeId == emp.EmployeeId);
+                return View(user);
+
+            }
+            return BadRequest();
+            
+        }
+
+        public IActionResult GetOrderDetail(int OrderID)
+        {
+            var detail = _ctx.OrderDetail.AsNoTracking().Where(p => p.OrderId == OrderID).Include(x=>x.Product);
+            return PartialView("ModalOrderDetail", detail);
+        }
+
+        [HttpPost]
+        public int ChangePassword(string OldPass, string NewPass)
+        {
+            string hashOldPass = MyHashTool.GetMd5Hash(OldPass);
+            var cus = HttpContext.Session.GetObject<Customer>("Customer");
+            var emp = HttpContext.Session.GetObject<Employee>("Employee");
+            if (cus != null)
+            {
+                if (cus.Password == hashOldPass)
+                {
+                    //They are same
+                    var c = _ctx.Customer.SingleOrDefault(p => p.CustomerId == cus.CustomerId);
+                    c.Password = MyHashTool.GetMd5Hash(NewPass);
+                    _ctx.Customer.Update(c);
+                    _ctx.SaveChanges();
+                    return 1;
+                }
+                
+            }
+            else
+            {
+                if (emp.Password == hashOldPass)
+                {
+                    //They are same
+                    var e = _ctx.Employee.SingleOrDefault(p => p.EmployeeId == emp.EmployeeId);
+                    e.Password = MyHashTool.GetMd5Hash(NewPass);
+                    _ctx.Employee.Update(e);
+                    _ctx.SaveChanges();
+                    return 1;
+                }
+               
+            }
+            return 0;
+        }
     }
 }
