@@ -1,0 +1,110 @@
+﻿@model IEnumerable<BookStore.Models.Orders>
+
+@{ 
+    ViewData["Title"] = "Hóa Đơn";
+}
+
+
+<!-- BEGIN Main Content -->
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="box">
+            <div class="box-title">
+                <h3><i class="fa fa-table"></i>Table Orders</h3>
+                <div class="box-tool">
+                    <a data-action="collapse" href="#"><i class="fa fa-chevron-up"></i></a>
+                    <a data-action="close" href="#"><i class="fa fa-times"></i></a>
+                </div>
+            </div>
+            <div class="box-content">
+                <div class="btn-toolbar pull-right clearfix">
+                    <div class="btn-group">
+                        <a class="btn btn-circle show-tooltip" title="Add new record" asp-action="Create"><i class="fa fa-plus"></i></a>
+                        <a class="btn btn-circle show-tooltip" title="Edit selected" href="#"><i class="fa fa-edit"></i></a>
+                        <a class="btn btn-circle show-tooltip" title="Delete selected" href="#"><i class="fa fa-trash-o"></i></a>
+                    </div>
+                    <div class="btn-group">
+                        <a class="btn btn-circle show-tooltip" title="Print" href="#"><i class="fa fa-print"></i></a>
+                        <a class="btn btn-circle show-tooltip" title="Export to PDF" href="#"><i class="fa fa-file-text-o"></i></a>
+                        <a class="btn btn-circle show-tooltip" title="Export to Exel" href="#"><i class="fa fa-table"></i></a>
+                    </div>
+                    <div class="btn-group">
+                        <a class="btn btn-circle show-tooltip" title="Refresh" href="#"><i class="fa fa-repeat"></i></a>
+                    </div>
+                </div>
+                <br /><br />
+                <div class="clearfix"></div>
+                <div class="table-responsive" style="border:0">
+                    <table class="table table-advance" id="tablePublishers">
+                        <thead>
+                            <tr>
+                                <th>Mã đơn hàng</th>
+                                <th>Họ tên khách hàng</th>
+                                <th>Địa chỉ</th>
+                                <th>Phương thức thanh toán</th>
+                                <th>Tổng tiền</th>
+                                <th class="text-center">Trạng thái</th>
+                                <th class="text-center" width="23%">Chức năng</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr class="table-flag-blue">
+                                    <td><b>@item.OrderId</b></td>
+                                    <td>@item.Name</td>
+                                    <td>@item.Address</td>
+                                    <td><b>@item.PayMethod</b></td>
+                                    <td><b>@item.Total</b></td>
+                                    @if (item.OrderStatus == 2)
+                                    {
+                                        <td class="text-center"><span class="label label-success">Đang vận chuyển</span></td>
+                                    }
+                                    else
+                                    {
+                                        <td class="text-center"><span class="label label-warning">Không biết nữa</span></td>
+                                    }
+                                    <td class="text-center">
+                                        <div class="btn-group">
+                                            <p>
+                                                <button class="btn btn-magenta btnDetail" data-id="@item.OrderId" data-target="#modalDetail" data-toggle="modal"><i class="fa fa-eye"></i></button>
+                                                <a class="btn btn-primary" asp-controller="Order" asp-action="Edit" asp-route-id="@item.OrderId"><i class="fa fa-edit"></i></a>
+                                                <button class="btn btn-danger btnDelete" data-id="@item.OrderId" data-name="@item.OrderId"><i class="fa fa-trash-o"></i></button>
+                                            </p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END Main Content -->
+<!-- Modal -->
+<div class="modal fade" id="modalDetail" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Thông tin hóa đơn</h4>
+            </div>
+            <div class="modal-body" id="modalBody">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.js"></script>
+    <script type="text/javascript" src="~/Admin/assets/data-tables/bootstrap3/dataTables.bootstrap.js"></script>
+    <script src="~/Admin/js/Order.js"></script>
+}
