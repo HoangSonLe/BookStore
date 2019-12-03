@@ -3,12 +3,23 @@
 @{ 
     var cus = Context.Session.GetObject<Customer>("Customer");
     var emp = Context.Session.GetObject<Employee>("Employee");
+    
 }
 @foreach (var comment in Model)
 {
+    string image = "";
+    if (comment.CustomerID != null)
+    {
+        //This comment belongs to customer
+        image = "Customer/"+comment.Image;
+    }
+    else
+    {
+        image = "Employee/"+comment.Image;
+     }
     <li class="media">
         <a href="#" class="pull-left">
-            <img src="~/Image/Customer/@comment.Image" style="width:48px;height:48px" alt="" class="img-circle">
+            <img src="~/Image/@image" style="width:48px;height:48px" alt="" class="img-circle">
         </a>
         <div class="media-body">
             <span class="text-muted pull-right">
