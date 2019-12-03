@@ -52,8 +52,16 @@ namespace BookStore.Controllers
             return View();
         }
         [AllowAnonymous]
-        public IActionResult Login()
+        public IActionResult Login(string ReturnUrl)
         {
+            if (TempData["ReturnUrl"] != null)
+            {
+                ViewBag.ReturnUrl = TempData["ReturnUrl"].ToString();
+            }
+            else
+            {
+                ViewBag.ReturnUrl = ReturnUrl;
+            }
             return View();
         }
    
@@ -119,12 +127,16 @@ namespace BookStore.Controllers
             }
             return RedirectToAction("Index", "Home");
         }
-        public async Task<IActionResult> Logout()
+        public async Task<IActionResult> Logout(string ReturnUrl)
         {
             HttpContext.Session.Remove("Customer");
             await HttpContext.SignOutAsync("Customer");
             HttpContext.Session.Remove("Admin");
             await HttpContext.SignOutAsync("Admin");
+            if (Url.IsLocalUrl(ReturnUrl))
+            {
+                return Redirect(ReturnUrl);
+            }
             return RedirectToAction("Index", "Home");
         }
         [AllowAnonymous]
@@ -341,7 +353,7 @@ namespace BookStore.Controllers
                 return View(user);
 
             }
-            return BadRequest();
+            return RedirectToAction("Login","User");
             
         }
 
@@ -359,26 +371,28 @@ namespace BookStore.Controllers
             var emp = HttpContext.Session.GetObject<Employee>("Employee");
             if (cus != null)
             {
-                if (cus.Password == hashOldPass)
+                if (cus.Password.ToLower() == hashOldPass.ToLower())
                 {
                     //They are same
                     var c = _ctx.Customer.SingleOrDefault(p => p.CustomerId == cus.CustomerId);
                     c.Password = MyHashTool.GetMd5Hash(NewPass);
                     _ctx.Customer.Update(c);
                     _ctx.SaveChanges();
+                    HttpContext.Session.SetObject<Customer>("Customer", c);
                     return 1;
                 }
                 
             }
             else
             {
-                if (emp.Password == hashOldPass)
+                if (emp.Password.ToLower() == hashOldPass.ToLower())
                 {
                     //They are same
                     var e = _ctx.Employee.SingleOrDefault(p => p.EmployeeId == emp.EmployeeId);
                     e.Password = MyHashTool.GetMd5Hash(NewPass);
                     _ctx.Employee.Update(e);
                     _ctx.SaveChanges();
+                    HttpContext.Session.SetObject<Employee>("Employee", e);
                     return 1;
                 }
                

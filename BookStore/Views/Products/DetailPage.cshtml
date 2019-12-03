@@ -165,7 +165,7 @@
                                 else
                                 {
                                     <div style="margin-bottom:50px">
-                                        <h4> <a asp-controller="User" asp-action="Login">Đăng nhập</a> để có thể bình luận sản phẩm</h4>
+                                        <h4> <a asp-controller="User" asp-action="Login" asp-route-ReturnUrl="/@Model.Category.UrlFriendly/@Model.UrlFriendly" >Đăng nhập</a> để có thể bình luận sản phẩm</h4>
                                     </div>
                                 }
                             }

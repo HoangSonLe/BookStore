@@ -6,7 +6,6 @@
 <!-- breadcrumbs-area-start -->
 @await Html.PartialAsync("_Breadcrumbs")
 <!-- breadcrumbs-area-end -->
-
 <div style="text-align: center;">
     <img src="https://nlkart.com/image/catalog/demo/bonuspage/404/emptycart.png"
          alt="Không có sản phẩm nào trong giỏ hàng của bạn.">
@@ -24,40 +23,99 @@
         </div>
         <!-- tab-area-start -->
         <div class="tab-content">
-            <div class="tab-pane active">
-                <div class="tab-active owl-carousel">
-                    @foreach (var item in Model)
-                    {
-                        <!-- single-product-start -->
-                        <div class="product-wrapper">
-                            <div class="product-img">
-                                <a href="#">
-                                    <img src="~/Image/Product/@item.ImageCover" alt="book" class="primary" />
+            <div class="tab-active owl-carousel">
+                @foreach (var p in Model)
+                {
+                    <!-- single-product-start -->
+                    <div class="product-wrapper mb-40" title="@p.ProductName">
+                        <div class="product-img">
+                            <a asp-action="DetailPage" asp-controller="Products" asp-route-loai="@p.Category.UrlFriendly" asp-route-hanghoa="@p.UrlFriendly" title="Details">
+                                <img src="~/Image/Product/@p.ImageCover" alt="@p.ImageCover" class="primary" style="margin:5px;height:220px;width:160px; text-align:center;" />
+                            </a>
+                            <div class="quick-view" style="cursor:pointer;">
+                                <a class="action-view quickViewModal" data-urlfriendly="@p.UrlFriendly" data-target="#productModal" data-toggle="modal" title="Quick View">
+                                    <i class="fa fa-search-plus"></i>
                                 </a>
+                            </div>
+                            @if (p.Discount != 0)
+                            {
                                 <div class="product-flag">
                                     <ul>
-                                        <li><span class="sale">new</span></li>
+                                        <li><span class="discount-percentage">@p.Discount %</span></li>
                                     </ul>
                                 </div>
+                            }
+                        </div>
+                        <div class="product-details text-center">
+                            <div class="divAreaContent">
+                                <a asp-action="DetailPage" asp-controller="Products" asp-route-loai="@p.Category.UrlFriendly" asp-route-hanghoa="@p.UrlFriendly">@p.ProductName</a>
                             </div>
-                            <div class="product-details text-center">
-                                <h4><a href="#">@item.ProductName</a></h4>
-                                <div class="product-price">
-                                    <ul>
-                                        <li>@(String.Format("{0:0,0} VNĐ", item.Price))</li>
-                                    </ul>
-                                </div>
+                            <div class="product-price">
+                                <ul>
+                                    @{var price = String.Format("{0:0,0 VNĐ}", p.Price);}
+                                    @if (p.Discount != 0)
+                                    {
+                                        var promotionPrice = String.Format("{0:0,0 VNĐ}", p.PromotionPrice);
+                                        <li style="font-family:Arial; font-weight:normal;">@promotionPrice</li>
+                                        <li class="old-price" style="font-family:Arial; font-weight:normal;">@price</li>
+                                    }
+                                    else
+                                    {
+                                        <li style="font-family:Arial; font-weight:normal;">@price</li>
+                                    }
+
+                                </ul>
                             </div>
                         </div>
-                        <!-- single-product-end -->
-
-                    }
-                </div>
+                        <div class="product-link">
+                            <div class="product-button">
+                                <a onclick="onClickAddToCart(@p.ProductId,1)" style="cursor:pointer;" title="Add to cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
+                            </div>
+                            <div class="add-to-link">
+                                <ul>
+                                    <li><a asp-action="DetailPage" asp-controller="Products" asp-route-loai="@p.Category.UrlFriendly" asp-route-hanghoa="@p.UrlFriendly" title="Details"><i class="fa fa-external-link"></i></a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- single-product-end -->
+                }
             </div>
         </div>
         <!-- tab-area-end -->
     </div>
 </div>
 
-<br />
-<br />
+<div class="modal fade" id="productModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">x</span></button>
+            </div>
+            <div class="modal-body modalBody">
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script src="~/js/jsScriptByMySelf/UpdateCart.js"></script>
+    <script>
+        $(function () {
+            $(".quickViewModal").on("click", function () {
+                var urlfriendly = $(this).data("urlfriendly");
+                $.ajax({
+                    url: "/chi-tiet/" + urlfriendly,
+                    type: "GET",
+                    success: function (data) {
+                        $(".modalBody").html("");
+                        $(".modalBody").html(data);
+                    },
+                    error: function (data) {
+                        alert("error");
+
+                    }
+                });
+            });
+        });
+    </script>
+}

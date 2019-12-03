@@ -9,10 +9,11 @@
                     <div class="account-area text-right">
                         <ul>
                             @{
-                                if (User.Identity.IsAuthenticated && User.IsInRole("Customer"))
+                                var url = Context.Request.Path;
+                                if (User.Identity.IsAuthenticated/* && User.IsInRole("Customer")*/)
                                 {
                                     <li><a asp-action="Profile" asp-controller="User" id="fullName">@User.Identity.Name</a></li>
-                                    <li><a asp-action="Logout" asp-controller="User">Đăng xuất</a></li>
+                                    <li><a asp-action="Logout" asp-controller="User" asp-route-ReturnUrl="@url">Đăng xuất</a></li>
                                 }
                                 else
                                 {

@@ -8,6 +8,7 @@ using BookStore.Models;
 using BookStore.ModelViews;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace BookStore.Controllers
 {
@@ -100,7 +101,7 @@ namespace BookStore.Controllers
         [AllowAnonymous]
         public IActionResult EmptyCart()
         {
-            var list = _context.Product.ToList();
+            var list = _context.Product.Include(p=>p.Category).ToList();
             IEnumerable<Product> model = list.TakeLast(10);
             return View(model);
         }
