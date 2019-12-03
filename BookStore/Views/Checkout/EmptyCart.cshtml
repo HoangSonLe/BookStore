@@ -6,6 +6,11 @@
 <!-- breadcrumbs-area-start -->
 @await Html.PartialAsync("_Breadcrumbs")
 <!-- breadcrumbs-area-end -->
+
+<link href="~/css/ProductItem.css" rel="stylesheet" />
+<script src="https://kit.fontawesome.com/aa03f9ec64.js" crossorigin="anonymous"></script>
+
+
 <div style="text-align: center;">
     <img src="https://nlkart.com/image/catalog/demo/bonuspage/404/emptycart.png"
          alt="Không có sản phẩm nào trong giỏ hàng của bạn.">
@@ -21,71 +26,74 @@
                 </div>
             </div>
         </div>
-        <!-- tab-area-start -->
+
         <div class="tab-content">
-            <div class="tab-active owl-carousel">
-                @foreach (var p in Model)
-                {
-                    <!-- single-product-start -->
-                    <div class="product-wrapper mb-40" title="@p.ProductName">
-                        <div class="product-img">
-                            <a asp-action="DetailPage" asp-controller="Products" asp-route-loai="@p.Category.UrlFriendly" asp-route-hanghoa="@p.UrlFriendly" title="Details">
-                                <img src="~/Image/Product/@p.ImageCover" alt="@p.ImageCover" class="primary" style="margin:5px;height:220px;width:160px; text-align:center;" />
-                            </a>
-                            <div class="quick-view" style="cursor:pointer;">
-                                <a class="action-view quickViewModal" data-urlfriendly="@p.UrlFriendly" data-target="#productModal" data-toggle="modal" title="Quick View">
-                                    <i class="fa fa-search-plus"></i>
+            <div class="tab-pane active" id="Audiobooks">
+                <div class="tab-active owl-carousel">
+                    @foreach (var p in Model)
+                    {
+                        <!-- single-product-start -->
+                        <div class="product-wrapper mb-40" title="@p.ProductName">
+                            <div class="product-img">
+                                <a asp-action="DetailPage" asp-controller="Products" asp-route-loai="@p.Category.UrlFriendly" asp-route-hanghoa="@p.UrlFriendly" title="Details">
+                                    <img src="~/Image/Product/@p.ImageCover" alt="@p.ImageCover" class="primary" style="margin:5px;height:220px;width:160px; text-align:center;" />
                                 </a>
+                                <div class="quick-view" style="cursor:pointer;">
+                                    <a class="action-view quickViewModal" data-urlfriendly="@p.UrlFriendly" data-target="#productModal" data-toggle="modal" title="Quick View">
+                                        <i class="fa fa-search-plus"></i>
+                                    </a>
+                                </div>
+                                @if (p.Discount != 0)
+                                {
+                                    <div class="product-flag">
+                                        <ul>
+                                            <li><span class="discount-percentage">@p.Discount %</span></li>
+                                        </ul>
+                                    </div>
+                                }
                             </div>
-                            @if (p.Discount != 0)
-                            {
-                                <div class="product-flag">
+                            <div class="product-details text-center">
+                                <div class="divAreaContent">
+                                    <a asp-action="DetailPage" asp-controller="Products" asp-route-loai="@p.Category.UrlFriendly" asp-route-hanghoa="@p.UrlFriendly">@p.ProductName</a>
+                                </div>
+                                <div class="product-price">
                                     <ul>
-                                        <li><span class="discount-percentage">@p.Discount %</span></li>
+                                        @{var price = String.Format("{0:0,0 VNĐ}", p.Price);}
+                                        @if (p.Discount != 0)
+                                        {
+                                            var promotionPrice = String.Format("{0:0,0 VNĐ}", p.PromotionPrice);
+                                            <li style="font-family:Arial; font-weight:normal;">@promotionPrice</li>
+                                            <li class="old-price" style="font-family:Arial; font-weight:normal;">@price</li>
+                                        }
+                                        else
+                                        {
+                                            <li style="font-family:Arial; font-weight:normal;">@price</li>
+                                        }
+
                                     </ul>
                                 </div>
-                            }
-                        </div>
-                        <div class="product-details text-center">
-                            <div class="divAreaContent">
-                                <a asp-action="DetailPage" asp-controller="Products" asp-route-loai="@p.Category.UrlFriendly" asp-route-hanghoa="@p.UrlFriendly">@p.ProductName</a>
                             </div>
-                            <div class="product-price">
-                                <ul>
-                                    @{var price = String.Format("{0:0,0 VNĐ}", p.Price);}
-                                    @if (p.Discount != 0)
-                                    {
-                                        var promotionPrice = String.Format("{0:0,0 VNĐ}", p.PromotionPrice);
-                                        <li style="font-family:Arial; font-weight:normal;">@promotionPrice</li>
-                                        <li class="old-price" style="font-family:Arial; font-weight:normal;">@price</li>
-                                    }
-                                    else
-                                    {
-                                        <li style="font-family:Arial; font-weight:normal;">@price</li>
-                                    }
-
-                                </ul>
+                            <div class="product-link">
+                                <div class="product-button">
+                                    <a onclick="onClickAddToCart(@p.ProductId,1)" style="cursor:pointer;" title="Add to cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
+                                </div>
+                                <div class="add-to-link">
+                                    <ul>
+                                        <li><a asp-action="DetailPage" asp-controller="Products" asp-route-loai="@p.Category.UrlFriendly" asp-route-hanghoa="@p.UrlFriendly" title="Details"><i class="fa fa-external-link"></i></a></li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
-                        <div class="product-link">
-                            <div class="product-button">
-                                <a onclick="onClickAddToCart(@p.ProductId,1)" style="cursor:pointer;" title="Add to cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
-                            </div>
-                            <div class="add-to-link">
-                                <ul>
-                                    <li><a asp-action="DetailPage" asp-controller="Products" asp-route-loai="@p.Category.UrlFriendly" asp-route-hanghoa="@p.UrlFriendly" title="Details"><i class="fa fa-external-link"></i></a></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- single-product-end -->
-                }
+                        <!-- single-product-end -->
+                    }
+                </div>
             </div>
         </div>
-        <!-- tab-area-end -->
+
+
     </div>
 </div>
-
+<!--Modal-->
 <div class="modal fade" id="productModal" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -97,6 +105,10 @@
         </div>
     </div>
 </div>
+<!--End Modal-->
+<br />
+<br />
+
 @section Scripts{
     <script src="~/js/jsScriptByMySelf/UpdateCart.js"></script>
     <script>

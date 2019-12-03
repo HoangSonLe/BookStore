@@ -73,8 +73,12 @@ namespace BookStore.Controllers
         [AllowAnonymous]
         public IActionResult PaymentFailed()
         {
-            var list = _context.Product.ToList();
-            IEnumerable<Product> model = list.TakeLast(10);
+            var model = _context.Product.Include(p => p.Category)
+                                               .OrderByDescending(p => p.ProductId)
+                                               .Take(10)
+                                               .AsNoTracking()
+                                               .Where(p => p.Status == true)
+                                               .ToList();
             return View(model);
         }
 
@@ -101,8 +105,13 @@ namespace BookStore.Controllers
         [AllowAnonymous]
         public IActionResult EmptyCart()
         {
-            var list = _context.Product.Include(p=>p.Category).ToList();
-            IEnumerable<Product> model = list.TakeLast(10);
+
+            var model = _context.Product.Include(p => p.Category)
+                                               .OrderByDescending(p => p.ProductId)
+                                               .Take(10)
+                                               .AsNoTracking()
+                                               .Where(p => p.Status == true)
+                                               .ToList();
             return View(model);
         }
 

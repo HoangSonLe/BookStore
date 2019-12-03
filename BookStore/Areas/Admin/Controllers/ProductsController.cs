@@ -127,7 +127,7 @@ namespace BookStore.Areas.Admin.Controllers
             //mảng id hình ảnh xóa
             string[] arrDeleteImage = new string[] { };
 
-            var productBefore = _context.Product.AsNoTracking().SingleOrDefault(p => p.ProductId == product.ProductId && p.UrlFriendly==urlfriendly);
+            var productBefore = _context.Product.AsNoTracking().SingleOrDefault(p => p.ProductId == product.ProductId);
 
             if (productBefore == null)
             {
