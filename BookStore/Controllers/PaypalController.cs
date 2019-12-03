@@ -45,7 +45,7 @@ namespace BookStore.Controllers
         public async Task<IActionResult> Checkout(Orders order)
         {
             //SandboxEnvironment(clientId, clientSerect)
-            var environment = new SandboxEnvironment("AdD6Pe74n4rpkoVI7jgO9hVdyFx9r2LVsZspknx8sbdtCkGOjaGd-XQ21ojOglIIybTDNqrmb2gNMZh6", "EFUnJYFszc9T83ROcR9-adigWha2zB7GjHgWAUhzQ0SXYffYQdDWKISFJwcemPFdcBplqGiU6FBskBzD");
+            var environment = new SandboxEnvironment("ATEyDHMWKozlcGDf5yNduG92WTeajJf9gqXc34Dd0AU7LbWgFvH3qY_8ImvFfZls5uZMzaoeZAdZBCrm", "EH1J-u4MfbsyBENy8zBoVHHOnU9DMsDRjGDaXwfZltNEVc3rv_t26ANZ_L2Z4eQlS12oRnUj_Zr8dizO");
             var client = new PayPalHttpClient(environment);
 
             //Đọc thông tin đơn hàng từ Session
@@ -113,8 +113,8 @@ namespace BookStore.Controllers
                 },
                 RedirectUrls = new RedirectUrls()
                 {
-                    CancelUrl = "http://mybookstore.somee.com//Paypal/Fail",
-                    ReturnUrl = "http://mybookstore.somee.com//Paypal/Success"
+                    CancelUrl = HttpContext.Request.Scheme + "://" + HttpContext.Request.Host + "/Paypal/Fail",
+                    ReturnUrl = HttpContext.Request.Scheme + "://" + HttpContext.Request.Host + "/Paypal/Success"
                 },
                 Payer = new Payer()
                 {

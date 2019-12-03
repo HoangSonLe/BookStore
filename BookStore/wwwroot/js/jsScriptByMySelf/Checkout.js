@@ -55,13 +55,13 @@ $("#Payment").click(function (e) {
         var order = $("#InfoOrder").serialize();
         var payMethod = $("input[name='PayMethod']:checked").val();
         if (payMethod == "Paypal") {
-            window.location = "http://mybookstore.somee.com/Paypal/Checkout?" + order;
+            window.location = window.location.host + "/Paypal/Checkout?" + order;
         }
         else if (payMethod == "OnePay") {
-            window.location = "http://mybookstore.somee.com/OnePay/OnePayPayment?" + order;
+            window.location = window.location.host + "/OnePay/OnePayPayment?" + order;
         }
         else if (payMethod == "DirectPay") {
-            window.location = "http://mybookstore.somee.com/Checkout/Invoice?" + order;
+            window.location = window.location.host + "/Checkout/Invoice?" + order;
         }
     }
 });
