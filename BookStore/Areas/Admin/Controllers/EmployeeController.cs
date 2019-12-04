@@ -37,12 +37,12 @@ namespace BookStore.Areas.Admin.Controllers
 
             if (info == null)
             {
-                return RedirectToAction("Index", "Login");
+                return BadRequest(new { message = "login" });
             }
 
             if (info.Role == 3) // Role is Employee
             {
-                return BadRequest(new { message = "Bạn không được quyền thêm tài khoản!!"});
+                return BadRequest(new { content = "Bạn không được quyền thêm tài khoản!!"});
             }
 
             Employee emp = new Employee();
@@ -62,7 +62,7 @@ namespace BookStore.Areas.Admin.Controllers
 
             if (info == null)
             {
-                return RedirectToAction("Index", "Login");
+                return BadRequest(new { message = "login" });
             }
             if (ModelState.IsValid && employee != null)
             {
@@ -79,12 +79,12 @@ namespace BookStore.Areas.Admin.Controllers
                 }
                 else
                 {
-                    return BadRequest(new { message = "Tài khoản đã tồn tại!!!"});
+                    return BadRequest(new {content = "Tài khoản đã tồn tại!!!"});
                 }
             }
             else
             {
-                return BadRequest(new { message = "Vui lòng điền thông tin tài khoản!"});
+                return BadRequest(new { content = "Vui lòng điền thông tin tài khoản!"});
             }
 
             var model = await _context.Employee.AsNoTracking().ToListAsync();
@@ -97,7 +97,7 @@ namespace BookStore.Areas.Admin.Controllers
 
             if (info == null)
             {
-                return RedirectToAction("Index", "Login");
+                return BadRequest(new { message = "login" });
             }
             if (id == null)
             {
@@ -129,31 +129,22 @@ namespace BookStore.Areas.Admin.Controllers
         public async Task<IActionResult> Edit(int id)
         {
             var info = HttpContext.Session.GetObject<Employee>("Employee");
-
+            // xét còn session
             if (info == null)
             {
-                return RedirectToAction("Index", "Login");
-            }
-            if (!EmployeeExists(id))
-            {
-                return BadRequest(new { message = "Không tồn tại nhân viên này!!" });
+                return BadRequest(new { message = "login" });
             }
 
-            if (info == null)
-            {
-                return RedirectToAction("Index", "Login");
-            }
             var employee = await _context.Employee.AsNoTracking().SingleOrDefaultAsync(e => e.EmployeeId == id);
             
-
             if (employee == null)
             {
-                return BadRequest();
+                return BadRequest(new { content = "Không tồn tại nhân viên này!!" });
             }
 
             if (employee.Role <= info.Role && info.EmployeeId != employee.EmployeeId)
             {
-                return BadRequest(new { message = "Bạn không có quyền sửa thông tin người này!!" });
+                return BadRequest(new { content = "Bạn không có quyền sửa thông tin người này!!" });
             }
 
             var Roles = _context.Roles.AsNoTracking().Where(r => r.RoleId >= info.Role);
@@ -181,7 +172,7 @@ namespace BookStore.Areas.Admin.Controllers
 
             if (info == null)
             {
-                return RedirectToAction("Index", "Login");
+                return BadRequest(new { message = "login" });
             }
             
 
@@ -192,7 +183,7 @@ namespace BookStore.Areas.Admin.Controllers
                     var emp = await _context.Employee.AsNoTracking().SingleOrDefaultAsync(e => e.EmployeeId == employee.EmployeeId);
                     if (emp == null)
                     {
-                        return BadRequest(new { message = "Không tồn tại nhân viên này!!" });
+                        return BadRequest(new { content = "Không tồn tại nhân viên này!!" });
                     }
                     if (employee.Password != emp.Password)
                     {
@@ -208,7 +199,7 @@ namespace BookStore.Areas.Admin.Controllers
                 }
                 catch
                 {
-                    return BadRequest(new { message = "Sửa không thành công!" });
+                    return BadRequest(new { content = "Sửa không thành công!" });
                 }
             }
 
@@ -223,18 +214,18 @@ namespace BookStore.Areas.Admin.Controllers
 
             if (info == null)
             {
-                return RedirectToAction("Index", "Login");
+                return BadRequest(new { message = "login" });
             }
             if (!EmployeeExists(id))
             {
-                return BadRequest(new { message = "Không tồn tại nhân viên này!!" });
+                return BadRequest(new { content = "Không tồn tại nhân viên này!!" });
             }
 
             var employee = await _context.Employee.AsNoTracking().SingleOrDefaultAsync(e => e.EmployeeId == id);
 
             if (employee.Role <= info.Role)
             {
-                return BadRequest( new { message = "Bạn không có quyền xóa người này!!"});
+                return BadRequest( new { content = "Bạn không có quyền xóa người này!!"});
             }
             _context.Employee.Remove(employee);
             await _context.SaveChangesAsync();
@@ -245,6 +236,13 @@ namespace BookStore.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> GetManagers(int role, int? idEmployee)
         {
+            var info = HttpContext.Session.GetObject<Employee>("Employee");
+
+            if (info == null)
+            {
+                return BadRequest(new { message = "login" });
+            }
+
             var employee = _context.Employee.SingleOrDefault(e => e.EmployeeId == idEmployee);
 
             if (employee.Role == role)
@@ -270,6 +268,13 @@ namespace BookStore.Areas.Admin.Controllers
         [HttpPost]
         public IActionResult UploadImage([FromForm]IFormFile file)
         {
+            var info = HttpContext.Session.GetObject<Employee>("Employee");
+
+            if (info == null)
+            {
+                return BadRequest(new { message = "login" });
+            }
+
             string fileName = file.FileName;
             bool check = fileName[0] == 'A'; // check Add or Edit
 

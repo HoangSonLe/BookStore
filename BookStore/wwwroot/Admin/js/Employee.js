@@ -28,8 +28,14 @@ async function ReadImage(input) {
                 NameImage = message.name;
                 NameFolder = message.folder;
             },
-            error: function () {
-                alert("there was error uploading files!");
+            error: function (response) {
+                if (response.responseJSON.message == "login") {
+                    alert("Vui lòng đăng nhập lại!");
+                    window.location = window.location.protocol + "//" + window.location.host + "/Admin/Login";
+                }
+                else {
+                    alert("there was error uploading files!");
+                }
             }
         });
     }
@@ -49,7 +55,14 @@ $("#Role").change(function () {
             $(".ManagerList").html("")
             
             $(".ManagerList").html(data);
+        },
+        error: function (response) {
+            if (response.responseJSON.message == "login") {
+                alert("Vui lòng đăng nhập lại!");
+                window.location = window.location.protocol + "//" + window.location.host + "/Admin/Login";
+            }
         }
+
     });
 
 });
@@ -125,14 +138,20 @@ $(".btnAdd").click(function () {
             $("#modalBody").html(data);
         },
         error: function (response) {
-            $("#modalDetail").modal("hide");
-            Swal.fire({
-                icon: 'warning',
-                title: 'Cảnh báo!',
-                text: JSON.parse(response.responseText).message,
-                showConfirmButton: false,
-                timer: 1000
-            });
+            if (response.responseJSON.message == "login") {
+                alert("Vui lòng đăng nhập lại!");
+                window.location = window.location.protocol + "//" + window.location.host + "/Admin/Login";
+            }
+            else {
+                $("#modalDetail").modal("hide");
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Cảnh báo!',
+                    text: response.responseJSON.content,
+                    showConfirmButton: false,
+                    timer: 1000
+                });
+            }
         }
     });
 });
@@ -161,13 +180,19 @@ $(".btnCreate").on('click', function (e) {
                 nameImage = "";
             },
             error: function (response) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Thất bại!',
-                    text: JSON.parse(response.responseText).message,
-                    showConfirmButton: false,
-                    timer: 1000
-                });
+                if (response.responseJSON.message == "login") {
+                    alert("Vui lòng đăng nhập lại!");
+                    window.location = window.location.protocol + "//" + window.location.host + "/Admin/Login";
+                }
+                else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Thất bại!',
+                        text: response.responseJSON.content,
+                        showConfirmButton: false,
+                        timer: 1000
+                    });
+                }
             }
         });
 
@@ -190,13 +215,20 @@ $('#tableEmployees tbody').on('click', '.btnDetail', function () {
             $("#modalBody").html(data);
         },
         error: function (response) {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Cảnh báo!',
-                text: JSON.parse(response.responseText).message,
-                showConfirmButton: false,
-                timer: 1000
-            });
+            console.log(response);
+            if (response.responseJSON.message == "login") {
+                alert("Vui lòng đăng nhập lại!");
+                window.location = window.location.protocol + "//" + window.location.host + "/Admin/Login";
+            }
+            else {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Cảnh báo!',
+                    text: response.responseJSON.content,
+                    showConfirmButton: false,
+                    timer: 1000
+                });
+            }
         }
     });
 });
@@ -217,13 +249,19 @@ $('#tableEmployees tbody').on('click', '.btnEdit', function () {
             $("#modalBody").html(data);
         },
         error: function (response) {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Cảnh báo!',
-                text: JSON.parse(response.responseText).message,
-                showConfirmButton: false,
-                timer: 1000
-            });
+            if (response.responseJSON.message == "login") {
+                alert("Vui lòng đăng nhập lại!");
+                window.location = window.location.protocol + "//" + window.location.host + "/Admin/Login";
+            }
+            else {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Cảnh báo!',
+                    text: response.responseJSON.content,
+                    showConfirmButton: false,
+                    timer: 1000
+                });
+            }
         }
     });
 });
@@ -261,13 +299,19 @@ $(".btnEditSaveChange").click(function (e) {
                 $("#modalDetail").modal("hide");
             },
             error: function (response) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Thất bại!',
-                    text: response.message,
-                    showConfirmButton: false,
-                    timer: 1000
-                });
+                if (response.responseJSON.message == "login") {
+                    alert("Vui lòng đăng nhập lại!");
+                    window.location = window.location.protocol + "//" + window.location.host + "/Admin/Login";
+                }
+                else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Thất bại!',
+                        text: response.responseJSON.content,
+                        showConfirmButton: false,
+                        timer: 1000
+                    });
+                }
             }
         });
         NameImage = "";
@@ -310,13 +354,19 @@ $('#tableEmployees tbody').on('click', '.btnDelete', function () {
                         .draw();
                 },
                 error: function (response) {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Cảnh báo',
-                        text: JSON.parse(response.responseText).message,
-                        showConfirmButton: false,
-                        timer: 1000
-                    });
+                    if (response.responseJSON.message == "login") {
+                        alert("Vui lòng đăng nhập lại!");
+                        window.location = window.location.protocol + "//" + window.location.host + "/Admin/Login";
+                    }
+                    else {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Cảnh báo',
+                            text: response.responseJSON.content,
+                            showConfirmButton: false,
+                            timer: 1000
+                        });
+                    }
                 }
             });
 

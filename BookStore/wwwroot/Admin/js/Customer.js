@@ -28,15 +28,21 @@ async function ReadImage(input) {
                 NameImage = message.name;
                 NameFolder = message.folder;
             },
-            error: function () {
-                alert("there was error uploading files!");
+            error: function (response) {
+                if (response.responseJSON.message == "login") {
+                    alert("Vui lòng đăng nhập lại!");
+                    window.location = window.location.protocol + "//" + window.location.host + "/Admin/Login";
+                }
+                else {
+                    alert("there was error uploading files!");
+                }
             }
         });
     }
 }
 
 function validate(data) {
-   
+
     let isValid = true;
     let FirstName = data.find('input[name="FirstName"]').val();
     let UserName = data.find('input[name="UserName"]').val();
@@ -105,7 +111,25 @@ $(".btnAdd").click(function () {
         type: "GET",
         success: function (data) {
             $("#modalBody").html("");
+            $('#modalDetail').modal({
+                show: 'false'
+            });
             $("#modalBody").html(data);
+        },
+        error: function (response) {
+            if (response.responseJSON.message == "login") {
+                alert("Vui lòng đăng nhập lại!");
+                window.location = window.location.protocol + "//" + window.location.host + "/Admin/Login";
+            }
+            else {
+                Swal.fire({
+                    icon: 'fail',
+                    title: 'Thất bại!',
+                    text: response.responseJSON.content,
+                    showConfirmButton: false,
+                    timer: 1000
+                });
+            }
         }
     });
 });
@@ -133,14 +157,20 @@ $(".btnCreate").on('click', function (e) {
                 $(".tableCustomer").html(data);
                 $("#modalDetail").modal("hide");
             },
-            error: function () {
-                Swal.fire({
-                    icon: 'fail',
-                    title: 'Thất bại!',
-                    text: 'Thêm không thành công!',
-                    showConfirmButton: false,
-                    timer: 1000
-                });
+            error: function (response) {
+                if (response.responseJSON.message == "login") {
+                    alert("Vui lòng đăng nhập lại!");
+                    window.location = window.location.protocol + "//" + window.location.host + "/Admin/Login";
+                }
+                else {
+                    Swal.fire({
+                        icon: 'fail',
+                        title: 'Thất bại!',
+                        text: response.responseJSON.content,
+                        showConfirmButton: false,
+                        timer: 1000
+                    });
+                }
             }
         });
 
@@ -158,13 +188,33 @@ $('#tableCustomers tbody').on('click', '.btnDetail', function () {
         },
         success: function (data) {
             $("#modalBody").html("");
+            $('#modalDetail').modal({
+                show: 'false'
+            });
             $("#modalBody").html(data);
+        },
+        error: function (response) {
+            if (response.responseJSON.message == "login") {
+                alert("Vui lòng đăng nhập lại!");
+                window.location = window.location.protocol + "//" + window.location.host + "/Admin/Login";
+            }
+            else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Thất bại!',
+                    text: response.responseJSON.content,
+                    showConfirmButton: false,
+                    timer: 1000
+                });
+            }
         }
     });
 });
 
 $('#tableCustomers tbody').on('click', '.btnEdit', function () {
     var id = $(this).data("id");
+
+    console.log(id);
     $.ajax({
         url: "/Admin/Customer/Edit",
         type: "GET",
@@ -173,7 +223,25 @@ $('#tableCustomers tbody').on('click', '.btnEdit', function () {
         },
         success: function (data) {
             $("#modalBody").html("");
+            $('#modalDetail').modal({
+                show: 'false'
+            });
             $("#modalBody").html(data);
+        },
+        error: function (response) {
+            if (response.responseJSON.message == "login") {
+                alert("Vui lòng đăng nhập lại!");
+                window.location = window.location.protocol + "//" + window.location.host + "/Admin/Login";
+            }
+            else {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Cảnh báo!',
+                    text: response.responseJSON.content,
+                    showConfirmButton: false,
+                    timer: 1000
+                });
+            }
         }
     });
 });
@@ -210,14 +278,20 @@ $(".btnEditSaveChange").click(function (e) {
                 $(".tableCustomer").html(data);
                 $("#modalDetail").modal("hide");
             },
-            error: function () {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Thất bại!',
-                    text: 'Sửa không thành công!',
-                    showConfirmButton: false,
-                    timer: 1000
-                });
+            error: function (response) {
+                if (response.responseJSON.message == "login") {
+                    alert("Vui lòng đăng nhập lại!");
+                    window.location = window.location.protocol + "//" + window.location.host + "/Admin/Login";
+                }
+                else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Thất bại!',
+                        text: 'Sửa không thành công!',
+                        showConfirmButton: false,
+                        timer: 1000
+                    });
+                }
             }
         });
         NameImage = "";
@@ -257,14 +331,20 @@ $('#tableCustomers tbody').on('click', '.btnDelete', function () {
                         .remove()
                         .draw();
                 },
-                error: function () {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Lỗi',
-                        text: 'Xóa thất bại!',
-                        showConfirmButton: false,
-                        timer: 1000
-                    });
+                error: function (response) {
+                    if (response.responseJSON.message == "login") {
+                        alert("Vui lòng đăng nhập lại!");
+                        window.location = window.location.protocol + "//" + window.location.host + "/Admin/Login";
+                    }
+                    else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Lỗi',
+                            text: 'Xóa thất bại!',
+                            showConfirmButton: false,
+                            timer: 1000
+                        });
+                    }
                 }
             });
 

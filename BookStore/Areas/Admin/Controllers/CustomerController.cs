@@ -30,6 +30,12 @@ namespace BookStore.Areas.Admin.Controllers
 
         public IActionResult Add()
         {
+            var info = HttpContext.Session.GetObject<Employee>("Employee");
+
+            if (info == null)
+            {
+                return BadRequest(new { message = "login" });
+            }
             Customer customer = new Customer();
             return View(customer);
         }
@@ -41,7 +47,7 @@ namespace BookStore.Areas.Admin.Controllers
 
             if (info == null)
             {
-                return RedirectToAction("Index", "Login");
+                return BadRequest(new { message = "login"});
             }
             if (ModelState.IsValid && customer != null)
             {
@@ -61,7 +67,7 @@ namespace BookStore.Areas.Admin.Controllers
                 }
                 else
                 {
-                    return BadRequest();
+                    return BadRequest(new { content = "Tài khoản này đã tồn tại!!!" });
                 }
             }
             else
@@ -75,6 +81,13 @@ namespace BookStore.Areas.Admin.Controllers
 
         public async Task<IActionResult> Details(int? id)
         {
+            var info = HttpContext.Session.GetObject<Employee>("Employee");
+
+            if (info == null)
+            {
+                return BadRequest(new { message = "login" });
+            }
+
             if (id == null)
             {
                 return BadRequest();
@@ -85,23 +98,25 @@ namespace BookStore.Areas.Admin.Controllers
 
             if (customer == null)
             {
-                return BadRequest();
+                return BadRequest(new { content = "Thành viên không tồn tại" });
             }
 
             return PartialView(customer);
         }
 
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int id)
         {
-            if (id == null)
+            var info = HttpContext.Session.GetObject<Employee>("Employee");
+            // xét còn session
+            if (info == null)
             {
-                return BadRequest();
+                return BadRequest(new { message = "login" });
             }
 
-            var customer = await _context.Customer.FindAsync(id);
+            var customer= await _context.Customer.AsNoTracking().SingleOrDefaultAsync(c => c.CustomerId == id);
             if (customer == null)
             {
-                return BadRequest();
+                return BadRequest(new {content = "Thành viên không tồn tại" });
             }
 
             return View(customer);
@@ -110,6 +125,12 @@ namespace BookStore.Areas.Admin.Controllers
         [HttpPost]
         public IActionResult UploadImage([FromForm]IFormFile file)
         {
+            var info = HttpContext.Session.GetObject<Employee>("Employee");
+
+            if (info == null)
+            {
+                return BadRequest(new { message = "login" });
+            }
             string fileName = file.FileName;
             bool check = fileName[0] == 'A'; // check Add or Edit
 
@@ -160,7 +181,7 @@ namespace BookStore.Areas.Admin.Controllers
 
             if (info == null)
             {
-                return RedirectToAction("Index", "Login");
+                return BadRequest(new { message = "login" });
             }
             MyTool.MoveImage("Customer", NameImage, NameFolder);
 
@@ -181,7 +202,7 @@ namespace BookStore.Areas.Admin.Controllers
                 }
                 catch
                 {
-                    return BadRequest();
+                    return BadRequest(new {content = "Sửa không thành công!!!"} );
                 }
                 var model = await _context.Customer.AsNoTracking().ToListAsync();
                 return View("Datatable", model);
@@ -196,7 +217,7 @@ namespace BookStore.Areas.Admin.Controllers
 
             if (info == null)
             {
-                return RedirectToAction("Index", "Login");
+                return BadRequest(new { message = "login" });
             }
             var customer = await _context.Customer.AsNoTracking().SingleOrDefaultAsync(c => c.CustomerId == id);
             _context.Customer.Remove(customer);
@@ -208,7 +229,5 @@ namespace BookStore.Areas.Admin.Controllers
         {
             return _context.Customer.Any(c => c.CustomerId == id);
         }
-
-        
     }
 }
