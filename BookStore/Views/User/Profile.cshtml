@@ -244,7 +244,20 @@
                         <tr>
                             <th>@o.OrderId</th>
                             <td>
-                                Paypal
+                                @{ 
+                                    if(o.PayMethod== "DirectPay")
+                                    {
+                                        <text>Thanh toán khi nhận hàng</text>
+                                    }
+                                    else if(o.PayMethod.ToLower()=="paypal")
+                                    {
+                                        <text>Thanh toán bằng PayPal</text>
+                                    }
+                                    else
+                                    {
+                                        <text>Thanh toán bằng OnePay</text>
+                                    }
+                                }
                             </td>
                             <td>
                                 @o.ShipMethod
