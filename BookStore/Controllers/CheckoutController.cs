@@ -61,6 +61,15 @@ namespace BookStore.Controllers
         [AllowAnonymous]
         public IActionResult Invoice(Orders order)
         {
+            if (Cart.Count() == 0)
+            {
+                return RedirectToAction("EmptyCart");
+            }
+            var info = HttpContext.Session.GetObject<Customer>("Customer");
+            if (info != null)
+            {
+                order.CustomerId = info.CustomerId;
+            }
             if (order.PayMethod == "DirectPay")
             {
                 DirectPay(order, Cart);
@@ -84,8 +93,20 @@ namespace BookStore.Controllers
 
         public void DirectPay(Orders order, List<CartItem> CartItems)
         {
-            order.CreatedDate = DateTime.Now;
             order.Total = Cart.Sum(p => p.Price * p.QuantityProduct);
+            if (order.Total < 100000)
+            {
+                order.ShipCost = 20000;
+            }
+            else if (order.Total < 500000)
+            {
+                order.ShipCost = 12000;
+            }
+            else
+            {
+                order.ShipCost = 0;
+            }
+            order.CreatedDate = DateTime.Now;
             _context.Orders.Add(order);
             _context.SaveChanges();
             var IdLasted = order.OrderId;
