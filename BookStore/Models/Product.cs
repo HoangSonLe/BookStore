@@ -9,7 +9,6 @@ namespace BookStore.Models
         {
             Comment = new HashSet<Comment>();
             OrderDetail = new HashSet<OrderDetail>();
-            OrderTemp = new HashSet<OrderTemp>();
             ProductImages = new HashSet<ProductImages>();
         }
 
@@ -33,7 +32,6 @@ namespace BookStore.Models
         public virtual Publishers Publisher { get; set; }
         public virtual ICollection<Comment> Comment { get; set; }
         public virtual ICollection<OrderDetail> OrderDetail { get; set; }
-        public virtual ICollection<OrderTemp> OrderTemp { get; set; }
         public virtual ICollection<ProductImages> ProductImages { get; set; }
     }
 }

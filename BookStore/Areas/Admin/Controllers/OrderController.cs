@@ -67,52 +67,88 @@ namespace BookStore.Areas.Admin.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        public async Task<IActionResult> Create(Orders orders)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create([Bind("Name,Address,Phone,Email,PayMethod,ShipMethod,ShipCost,Comment,OrderStatus,ShipDate")] Orders order,
+                                        [Bind("ArrAddItemId")] string ArrAddItemId,
+                                        [Bind("ArrAddItemQuantity")] string ArrAddItemQuantity)
         {
+            var emp = HttpContext.Session.GetObject<Employee>("Employee");
+            if (emp == null)
+            {
+                return RedirectToAction("Index", "Login");
+            }
+            //mảng id item thêm
+            string[] arrAddItemId = new string[] { };
+            if (ArrAddItemId.Length > 0)
+            {
+                ArrAddItemId = ArrAddItemId.Trim();
+                arrAddItemId = ArrAddItemId.Split(',');
+            }
+            //mảng quantity item sửa
+            string[] arrAddItemQuantity = new string[] { };
+            if (ArrAddItemQuantity.Length > 0)
+            {
+                ArrAddItemQuantity = ArrAddItemQuantity.Trim();
+                arrAddItemQuantity = ArrAddItemQuantity.Split(',');
+            }
+            
             if (ModelState.IsValid)
             {
-                orders.Total = _context.OrderTemp.Sum(p => (p.Product.Price * (100 - p.Product.Discount) / 100) * p.Quantity);
-                if (orders.Total < 100000)
+                try
                 {
-                    orders.ShipCost = 20000;
-                }
-                else if (orders.Total < 500000)
-                {
-                    orders.ShipCost = 12000;
-                }
-                else
-                {
-                    orders.ShipCost = 0;
-                }
-                orders.CreatedDate = DateTime.Now;
-                _context.Orders.Add(orders);
-
-                await _context.SaveChangesAsync();
-
-                var orderdetailtmp = await _context.OrderTemp
-                                            .Include(p => p.Product).ToListAsync();
-
-
-                foreach (var item in orderdetailtmp)
-                {
-                    OrderDetail orderDetail = new OrderDetail()
+                    _context.Add(order);
+                    _context.SaveChanges();
+                    int? total = 0;
+                    if (ArrAddItemId.Count() > 0)
                     {
-                        OrderId = orders.OrderId,
-                        ProductId = item.ProductId,
-                        Price = item.Product.Price,
-                        Discount = item.Product.Discount,
-                        Quantity = item.Quantity
-                    };
-                    await _context.OrderDetail.AddAsync(orderDetail);
-                    _context.OrderTemp.Remove(item);
+                        for (var i = 0; i < arrAddItemId.Count(); ++i)
+                        {
+                            try
+                            {
+                                Product p = _context.Product.AsNoTracking().SingleOrDefault(o => o.ProductId == int.Parse(arrAddItemId[i].Trim()));
+                                if (p != null)
+                                {
+                                    OrderDetail detail = new OrderDetail();
+                                    detail.OrderId = order.OrderId;
+                                    detail.ProductId = p.ProductId;
+                                    detail.Quantity = int.Parse(arrAddItemQuantity[i].Trim());
+                                    detail.Price = (p.Discount == 0) ? p.Price : p.PromotionPrice;
+                                    _context.Update(detail);
+                                    total += detail.Price * detail.Quantity;
+                                }
+                            }
+                            catch (Exception)
+                            {
+
+                            }
+                        }
+
+                    }
+                    order.EmployeeId = emp.EmployeeId;
+                    order.Total = total + (int)order.ShipCost;
+                    order.CreatedDate = DateTime.Now;
+                    _context.Update(order);
                     await _context.SaveChangesAsync();
                 }
-                return RedirectToAction(nameof(Index));
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!OrdersExists(order.OrderId))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
             }
-            ViewData["CustomerId"] = new SelectList(_context.Customer, "CustomerId", "CustomerId", orders.CustomerId);
-            ViewData["EmployeeId"] = new SelectList(_context.Employee, "EmployeeId", "EmployeeId", orders.EmployeeId);
-            return View(orders);
+            var orderDetails = await _context.OrderDetail.Where(od => od.OrderId == order.OrderId).Include(p => p.Product).ToListAsync();
+            ViewBag.orderDetails = orderDetails;
+
+            ViewData["EmployeeName"] = emp.FirstName + " " + emp.LastName;
+            return View("Edit",order);
         }
+
 
         // GET: Admin/Orders/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -122,19 +158,27 @@ namespace BookStore.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var orders = await _context.Orders.FindAsync(id);
-            if (orders == null)
+            var order = await _context.Orders.FindAsync(id);
+            if (order == null)
             {
                 return NotFound();
             }
 
-            var orderDetails = await _context.OrderDetail.Where(od => od.OrderId == orders.OrderId).Include(p => p.Product).ToListAsync();
+            var orderDetails = await _context.OrderDetail.Where(od => od.OrderId == order.OrderId).Include(p => p.Product).ToListAsync();
 
             ViewBag.orderDetails = orderDetails;
+            if (order.EmployeeId != null)
+            {
+                var emp = _context.Employee.SingleOrDefault(p => p.EmployeeId == order.EmployeeId);
+                if (emp != null)
+                {
+                    ViewData["EmployeeName"] = emp.FirstName +" "+ emp.LastName;
+                }
+                else ViewData["EmployeeName"] = "";
+            }
+            else ViewData["EmployeeName"] = "";
 
-            ViewData["CustomerId"] = new SelectList(_context.Customer, "CustomerId", "CustomerId", orders.CustomerId);
-            ViewData["EmployeeId"] = new SelectList(_context.Employee, "EmployeeId", "LastName", orders.EmployeeId);
-            return View(orders);
+            return View(order);
         }
 
         // POST: Admin/Orders/Edit/5
@@ -142,39 +186,106 @@ namespace BookStore.Areas.Admin.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("OrderId,CustomerId,EmployeeId,Name,Address,PayMethod,ShipMethod,ShipCost,Comment,OrderStatus,ShipDate")] Orders orders)
+        public async Task<IActionResult> Edit(int id, [Bind("OrderId,CustomerId,Name,Address,Phone,Email,PayMethod,ShipMethod,ShipCost,Comment,OrderStatus,ShipDate")] Orders order,
+                                                [Bind("ArrDeleteItem")] string ArrDeleteItem,
+                                                [Bind("ArrEditItemId")] string ArrEditItemId,
+                                                [Bind("ArrEditItemQuantity")] string ArrEditItemQuantity)
         {
-            Orders orderBefore = _context.Orders.AsNoTracking().SingleOrDefault(p => p.OrderId == orders.OrderId);
+            var emp = HttpContext.Session.GetObject<Employee>("Employee");
+            if (emp == null)
+            {
+                 return RedirectToAction("Index", "Login");
+            }
+            //mảng id item xóa
+            string[] arrDeleteItem = new string[] { };
+            if (ArrDeleteItem.Length > 0)
+            {
+                ArrDeleteItem = ArrDeleteItem.Trim();
+                arrDeleteItem = ArrDeleteItem.Split(',');
+            }
+            //mảng id item sửa
+            string[] arrEditItemId = new string[] { };
+            if (ArrDeleteItem.Length > 0)
+            {
+                ArrEditItemId = ArrEditItemId.Trim();
+                arrEditItemId = ArrEditItemId.Split(',');
+            }
+            //mảng id hình ảnh xóa
+            string[] arrEditItemQuantity = new string[] { };
+            if (ArrEditItemQuantity.Length > 0)
+            {
+                ArrEditItemQuantity = ArrEditItemQuantity.Trim();
+                arrEditItemQuantity = ArrEditItemQuantity.Split(',');
+            }
+            Orders orderBefore = _context.Orders.AsNoTracking().SingleOrDefault(p => p.OrderId == order.OrderId);
             if (orderBefore == null)
             {
                 return NotFound();
             }
-
+            order.Total = orderBefore.Total-(int)orderBefore.ShipCost;
             if (ModelState.IsValid)
             {
                 try
                 {
-                    orders.Total = _context.OrderDetail.Where(p => p.OrderId == orders.OrderId).Sum(p => (p.Price * (100 - p.Product.Discount) / 100 * p.Quantity));
-                    orders.CreatedDate = orderBefore.CreatedDate;
-                    _context.Update(orders);
+                    if (arrDeleteItem.Count() > 0)
+                    {
+                        foreach(var o in arrDeleteItem)
+                        {
+                            try
+                            {
+                                OrderDetail orderDetail = _context.OrderDetail.AsNoTracking().SingleOrDefault(p => p.ProductId == int.Parse(o.Trim()));
+                                order.Total -= orderDetail.Price * orderDetail.Quantity;
+                                _context.Remove(orderDetail);
+                            }
+                            catch (Exception)
+                            {
+
+                            }
+                        }
+
+                    }
+                    if (arrEditItemId.Count() > 0)
+                    {
+                        for (var i=0;i<arrEditItemId.Count();++i)
+                        {
+                            try
+                            {
+                                OrderDetail orderDetail = _context.OrderDetail.SingleOrDefault(p => p.ProductId == int.Parse(arrEditItemId[i].Trim()));
+                                order.Total= order.Total - (orderDetail.Price * orderDetail.Quantity);
+                                orderDetail.Quantity = int.Parse(arrEditItemQuantity[i].Trim());
+                                _context.Update(orderDetail);
+                                order.Total =order.Total + (orderDetail.Price * orderDetail.Quantity);
+                            }
+                            catch (Exception)
+                            {
+
+                            }
+                        }
+
+                    }
+                    order.EmployeeId =emp.EmployeeId;
+                    order.Total= order.Total+ (int)order.ShipCost;
+                    order.CreatedDate = orderBefore.CreatedDate;
+                    _context.Update(order);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!OrdersExists(orders.OrderId))
+                    if (!OrdersExists(order.OrderId))
                     {
                         return NotFound();
                     }
                     else
-                    {
+                    { 
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
             }
-            ViewData["CustomerId"] = new SelectList(_context.Customer, "CustomerId", "CustomerId", orders.CustomerId);
-            ViewData["EmployeeId"] = new SelectList(_context.Employee, "EmployeeId", "EmployeeId", orders.EmployeeId);
-            return View(orders);
+            var orderDetails = await _context.OrderDetail.Where(od => od.OrderId == order.OrderId).Include(p => p.Product).ToListAsync();
+            ViewBag.orderDetails = orderDetails;
+
+            ViewData["EmployeeName"] = emp.FirstName + " " + emp.LastName;
+            return View(order);
         }
 
         // GET: Admin/Orders/Delete/5
@@ -212,61 +323,11 @@ namespace BookStore.Areas.Admin.Controllers
             return _context.Orders.Any(e => e.OrderId == id);
         }
 
-        [HttpPost]
-        public IActionResult AddOrderDetailTemp(int id, int quantity, string productName)
+        public IActionResult AddProductToList(int productId, int quantity)
         {
-            OrderTemp tmp = _context.OrderTemp.SingleOrDefault(o => o.ProductId == id);
-
-            if (tmp != null)
-            {
-                tmp.Quantity += quantity;
-            }
-            else
-            {
-                tmp = new OrderTemp()
-                {
-                    ProductId = id,
-                    ProductName = productName,
-                    Quantity = quantity
-                };
-
-                _context.OrderTemp.Add(tmp);
-            }
-            _context.SaveChanges();
-            var OrderTemps = _context.OrderTemp.OrderByDescending(p => p.OrderDetailId).ToList();
-            return PartialView(OrderTemps);
-        }
-
-        [HttpDelete]
-        public IActionResult DeleteOrderDetailTemp(int id)
-        {
-            OrderTemp tmp = _context.OrderTemp.SingleOrDefault(o => o.OrderDetailId == id);
-            _context.OrderTemp.Remove(tmp);
-            _context.SaveChanges();
-            var OrderTemps = _context.OrderTemp.OrderByDescending(p => p.OrderDetailId).ToList();
-            return PartialView("AddOrderDetailTemp", OrderTemps);
-        }
-
-        // Edit quantity Product quantity in OrderDetail
-        [HttpPost]
-        public OrderDetail EditQuantityOrderDetail(int orderId, int productId, int quantity)
-        {
-            OrderDetail orderDetail = _context.OrderDetail.SingleOrDefault(o => o.OrderId == orderId && o.ProductId == productId);
-            orderDetail.Quantity = quantity;
-
-            _context.Update(orderDetail);
-            _context.SaveChangesAsync();
-            return orderDetail;
-        }
-
-        //Delete orderDetail by orderID and ProductID
-        [HttpDelete]
-        public OrderDetail DeleteOrderDetail(int orderId, int productId)
-        {
-            OrderDetail tmp = _context.OrderDetail.SingleOrDefault(o => o.OrderId == orderId && o.ProductId == productId);
-            _context.OrderDetail.Remove(tmp);
-            _context.SaveChanges();
-            return tmp;
+            var product = _context.Product.AsNoTracking().SingleOrDefault(p => p.ProductId == productId);
+            ViewBag.Quantity = quantity;
+            return PartialView("ProductItem", product);
         }
 
     }

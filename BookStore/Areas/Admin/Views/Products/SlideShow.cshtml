@@ -1,0 +1,40 @@
+﻿<!-- Container for the image gallery -->
+@model IEnumerable<ProductImages>
+<link href="~/Admin/css/SlideShow.css" rel="stylesheet" />
+<div class="container">
+    @{ 
+        int a = 1;
+    }
+    @foreach(var p in Model){
+        <!-- Full-width images with number text -->
+        <div class="mySlides">
+            <div class="numbertext">@a / @Model.Count()</div>
+            <img src="~/Image/Product/@p.ProductImage"  style="max-width:250px; max-height:300px; min-height:250px; min-width:200px; text-align:center;">
+        </div>
+        ++a;
+    }
+    <!-- Next and previous buttons -->
+    <a class="Sprev" onclick="plusSlides(-1)">&#10094;</a>
+    <a class="Snext" onclick="plusSlides(1)">&#10095;</a>
+
+    <!-- Image text -->
+    <div class="caption-container">
+        <p id="caption"></p>
+    </div>
+
+    <!-- Thumbnail images -->
+    <div class="row">
+        @{
+            int i = 1;
+        }
+        @foreach (var p in Model)
+        {
+            <div class="column">
+                <img class="demo cursor" src="~/Image/Product/@p.ProductImage" style="width:100%" onclick="currentSlide(@i)" alt="@p.ProductImage">
+            </div>
+            ++i;
+        }
+        
+    </div>
+</div>
+<script src="~/Admin/js/SlideShow.js"></script>

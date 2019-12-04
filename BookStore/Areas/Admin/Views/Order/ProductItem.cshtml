@@ -1,0 +1,24 @@
+﻿@model Product
+<tr>
+
+    <td><img src="~/Image/Product/@Model.ImageCover" style="width:100px;height:100px;" /></td>
+    <th scope="row">@Model.ProductName</th>
+
+    <td> @Model.Unit</td>
+
+    @if (Model.Discount != 0)
+    {
+        var price = String.Format("{0:0,0 VNĐ}", Model.Price);
+        <td> @price</td>
+    }
+    else
+    {
+        var price = String.Format("{0:0,0 VNĐ}", Model.PromotionPrice);
+        <td> @price</td>
+    }
+    <td> <input class="form-control .product-quantity" onchange="ChangeQuantity(this, @Model.ProductId)" value="@ViewBag.Quantity" /> </td>
+
+
+    <td style="width:10%;"><input type="button" class="btn btn-danger btnRemove" id="btn-@Model.ProductId" onclick="RemoveItem(@Model.ProductId)" value="Xóa"></td>
+
+</tr>

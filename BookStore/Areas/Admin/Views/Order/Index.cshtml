@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<BookStore.Models.Orders>
 
 @{ 
-    ViewData["Title"] = "Hóa Đơn";
+    ViewData["Title"] = "Order";
 }
 
 
@@ -58,13 +58,13 @@
                                     <td>@item.Address</td>
                                     <td><b>@item.PayMethod</b></td>
                                     <td><b>@item.Total</b></td>
-                                    @if (item.OrderStatus == 2)
+                                    @if (item.OrderStatus == 0)
                                     {
-                                        <td class="text-center"><span class="label label-success">Đang vận chuyển</span></td>
+                                        <td class="text-center"><span class="label label-success">Chưa thanh toán</span></td>
                                     }
                                     else
                                     {
-                                        <td class="text-center"><span class="label label-warning">Không biết nữa</span></td>
+                                        <td class="text-center"><span class="label label-warning">Đã thanh toán</span></td>
                                     }
                                     <td class="text-center">
                                         <div class="btn-group">

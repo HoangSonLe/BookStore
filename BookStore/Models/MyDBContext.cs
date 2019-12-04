@@ -22,7 +22,6 @@ namespace BookStore.Models
         public virtual DbSet<Employee> Employee { get; set; }
         public virtual DbSet<Feedback> Feedback { get; set; }
         public virtual DbSet<OrderDetail> OrderDetail { get; set; }
-        public virtual DbSet<OrderTemp> OrderTemp { get; set; }
         public virtual DbSet<Orders> Orders { get; set; }
         public virtual DbSet<Product> Product { get; set; }
         public virtual DbSet<ProductCategory> ProductCategory { get; set; }
@@ -234,25 +233,6 @@ namespace BookStore.Models
                     .WithMany(p => p.OrderDetail)
                     .HasForeignKey(d => d.ProductId)
                     .HasConstraintName("FK__OrderDeta__Produ__32E0915F");
-            });
-
-            modelBuilder.Entity<OrderTemp>(entity =>
-            {
-                entity.HasKey(e => e.OrderDetailId)
-                    .HasName("PK__OrderTem__D3B9D30C5EA58C58");
-
-                entity.Property(e => e.OrderDetailId).HasColumnName("OrderDetailID");
-
-                entity.Property(e => e.ProductId).HasColumnName("ProductID");
-
-                entity.Property(e => e.ProductName)
-                    .HasMaxLength(100)
-                    .IsUnicode(false);
-
-                entity.HasOne(d => d.Product)
-                    .WithMany(p => p.OrderTemp)
-                    .HasForeignKey(d => d.ProductId)
-                    .HasConstraintName("fk_Order_Product");
             });
 
             modelBuilder.Entity<Orders>(entity =>

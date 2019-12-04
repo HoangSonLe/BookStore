@@ -1,11 +1,12 @@
 ﻿@model BookStore.Models.Orders
-
+@{
+    ViewData["Title"] = "Order";
+    ViewData["Child"] = "Edit";
+}
 @{
     IEnumerable<OrderDetail> OrderDetails = ViewBag.orderDetails as List<OrderDetail>;
 }
 
-
-<link href="~/Admin/css/ProductImage.css" rel="stylesheet" />
 <div class="row">
     <div class="col-md-12">
         <div class="box">
@@ -18,48 +19,71 @@
             </div>
             <div class="box-content">
                 <div class="table-responsive" style="border:0">
-                    <form asp-action="Edit" method="post" id="formAdd" enctype="multipart/form-data">
+                    <form asp-action="Edit" method="post" id="formOrder" enctype="multipart/form-data">
                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                         <input type="hidden" asp-for="OrderId" />
                         <div class="row">
                             <div class="col-lg-6">
+                                <input asp-for="EmployeeId" type="hidden" class="form-control" readonly />
                                 <div class="form-group">
-                                    <h5>Mã Khách hàng</h5>
-                                    <input asp-for="EmployeeId" class="form-control" readonly />
-                                    <span asp-validation-for="EmployeeId" class="text-danger"></span>
+                                    <h5>Mã hóa đơn</h5>
+                                    <input asp-for="OrderId" class="form-control" readonly />
                                 </div>
                                 <div class="form-group">
                                     <h5>Tên Khách hàng</h5>
-                                    <input asp-for="Name" class="form-control" />
-                                    <span asp-validation-for="Name" class="text-danger"></span>
+                                    <input asp-for="Name" id="CusName" class="form-control" />
+                                    <label id="errorName" style="color:red;display:none ">Vui lòng nhập tên khách hàng</label>
                                 </div>
                                 <div class="form-group">
                                     <h5>Tên nhân viên</h5>
-                                    <select asp-for="EmployeeId" class="form-control" asp-items="ViewBag.EmployeeId"></select>
-                                    <span asp-validation-for="EmployeeId" class="text-danger"></span>
+                                    <input class="form-control" value="@ViewData["EmployeeName"]" readonly />
                                 </div>
                                 <div class="form-group">
                                     <h5>Địa chỉ</h5>
-                                    <input asp-for="Address" class="form-control inputUrl" />
-                                    <span asp-validation-for="Address" class="text-danger"></span>
+                                    <input asp-for="Address" id="CusAddress" class="form-control inputUrl" />
+                                    <label id="errorAddress" style="color:red;display:none">Vui lòng nhập địa chỉ</label>
                                 </div>
                                 <div class="form-group">
-                                    <h5>Phương thức thanh toán</h5>
-                                    <input asp-for="PayMethod" class="form-control" />
-                                    <span asp-validation-for="PayMethod" class="text-danger"></span>
+                                    <h5>Email</h5>
+                                    <input asp-for="Email" id="CusEmail" class="form-control" />
+                                    <label id="errorEmail" style="color:red;display:none">Email không hợp lệ</label>
                                 </div>
-
+                                <div class="form-group">
+                                    <h5>Số điện thoại</h5>
+                                    <input asp-for="Phone" id="CusPhone" class="form-control" />
+                                    <label id="errorPhone" style="color:red;display:none">Số điện thoại không hợp lệ</label>
+                                </div>
                             </div>
                             <div class="col-lg-6">
                                 <div class="form-group">
                                     <h5>Phương thức giao hàng</h5>
-                                    <input asp-for="ShipMethod" class="form-control" />
-                                    <span asp-validation-for="ShipMethod" class="text-danger"></span>
+                                    <select name="ShipMethod" class="form-control">
+                                        @if (Model.ShipMethod == "Bike")
+                                        {
+                                            <option value="Bike" selected>Xe máy</option>
+                                            <option value="Xe tải">Xe tải</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="Bike">Xe máy</option>
+                                            <option value="Xe tải" selected>Xe tải</option>
+                                        }
+                                    </select>
                                 </div>
                                 <div class="form-group">
                                     <h5>Trạng thái đơn hàng</h5>
-                                    <input asp-for="OrderStatus" class="form-control" />
-                                    <span asp-validation-for="OrderStatus" class="text-danger"></span>
+                                    <select name="OrderStatus" class="form-control">
+                                        @if (Model.OrderStatus == 1)
+                                        {
+                                            <option value="1" selected>Đã thanh toán</option>
+                                            <option value="0">Chưa thanh toán</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="1">Đã thanh toán</option>
+                                            <option value="0" selected>Chưa thanh toán</option>
+                                        }
+                                    </select>
                                 </div>
                                 <div class="form-group">
                                     <h5>Phí Ship</h5>
@@ -73,8 +97,13 @@
                                 </div>
                                 <div class="form-group">
                                     <h5>Ngày giao hàng dự kiến:</h5>
-                                    <input asp-for="ShipDate" class="form-control" />
+                                    <input asp-for="ShipDate" type="date" class="form-control" />
                                     <span asp-validation-for="ShipDate" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <h5>Phương thức thanh toán</h5>
+                                    <input asp-for="PayMethod" class="form-control" readonly />
+                                    <span asp-validation-for="PayMethod" class="text-danger"></span>
                                 </div>
                             </div>
                         </div>
@@ -103,22 +132,23 @@
                                                 <td>@item.Product.ProductName</td>
                                                 <td>@item.ProductId</td>
                                                 <td>
-                                                    <input type="number" class="form-control quantity-product" value="@item.Quantity" />
-                                                    <input type="hidden" value="@item.ProductId" />
+                                                    <input type="number" class="form-control product-quantity" data-id="@item.ProductId" value="@item.Quantity" />
                                                 </td>
                                                 <td>
-                                                    <span class="glyphicon glyphicon-remove" onclick="removeMe(@item.ProductId)" aria-hidden="true"></span>
+                                                    <span class="glyphicon glyphicon-remove btnRemove" data-id="@item.ProductId" aria-hidden="true"></span>
                                                 </td>
                                             </tr>
                                         }
                                     </tbody>
                                 </table>
+                                <input type="hidden" name="ArrDeleteItem" value="," />
+                                <input type="hidden" name="ArrEditItemId" value="," />
+                                <input type="hidden" name="ArrEditItemQuantity" value="," />
                             </div>
                         </div>
-
                         <div class="form-group">
                             <br />
-                            <button class="btn btn-primary"><i class="fa fa-save"></i> Save</button>
+                            <button class="btn btn-primary btnSave"><i class="fa fa-save"></i> Save</button>
                         </div>
                     </form>
                 </div>
@@ -127,56 +157,134 @@
     </div>
 </div>
 <!-- The Modal -->
-<div id="myModal" class="modal">
-
-    <!-- The Close Button -->
-    <span class="close">&times;</span>
-
-    <!-- Modal Content (The Image) -->
-    <img class="modal-content" id="img01">
-
-    <!-- Modal Caption (Image Text) -->
-    <div id="caption"></div>
-</div>
-<script src="https://cdn.ckeditor.com/ckeditor5/15.0.0/classic/ckeditor.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <script>
-
-    $("#OrderStatus").mouseenter(function () {
-        var val = `1 - Đã thanh toán
-                   0 - Chưa thanh toán`;
-        $(this).attr('title', val);
+    const ArrEditItemId = new Array();
+    const ArrEditItemQuantity = new Array();
+    const ArrDeleteItem = new Array();
+    $(".btnRemove").on("click",function () {
+        let productId = $(this).data("id");
+        var index = ArrEditItemId.findIndex(k => k == productId);
+        if (index != -1) {
+            ArrEditItemId.splice(index, 1);
+            ArrEditItemQuantity.splice(index, 1);
+        }
+        ArrDeleteItem.push(productId);
+        $(this).closest("tr").hide();
     });
 
-    $(".quantity-product").change(function () {
+    $(".product-quantity").change(function () {
         let quantity = $(this).val();
-        let productId = $(this).next().val();
-        $.ajax({
-            url: "/Admin/Orders/EditQuantityOrderDetail",
-            type: "POST",
-            data: {
-                orderId: @Model.OrderId,
-                productId: productId,
-                quantity: quantity
-            },
-            success: function (data) {
-            }
-        })
-    })
+        let productId = $(this).data("id");
+        var index = ArrEditItemId.findIndex(k => k == productId);
+        if (index != -1) {
+            ArrEditItemQuantity[index] = quantity;
+        }
+        else {
+            ArrEditItemId.push(productId);
+            ArrEditItemQuantity.push(quantity);
+        }
+    });
+    //Hàm tắt enter= submit cho form
+    $('#formOrder').on('keyup keypress', function (e) {
+        var keyCode = e.keyCode || e.which;
+        if (keyCode === 13) {
+            e.preventDefault();
+            return false;
+        }
+    });
+    function validate() {
+        let isValid = true;
+        let name = $("#CusName").val();
+        let address = $("#CusAddress").val();
+        let phone = $("#CusPhone").val();
+        //validate name
+        if (name.length > 0) {
+            $("#errorName").css('display', 'none');
+        }
+        else {
+            $("#errorName").css('display', 'block');
+            isValid = false;
+        }
 
-    function removeMe(id) {
-        alert(id);
+        //validate address
+        if (address.length > 0) {
+            $("#errorAddress").css('display', 'none');
+        }
+        else {
+            $("#errorAddress").css('display', 'block');
+            isValid = false;
+        }
 
-        $.ajax({
-            url: "/Admin/Orders/DeleteOrderDetail",
-            type: "DELETE",
-            data: {
-                orderId: @Model.OrderId,
-                productId: id,
-            },
-            success: function (data) {
-                $(".row-" + id).remove();
-            }
-        })
+        //validate phone
+        let pattern = /0[3789][0-9]{8}$/;
+        if (pattern.test(phone)) {
+            $("#errorPhone").css('display', 'none');
+        }
+        else {
+            $("#errorPhone").css('display', 'block');
+            isValid = false;
+
+        }
+        return isValid;
     }
+    function validateEmail() {
+        let isValidEmail = true;
+        let email = $("#CusEmail").val();
+        //validate email
+        let patternEmail = /^[a-z][a-z0-9_\.]{3,32}@@[a-z0-9]{2,}(\.[a-z0-9]{2,4}){1,2}$/gm;
+        if (patternEmail.test(email)) {
+            $("#errorEmail").css('display', 'none');
+        }
+        else {
+            isValidEmail = false;
+            $("#errorEmail").css('display', 'block');
+        }
+        return isValidEmail;
+    }
+
+    $('.btnSave').on('click', function (e) {
+        e.preventDefault();
+        //form validation
+        var emailCus = $("#CusEmail").val();
+            debugger
+        if (emailCus.length > 0) {
+            if (validateEmail()) {
+                if (validate()) {
+                    if (ArrDeleteItem.length > 0) {
+                        var str = $("[name='ArrDeleteItem']").val().toString();
+                        $("[name='ArrDeleteItem']").val(str + ArrDeleteItem.toString() + ",");
+                    }
+                    if (ArrEditItemId.length > 0) {
+                        var str = $("[name='ArrEditItemId']").val().toString();
+                        $("[name='ArrEditItemId']").val(str + ArrEditItemId.toString() + ",");
+                    }
+                    if (ArrEditItemQuantity.length > 0) {
+                        var str = $("[name='ArrEditItemQuantity']").val().toString();
+                        $("[name='ArrEditItemQuantity']").val(str + ArrEditItemQuantity.toString() + ",");
+                    }
+                    $("#formOrder").submit();
+                }
+            };
+        }
+        else {
+            $("#errorEmail").css('display', 'none');
+            if (validate()) {
+                if (ArrDeleteItem.length > 0) {
+                    var str = $("[name='ArrDeleteItem']").val().toString();
+                    $("[name='ArrDeleteItem']").val(str + ArrDeleteItem.toString() + ",");
+                }
+                if (ArrEditItemId.length > 0) {
+                    var str = $("[name='ArrEditItemId']").val().toString();
+                    $("[name='ArrEditItemId']").val(str + ArrEditItemId.toString() + ",");
+                }
+                if (ArrEditItemQuantity.length > 0) {
+                    var str = $("[name='ArrEditItemQuantity']").val().toString();
+                    $("[name='ArrEditItemQuantity']").val(str + ArrEditItemQuantity.toString() + ",");
+                }
+                $("#formOrder").submit();
+            }
+        }
+    });
+
 </script>
