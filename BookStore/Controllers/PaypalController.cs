@@ -71,7 +71,32 @@ namespace BookStore.Controllers
             }
 
             order.CreatedDate = DateTime.Now;
+
+            // tính phí ship
             order.Total = AmountVND;
+            var shipCostUSD = 0.00;
+            if (AmountVND < 100000)
+            {
+                shipCostUSD = 0.87;
+                order.ShipCost = 20000;
+            }
+            else if (AmountVND < 500000)
+            {
+                shipCostUSD = 0.52;
+                order.ShipCost = 12000;
+            }
+            else
+            {
+                order.ShipCost = 0;
+            }
+
+            // kiểm tra người dùng có đăng nhập để lưu ID người dùng
+            var info = HttpContext.Session.GetObject<Customer>("Customer");
+            if (info != null)
+            {
+                order.CustomerId = info.CustomerId;
+            }
+
             _context.Orders.Add(order);
             _context.SaveChanges();
             IdLasted = order.OrderId;
@@ -97,12 +122,12 @@ namespace BookStore.Controllers
                     {
                         Amount = new Amount()
                         {
-                            Total = AmountUSD.ToString(),
+                            Total = (AmountUSD+shipCostUSD).ToString(),
                             Currency = "USD",
                             Details = new AmountDetails
                             {
                                 Tax = "0",
-                                Shipping = "0",
+                                Shipping = shipCostUSD.ToString(),
                                 Subtotal = AmountUSD.ToString(),
                             }
                         },

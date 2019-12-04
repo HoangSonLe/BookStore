@@ -55,9 +55,7 @@
                     </ul>
                 </div>
             </div>
-            @{
-                var totalString = String.Format("{0:0,0} VNĐ", totalCart);
-            }
+            
             <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
                 <div class="cart_totals">
                     <h2 style="margin:0;padding:0;">Tổng tiền</h2><hr />
@@ -66,17 +64,39 @@
                             <tr class="cart-subtotal">
                                 <th>Tổng</th>
                                 <td>
-                                    <p class="amount" style="font-family:Arial;">@totalString</p>
+                                    <p class="amount" style="font-family:Arial;">@String.Format("{0:0,0} VNĐ", totalCart)</p>
                                 </td>
                             </tr>
                             <tr class="shipping">
-                                <th>Shipping</th>
+                                <th>Phí vận chuyển</th>
                                 <td>
-                                    <ul id="shipping_method">
-                                        <li>
-                                            <label> Free Shipping </label>
-                                        </li>
-                                    </ul>
+                                    @{ 
+                                        var ship = 0;
+                                    }
+                                    @if (totalCart < 100000)
+                                    {
+                                        <ul id="shipping_method">
+                                            <li>
+                                                <label style="font-size:larger;"> 20000 </label>
+                                            </li>
+                                        </ul>
+                                    }
+                                    else if (totalCart < 500000)
+                                    {
+                                        <ul id="shipping_method">
+                                            <li>
+                                                <label style="font-size:larger;"> 12000 </label>
+                                            </li>
+                                        </ul>
+                                    }
+                                    else
+                                    {
+                                        <ul id="shipping_method">
+                                            <li>
+                                                <label style="font-size:larger;"> Miến phí vận chuyển </label>
+                                            </li>
+                                        </ul>
+                                    }
                                 </td>
                             </tr>
                             <tr class="order-total">
@@ -85,6 +105,9 @@
                                     <small style="display:block; font-size:small; text-transform:lowercase;">(đã gồm ship)</small>
                                 </th>
                                 <td>
+                                    @{
+                                        var totalString = String.Format("{0:0,0} VNĐ", totalCart + ship);
+                                    }
                                     <p class="amount" style="font-family:Arial;">@totalString</p>
                                 </td>
                             </tr>

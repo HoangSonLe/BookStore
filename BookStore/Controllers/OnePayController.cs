@@ -44,7 +44,6 @@ namespace BookStore.Controllers
         {
             var current_invoice = CreateInvoice(order);
 
-
             //Send request to OnePay
             string returnURL = Url.Action("OnePayResult", "OnePay", null, Request.Scheme);
             VPCRequest conn = new VPCRequest();
@@ -72,10 +71,29 @@ namespace BookStore.Controllers
 
         private Orders CreateInvoice(Orders order)
         {
-
+            // kiểm tra người dùng có đăng nhập để lưu ID người dùng
+            var info = HttpContext.Session.GetObject<Customer>("Customer");
+            if (info != null)
+            {
+                order.CustomerId = info.CustomerId;
+            }
             var amount = Cart.Sum(c => c.QuantityProduct * c.Price);
+            if (amount < 10000)
+            {
+                order.ShipCost = 20000;
+                order.Total = amount + 20000;
+            }
+            else if (amount < 50000)
+            {
+                order.ShipCost = (int?)12000;
+                order.Total = amount + 12000;
+            }
+            else
+            {
+                order.Total = amount;
+            }
+
             order.CreatedDate = DateTime.Now;
-            order.Total = amount;
             _context.Orders.Add(order);
             _context.SaveChanges();
             IdLasted = order.OrderId;
