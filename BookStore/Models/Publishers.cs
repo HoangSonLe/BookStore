@@ -17,6 +17,7 @@ namespace BookStore.Models
         public string Email { get; set; }
         public string Logo { get; set; }
         public string Description { get; set; }
+        public string UrlFrienfly { get; set; }
 
         public virtual ICollection<Product> Product { get; set; }
     }

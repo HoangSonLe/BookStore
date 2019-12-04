@@ -11,19 +11,8 @@
             <ul>
                 @foreach (var p in Model)
                 {
-                    <li><a  asp-action="PublisherSelect" asp-controller="Products" asp-route-id="@p.PublisherId">@p.PublisherName</a></li>
+                    <li><a  asp-action="SelectByPublisher" asp-controller="Products" asp-route-urlfriendly="@p.UrlFrienfly">@p.PublisherName</a></li>
                 }
-            </ul>
-        </div>
-        <div class="left-title mb-20">
-            <h4>Giá</h4>
-        </div>
-        <div class="left-menu mb-30">
-            <ul>
-                <li><a asp-controller="Products" asp-action="PriceSelect" asp-route-bot="0" asp-route-top="49999">0 < 50.000 VNĐ</a></li>
-                <li><a asp-controller="Products" asp-action="PriceSelect" asp-route-bot="50000" asp-route-top="99999">50.000 VNĐ - 100.000 VNĐ</a></li>
-                <li><a asp-controller="Products" asp-action="PriceSelect" asp-route-bot="100000" asp-route-top="199999">100.000 VNĐ - 200.000 VNĐ</a></li>
-                <li><a asp-controller="Products" asp-action="PriceSelect" asp-route-bot="200000" asp-route-top="300000">200.000 VNĐ - 300.000 VNĐ</a></li>
             </ul>
         </div>
     </div>
