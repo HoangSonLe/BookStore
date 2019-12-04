@@ -29,9 +29,24 @@ namespace BookStore.Controllers
                 var data = HttpContext.Session.GetObject<List<CartItem>>("Cart");
                 if (data == null)
                 {
+
                     data = new List<CartItem>();
                 }
-
+                else
+                {
+                    foreach (var d in data)
+                    {
+                        var p = _context.Product.AsNoTracking().SingleOrDefault(o => o.ProductId == d.ProductId);
+                        if (p == null)
+                        {
+                            data.Remove(d);
+                        }
+                        else
+                        {
+                            d.Price = (p.Discount == 0) ? p.Price : p.PromotionPrice;
+                        }
+                    }
+                }
                 return data;
             }
         }
@@ -107,6 +122,7 @@ namespace BookStore.Controllers
                 order.ShipCost = 0;
             }
             order.CreatedDate = DateTime.Now;
+            order.OrderStatus = 0;
             _context.Orders.Add(order);
             _context.SaveChanges();
             var IdLasted = order.OrderId;
