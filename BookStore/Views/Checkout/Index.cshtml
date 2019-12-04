@@ -106,15 +106,16 @@
 
                                         @if (amount < 100000)
                                         {
+                                            ship = 20000;
                                             <td colspan="2">
                                                 <ul>
                                                     <li>
-                                                        <label>Miễn phí vận chuyển</label>
+                                                        <label>@String.Format("{0:0,0} VNĐ", ship)</label>
                                                     </li>
                                                 </ul>
                                             </td>
                                         }
-                                        else if (amount >= 100000 && amount <= 500000)
+                                        else if (amount < 500000)
                                         {
                                             ship = 12000;
                                             <td colspan="2">
@@ -127,11 +128,10 @@
                                         }
                                         else
                                         {
-                                            ship = 20000;
                                             <td colspan="2">
                                                 <ul>
                                                     <li>
-                                                        <label>@String.Format("{0:0,0} VNĐ", ship)</label>
+                                                        <label>Miễn phí vận chuyển</label>
                                                     </li>
                                                 </ul>
                                             </td>
