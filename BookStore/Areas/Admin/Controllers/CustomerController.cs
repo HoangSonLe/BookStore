@@ -37,14 +37,25 @@ namespace BookStore.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> Add(Customer customer, string NameImage, string NameFolder)
         {
+            var info = HttpContext.Session.GetObject<Employee>("Employee");
+
+            if (info == null)
+            {
+                return RedirectToAction("Index", "Login");
+            }
             if (ModelState.IsValid && customer != null)
             {
                 bool check = _context.Customer.Any(c => c.UserName == customer.UserName);
                 if (!check)
                 {
                     MyTool.MoveImage("Customer", NameImage, NameFolder);
+                    Customer cus = _context.Customer.SingleOrDefault(c => c.CustomerId == customer.CustomerId);
                     customer.Image = NameImage;
                     customer.CreatedDate = DateTime.Now;
+                    if(cus.Password != customer.Password)
+                    {
+                        customer.Password = MyHashTool.GetMd5Hash(customer.Password);
+                    }
                     _context.Customer.Add(customer);
                     await _context.SaveChangesAsync();
                 }
@@ -99,10 +110,35 @@ namespace BookStore.Areas.Admin.Controllers
         [HttpPost]
         public IActionResult UploadImage([FromForm]IFormFile file)
         {
+            string fileName = file.FileName;
+            bool check = fileName[0] == 'A'; // check Add or Edit
+
+            string id = "";
+            for (int i = 2; i < fileName.Length; ++i)
+            {
+                if (fileName[i] != '_')
+                {
+                    id += fileName[i];
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+
             if (file != null)
             {
-                var info = HttpContext.Session.GetObject<Employee>("Employee");
-                var folder = info.EmployeeId + "_" + info.Role;
+                string folder = "";
+                if (!check)
+                {
+                    var emp = _context.Customer.SingleOrDefault(e => e.CustomerId == int.Parse(id));
+                    folder = emp.CustomerId + "_Customer_" + emp.CreatedDate?.ToString("yyyyMMddHHmmssfffffff");
+                }
+                else
+                {
+                    folder = "_Customer_" + id;
+                }
                 var pathString = "wwwroot/Image/" + folder;
                 Directory.CreateDirectory(pathString);
                 var name = MyTool.UploadHinh(file, folder);
@@ -112,8 +148,20 @@ namespace BookStore.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        public void DeleteFolderTmp(string NameFolder)
+        {
+            MyTool.DeleteFolder(NameFolder);
+        }
+
+        [HttpPost]
         public async Task<IActionResult> Edit(Customer customer, string NameImage, string NameFolder)
         {
+            var info = HttpContext.Session.GetObject<Employee>("Employee");
+
+            if (info == null)
+            {
+                return RedirectToAction("Index", "Login");
+            }
             MyTool.MoveImage("Customer", NameImage, NameFolder);
 
             var cus = await _context.Customer.AsNoTracking().SingleOrDefaultAsync(e => e.CustomerId == customer.CustomerId);
@@ -144,6 +192,12 @@ namespace BookStore.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> Delete(int id)
         {
+            var info = HttpContext.Session.GetObject<Employee>("Employee");
+
+            if (info == null)
+            {
+                return RedirectToAction("Index", "Login");
+            }
             var customer = await _context.Customer.AsNoTracking().SingleOrDefaultAsync(c => c.CustomerId == id);
             _context.Customer.Remove(customer);
             await _context.SaveChangesAsync();
@@ -155,5 +209,6 @@ namespace BookStore.Areas.Admin.Controllers
             return _context.Customer.Any(c => c.CustomerId == id);
         }
 
+        
     }
 }

@@ -22,7 +22,7 @@
                         }
 
                         <h6>Upload a different photo...</h6>
-                        <input type="file" name="file" class="form-control" asp-for="Image" onchange="ReadImage(this)">
+                        <input type="file" name="file" data-name="Add" class="form-control" asp-for="Image" onchange="ReadImage(this)">
                     </div>
                 </div>
                 <br />
@@ -140,8 +140,9 @@
     </div>
     <div class="modal-footer">
         <button type="submit" data-id="@Model.EmployeeId" class="btn btn-primary btnCreate">Tạo</button>
-        <button type="reset" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+        <button type="reset" data-id="@Model.EmployeeId" class="btn btn-secondary btnCancel" data-dismiss="modal">Hủy</button>
     </div>
+    <div hidden class="DateAdd">@DateTime.Now.ToString("yyyyMMddHHmmssfffffff")</div>
 </form>
 
 <script src="~/Admin/js/Employee.js"></script>

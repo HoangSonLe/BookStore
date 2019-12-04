@@ -23,7 +23,7 @@
                         }
 
                         <h6>Upload a different photo...</h6>
-                        <input type="file" name="file" class="form-control" asp-for="Image" onchange="ReadImage(this)">
+                        <input type="file" name="file" data-name="Edit" data-id="@Model.CustomerId" class="form-control" asp-for="Image" onchange="ReadImage(this)">
                     </div>
                 </div>
                 <br />
@@ -139,7 +139,7 @@
     </div>
     <div class="modal-footer">
         <button type="submit" data-id="@Model.CustomerId" class="btn btn-primary btnEditSaveChange">Lưu</button>
-        <button type="reset" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+        <button type="reset" class="btn btn-secondary btnCancel" data-dismiss="modal">Hủy</button>
     </div>
 </form>
 
