@@ -9,6 +9,7 @@ using BookStore.Helpers;
 using System;
 using System.IO;
 using Microsoft.AspNetCore.Http;
+using System.Collections.Generic;
 
 namespace BookStore.Areas.Admin.Controllers
 {
@@ -33,6 +34,12 @@ namespace BookStore.Areas.Admin.Controllers
         public async Task<IActionResult> Add()
         {
             var info = HttpContext.Session.GetObject<Employee>("Employee");
+
+            if (info == null)
+            {
+                return RedirectToAction("Index", "Login");
+            }
+
             if (info.Role == 3) // Role is Employee
             {
                 return BadRequest(new { message = "Bạn không được quyền thêm tài khoản!!"});
@@ -51,15 +58,22 @@ namespace BookStore.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> Add(Employee employee, string NameImage, string NameFolder)
         {
+            var info = HttpContext.Session.GetObject<Employee>("Employee");
+
+            if (info == null)
+            {
+                return RedirectToAction("Index", "Login");
+            }
             if (ModelState.IsValid && employee != null)
             {
-                bool check = _context.Employee.Any(e => e.UserName == employee.UserName);
-                
+                bool check = _context.Employee.Any(e => e.UserName == employee.UserName);   
                 if (!check)
                 {
                     MyTool.MoveImage("Employee", NameImage, NameFolder);
                     employee.Image = NameImage;
                     employee.CreatedDate = DateTime.Now;
+                    employee.Password = MyHashTool.GetMd5Hash(employee.Password);
+                   
                     _context.Employee.Add(employee);
                     await _context.SaveChangesAsync();
                 }
@@ -79,6 +93,12 @@ namespace BookStore.Areas.Admin.Controllers
 
         public async Task<IActionResult> Details(int? id)
         {
+            var info = HttpContext.Session.GetObject<Employee>("Employee");
+
+            if (info == null)
+            {
+                return RedirectToAction("Index", "Login");
+            }
             if (id == null)
             {
                 return BadRequest();
@@ -106,15 +126,25 @@ namespace BookStore.Areas.Admin.Controllers
             return PartialView(employee);
         }
         
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int id)
         {
-            if (id == null)
+            var info = HttpContext.Session.GetObject<Employee>("Employee");
+
+            if (info == null)
             {
-                return BadRequest();
+                return RedirectToAction("Index", "Login");
+            }
+            if (!EmployeeExists(id))
+            {
+                return BadRequest(new { message = "Không tồn tại nhân viên này!!" });
             }
 
+            if (info == null)
+            {
+                return RedirectToAction("Index", "Login");
+            }
             var employee = await _context.Employee.AsNoTracking().SingleOrDefaultAsync(e => e.EmployeeId == id);
-            var info = HttpContext.Session.GetObject<Employee>("Employee");
+            
 
             if (employee == null)
             {
@@ -127,49 +157,79 @@ namespace BookStore.Areas.Admin.Controllers
             }
 
             var Roles = _context.Roles.AsNoTracking().Where(r => r.RoleId >= info.Role);
-            var Managers = _context.Employee.AsNoTracking().Where(m => m.Role < employee.Role).Select(m => new { EmployeeId = m.EmployeeId, Name = m.FirstName + " " + m.LastName});
+            
+            if (employee.EmployeeId == info.EmployeeId)
+            {
+                var Managers = _context.Employee.AsNoTracking().Where(m => m.EmployeeId == employee.ManagerId).Select(m => new { EmployeeId = m.EmployeeId, Name = m.FirstName + " " + m.LastName });
+
+                ViewData["ManageId"] = new SelectList(Managers, "EmployeeId", "Name", employee.Role);
+            }
+            else
+            {
+                var Managers = _context.Employee.AsNoTracking().Where(m => m.Role < employee.Role).Select(m => new { EmployeeId = m.EmployeeId, Name = m.FirstName + " " + m.LastName });
+                ViewData["ManageId"] = new SelectList(Managers, "EmployeeId", "Name", employee.Role);
+            }
 
             ViewData["RoleId"] = new SelectList(Roles, "RoleId", "RoleName", employee.Role);
-            ViewData["ManageId"] = new SelectList(Managers, "EmployeeId", "Name", employee.Role);
-
+            
             return View(employee);
         }
         [HttpPost]
-        public async Task<IActionResult> Edit(Employee employee, string NameImage, string NameFolder)
+        public async Task<IActionResult> Edit([Bind("EmployeeId,UserName,Password,FirstName,LastName,Address,Email,Sex,Phone,BirthDate,Role,ManagerId,Image,IsActive")] Employee employee, string NameImage, string NameFolder)
         {
+            var info = HttpContext.Session.GetObject<Employee>("Employee");
+
+            if (info == null)
+            {
+                return RedirectToAction("Index", "Login");
+            }
+            
+
             if (ModelState.IsValid)
             {
                 try
                 {
                     var emp = await _context.Employee.AsNoTracking().SingleOrDefaultAsync(e => e.EmployeeId == employee.EmployeeId);
-
+                    if (emp == null)
+                    {
+                        return BadRequest(new { message = "Không tồn tại nhân viên này!!" });
+                    }
                     if (employee.Password != emp.Password)
                     {
                         employee.Password = MyHashTool.GetMd5Hash(employee.Password);
                     }
                     MyTool.MoveImage("Employee", NameImage, NameFolder);
                     employee.Image = NameImage;
+
+                    employee.UserName = emp.UserName;
                     _context.Update(employee);
                     await _context.SaveChangesAsync();
+
                 }
                 catch
                 {
-                    return BadRequest();
+                    return BadRequest(new { message = "Sửa không thành công!" });
                 }
-                return RedirectToAction(nameof(Index));
             }
-            var info = HttpContext.Session.GetObject<Employee>("Employee");
-            ViewData["RoleId"] = new SelectList(_context.Roles, "RoleId", "RoleName", info.Role);
-            var managers = _context.Employee.Where(p => p.Role < info.Role).ToList();
 
-            ViewBag.Managers = managers;
-            return View(employee);
+            var model = await _context.Employee.AsNoTracking().ToListAsync();
+            return View("Datatable", model);
         }
         
         [HttpPost]
         public async Task<IActionResult> Delete(int id)
         {
             var info = HttpContext.Session.GetObject<Employee>("Employee");
+
+            if (info == null)
+            {
+                return RedirectToAction("Index", "Login");
+            }
+            if (!EmployeeExists(id))
+            {
+                return BadRequest(new { message = "Không tồn tại nhân viên này!!" });
+            }
+
             var employee = await _context.Employee.AsNoTracking().SingleOrDefaultAsync(e => e.EmployeeId == id);
 
             if (employee.Role <= info.Role)
@@ -178,32 +238,80 @@ namespace BookStore.Areas.Admin.Controllers
             }
             _context.Employee.Remove(employee);
             await _context.SaveChangesAsync();
-            return RedirectToAction("Index");
+            var model = await _context.Employee.AsNoTracking().ToListAsync();
+            return View("Datatable", model);
         }
 
         [HttpPost]
         public async Task<IActionResult> GetManagers(int role, int? idEmployee)
         {
-            var Managers = await _context.Employee.Where(m => m.Role < role && m.EmployeeId != idEmployee).Select(m => new { EmployeeId = m.EmployeeId, Name = m.FirstName + " " + m.LastName }).ToListAsync();
+            var employee = _context.Employee.SingleOrDefault(e => e.EmployeeId == idEmployee);
 
-            ViewData["ManageId"] = new SelectList(Managers, "EmployeeId", "Name");
+            if (employee.Role == role)
+            {
+                var Managers = _context.Employee.AsNoTracking().Where(m => m.EmployeeId == employee.ManagerId).Select(m => new { EmployeeId = m.EmployeeId, Name = m.FirstName + " " + m.LastName });
+
+                ViewData["ManageId"] = new SelectList(Managers, "EmployeeId", "Name", employee.Role);
+            }
+            else
+            {
+                var Managers = await _context.Employee.Where(m => m.Role < role && m.EmployeeId != idEmployee).Select(m => new { EmployeeId = m.EmployeeId, Name = m.FirstName + " " + m.LastName }).ToListAsync();
+                ViewData["ManageId"] = new SelectList(Managers, "EmployeeId", "Name");
+            }
+
             return View();
         }
 
+        private bool EmployeeExists(int id)
+        {
+            return _context.Employee.Any(e => e.EmployeeId == id);
+        }
 
         [HttpPost]
         public IActionResult UploadImage([FromForm]IFormFile file)
         {
+            string fileName = file.FileName;
+            bool check = fileName[0] == 'A'; // check Add or Edit
+
+            string id = "";
+            for(int i=2; i<fileName.Length; ++i)
+            {
+                if (fileName[i] != '_')
+                {
+                    id += fileName[i];
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+
+
             if (file != null)
             {
-                var info = HttpContext.Session.GetObject<Employee>("Employee");
-                var folder = info.EmployeeId + "_" + info.Role;
+                string folder = "";
+                if (!check)
+                {
+                    var emp = _context.Employee.SingleOrDefault(e => e.EmployeeId == int.Parse(id));
+                    folder = emp.EmployeeId + "_Employee_" + emp.CreatedDate?.ToString("yyyyMMddHHmmss");
+                }
+                else
+                {
+                    folder = "_Employee_" + id;
+                }
                 var pathString = "wwwroot/Image/" + folder;
                 Directory.CreateDirectory(pathString);
                 var name = MyTool.UploadHinh(file, folder);
                 return Ok(new { name = name, folder = folder });
             }
             return BadRequest();
+        }
+
+        [HttpPost]
+        public void DeleteFolderTmp(string NameFolder)
+        {
+            MyTool.DeleteFolder(NameFolder);
         }
     }
 }

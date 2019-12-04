@@ -2,10 +2,17 @@
 var NameImage = "";
 var NameFolder = "";
 async function ReadImage(input) {
+    var prefix = "";
+    if ($("#Image").data("name") == "Add") {
+        prefix = 'A_' + $(".DateAdd").html() + "_";
+    }
+    else if ($("#Image").data("name") == "Edit") {
+        prefix = 'E_' + $("#Image").data("id") + "_";
+    }
+
     if (input.files && input.files[0]) {
-        
         var data = new FormData();
-        data.append('file', input.files[0], input.files[0].name);
+        data.append("file", input.files[0], prefix + input.files[0].name);
         $.ajax({
             url: "/Admin/Employee/UploadImage",
             type: "POST",
@@ -151,10 +158,11 @@ $(".btnCreate").on('click', function (e) {
                 $(".tableEmployee").html("");
                 $(".tableEmployee").html(data);
                 $("#modalDetail").modal("hide");
+                nameImage = "";
             },
             error: function (response) {
                 Swal.fire({
-                    icon: 'fail',
+                    icon: 'error',
                     title: 'Thất bại!',
                     text: JSON.parse(response.responseText).message,
                     showConfirmButton: false,
@@ -163,7 +171,6 @@ $(".btnCreate").on('click', function (e) {
             }
         });
 
-        nameImage = "";
     }
 });
 
@@ -221,6 +228,16 @@ $('#tableEmployees tbody').on('click', '.btnEdit', function () {
     });
 });
 
+$(".btnCancel").click(function () {
+    $.ajax({
+        url: "/Admin/Employee/DeleteFolderTmp",
+        type: "POST",
+        data: { NameFolder: NameFolder }
+    });
+    NameFolder = "";
+});
+
+
 $(".btnEditSaveChange").click(function (e) {
     e.preventDefault();
     if (validate($("#formEdit"))) {
@@ -239,15 +256,15 @@ $(".btnEditSaveChange").click(function (e) {
                     showConfirmButton: false,
                     timer: 1000
                 });
-                $(".tableCustomer").html("");
-                $(".tableCustomer").html(data);
+                $(".tableEmployee").html("");
+                $(".tableEmployee").html(data);
                 $("#modalDetail").modal("hide");
             },
-            error: function () {
+            error: function (response) {
                 Swal.fire({
                     icon: 'error',
                     title: 'Thất bại!',
-                    text: 'Sửa không thành công!',
+                    text: response.message,
                     showConfirmButton: false,
                     timer: 1000
                 });
@@ -277,7 +294,9 @@ $('#tableEmployees tbody').on('click', '.btnDelete', function () {
                 data: {
                     id: id
                 },
-                success: function () {
+                success: function (data) {
+                    $(".tableEmployee").html("");
+                    $(".tableEmployee").html(data);
                     Swal.fire({
                         icon: 'success',
                         title: 'Thành công!',

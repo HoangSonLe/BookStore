@@ -2,6 +2,14 @@
 var NameImage = "";
 var NameFolder = "";
 async function ReadImage(input) {
+    var prefix = "";
+    if ($("#Image").data("name") == "Add") {
+        prefix = 'A_' + $(".DateAdd").html() + "_";
+    }
+    else if ($("#Image").data("name") == "Edit") {
+        prefix = 'E_' + $("#Image").data("id") + "_";
+    }
+
     if (input.files && input.files[0]) {
         var reader = new FileReader();
         reader.onload = function (e) {
@@ -9,7 +17,7 @@ async function ReadImage(input) {
         };
         reader.readAsDataURL(input.files[0]);
         var data = new FormData();
-        data.append('file', input.files[0], input.files[0].name);
+        data.append('file', input.files[0], prefix + input.files[0].name);
         $.ajax({
             url: "/Admin/Customer/UploadImage",
             type: "POST",
@@ -170,7 +178,14 @@ $('#tableCustomers tbody').on('click', '.btnEdit', function () {
     });
 });
 
-
+$(".btnCancel").click(function () {
+    $.ajax({
+        url: "/Admin/Customer/DeleteFolderTmp",
+        type: "POST",
+        data: { NameFolder: NameFolder }
+    });
+    NameFolder = "";
+});
 
 $(".btnEditSaveChange").click(function (e) {
     e.preventDefault();

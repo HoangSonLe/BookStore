@@ -4,141 +4,143 @@
 
 @model Customer
 
-<form id="formAdd" enctype="multipart/form-data">
-    <div class="modal-body">
-        <br />
-        <div class="row">
-            <div class="col-md-4">
-                <div class="form-group">
-                    <div class="text-center">
-                        @if (String.IsNullOrEmpty(Model.Image))
-                        {
-                            <img id="image_upload_preview" src="https://cdn1.iconfinder.com/data/icons/navigation-elements/512/user-login-man-human-body-mobile-person-512.png" style="width: 200px; height: 200px;" class="avatar img-circle" alt="avatar">
-                        }
-                        else
-                        {
-                            <img id="image_upload_preview" src="~/Image/Customer/@Model.Image" style="width: 200px; height: 200px;" class="avatar img-circle" alt="avatar">
-                        }
+    <form id="formAdd" enctype="multipart/form-data">
+        <div class="modal-body">
+            <br />
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <div class="text-center">
+                            @if (String.IsNullOrEmpty(Model.Image))
+                            {
+                                <img id="image_upload_preview" src="https://cdn1.iconfinder.com/data/icons/navigation-elements/512/user-login-man-human-body-mobile-person-512.png" style="width: 200px; height: 200px;" class="avatar img-circle" alt="avatar">
+                            }
+                            else
+                            {
+                                <img id="image_upload_preview" src="~/Image/Customer/@Model.Image" style="width: 200px; height: 200px;" class="avatar img-circle" alt="avatar">
+                            }
 
-                        <h6>Upload a different photo...</h6>
-                        <input type="file" name="file" class="form-control" asp-for="Image" onchange="ReadImage(this)">
+                            <h6>Upload a different photo...</h6>
+                            <input type="file" name="file" data-name="Add" class="form-control" asp-for="Image" onchange="ReadImage(this)">
+                        </div>
+                    </div>
+                    <br />
+                    <div class="form-group">
+                        <label>Giới tính</label>
+                        <select class="form-control" asp-for="Sex">
+                            @if (Model.Sex == true)
+                            {
+                                <option selected value="true">Nam</option>
+                                <option value="false">Nữ</option>
+                            }
+                            else
+                            {
+                                <option selected value="false">Nữ</option>
+                                <option value="true">Nam</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Số điện thoại</label>
+                        <input type="text" class="form-control" asp-for="PhoneNumber" value="@Model.PhoneNumber" placeholder="Nhập số điện thoại">
+                        <label id="errorPhoneNumber" style="color:red;display:none ">Số điện thoại không hợp lệ</label>
+                    </div>
+
+
+                </div>
+                <div class="col-md-8">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Họ khách hàng</label>
+                                <input type="text" class="form-control" asp-for="LastName" value="@Model.LastName" required placeholder="Nhập họ">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Tên khách hàng</label>
+                                <input type="hidden" class="form-control inputName" asp-for="CustomerId" value="@Model.CustomerId">
+                                <input type="text" class="form-control" asp-for="FirstName" value="@Model.FirstName" required placeholder="Nhập tên">
+                                <label id="errorFirstName" style="color:red;display:none ">Vui lòng nhập tên khách hàng</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Tài khoản</label>
+                                <input type="text" class="form-control" asp-for="UserName" value="@Model.UserName" />
+                                <label id="errorUserName" style="color:red;display:none ">Vui lòng nhập tài khoản khách hàng</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Mật khẩu</label>
+                                <input type="password" class="form-control" asp-for="Password" value="@Model.Password" placeholder="Nhập mật khẩu">
+                                <label id="errorPassword" style="color:red;display:none ">
+                                    Xin vui lòng dùng mật khẩu khác
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Kích hoạt</label>
+                                <select class="form-control" asp-for="IsActive">
+                                    @if (Model.IsActive == true)
+                                    {
+                                        <option selected value="true">Đã kích hoạt</option>
+                                        <option value="false">Chưa kích hoạt</option>
+                                    }
+                                    else
+                                    {
+                                        <option selected value="false">Chưa kích hoạt</option>
+                                        <option value="true">Đã kích hoạt</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Xác thực số điện thoại</label>
+                                <select class="form-control" asp-for="PhoneNumberConfirmed">
+                                    @if (Model.PhoneNumberConfirmed == true)
+                                    {
+                                        <option selected value="true">Bật xác thực</option>
+                                        <option value="false">Không bật xác thực</option>
+                                    }
+                                    else
+                                    {
+                                        <option selected value="false">Bật xác thực</option>
+                                        <option value="true">Không bật xác thực</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="text" class="form-control" asp-for="Email" value="@Model.Email" placeholder="Nhập email">
+                        <label id="errorEmail" style="color:red;display:none ">Địa chỉ Email không hợp lệ</label>
+
+                    </div>
+                    <div class="form-group">
+                        <label>Địa chỉ</label>
+                        <input type="text" class="form-control" asp-for="Address" value="@Model.Address" placeholder="Nhập địa chỉ">
+                        <label id="errorAddress" style="color:red;display:none ">Vui lòng nhập địa chỉ khách hàng</label>
                     </div>
                 </div>
-                <br />
-                <div class="form-group">
-                    <label>Giới tính</label>
-                    <select class="form-control" asp-for="Sex">
-                        @if (Model.Sex == true)
-                        {
-                            <option selected value="true">Nam</option>
-                            <option value="false">Nữ</option>
-                        }
-                        else
-                        {
-                            <option selected value="false">Nữ</option>
-                            <option value="true">Nam</option>
-                        }
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Số điện thoại</label>
-                    <input type="text" class="form-control" asp-for="PhoneNumber" value="@Model.PhoneNumber" placeholder="Nhập số điện thoại">
-                    <label id="errorPhoneNumber" style="color:red;display:none ">Số điện thoại không hợp lệ</label>
-                </div>
-
 
             </div>
-            <div class="col-md-8">
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label>Họ khách hàng</label>
-                            <input type="text" class="form-control" asp-for="LastName" value="@Model.LastName" required placeholder="Nhập họ">
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label>Tên khách hàng</label>
-                            <input type="hidden" class="form-control inputName" asp-for="CustomerId" value="@Model.CustomerId">
-                            <input type="text" class="form-control" asp-for="FirstName" value="@Model.FirstName" required placeholder="Nhập tên">
-                            <label id="errorFirstName" style="color:red;display:none ">Vui lòng nhập tên khách hàng</label>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label>Tài khoản</label>
-                            <input type="text" class="form-control" asp-for="UserName" value="@Model.UserName" />
-                            <label id="errorUserName" style="color:red;display:none ">Vui lòng nhập tài khoản khách hàng</label>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label>Mật khẩu</label>
-                            <input type="password" class="form-control" asp-for="Password" value="@Model.Password" placeholder="Nhập mật khẩu">
-                            <label id="errorPassword" style="color:red;display:none ">
-                                Xin vui lòng dùng mật khẩu khác
-                            </label>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label>Kích hoạt</label>
-                            <select class="form-control" asp-for="IsActive">
-                                @if (Model.IsActive == true)
-                                {
-                                    <option selected value="true">Đã kích hoạt</option>
-                                    <option value="false">Chưa kích hoạt</option>
-                                }
-                                else
-                                {
-                                    <option selected value="false">Chưa kích hoạt</option>
-                                    <option value="true">Đã kích hoạt</option>
-                                }
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label>Xác thực số điện thoại</label>
-                            <select class="form-control" asp-for="PhoneNumberConfirmed">
-                                @if (Model.PhoneNumberConfirmed == true)
-                                {
-                                    <option selected value="true">Bật xác thực</option>
-                                    <option value="false">Không bật xác thực</option>
-                                }
-                                else
-                                {
-                                    <option selected value="false">Bật xác thực</option>
-                                    <option value="true">Không bật xác thực</option>
-                                }
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label>Email</label>
-                    <input type="text" class="form-control" asp-for="Email" value="@Model.Email" placeholder="Nhập email">
-                    <label id="errorEmail" style="color:red;display:none ">Địa chỉ Email không hợp lệ</label>
-
-                </div>
-                <div class="form-group">
-                    <label>Địa chỉ</label>
-                    <input type="text" class="form-control" asp-for="Address" value="@Model.Address" placeholder="Nhập địa chỉ">
-                    <label id="errorAddress" style="color:red;display:none ">Vui lòng nhập địa chỉ khách hàng</label>
-                </div>
-            </div>
-
         </div>
-    </div>
-    <div class="modal-footer">
-        <button type="submit" data-id="@Model.CustomerId" class="btn btn-primary btnCreate">Tạo</button>
-        <button type="reset" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
-    </div>
-</form>
+        <div class="modal-footer">
+            <button type="submit" data-id="@Model.CustomerId" class="btn btn-primary btnCreate">Tạo</button>
+            <button type="reset" class="btn btn-secondary btnCancel" data-dismiss="modal">Hủy</button>
+        </div>
+        <div hidden class="DateAdd">@DateTime.Now.ToString("yyyyMMddHHmmssfffffff")</div>
+
+    </form>
 
 <script src="~/Admin/js/Customer.js"></script>
 
