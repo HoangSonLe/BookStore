@@ -1,0 +1,28 @@
+﻿@model IEnumerable<Roles>
+<table class="table table-advance" id="tableRoles">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Role Name</th>
+            <th class="text-center" width="23%">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr class="table-flag-blue">
+                <td><b>@item.RoleId</b></td>
+                <td>@item.RoleName</td>
+                <td class="text-center">
+                    <div class="btn-group">
+                        <p>
+                            <button class="btn btn-primary btnEdit" data-id="@item.RoleId" data-target="#modalDetail" data-toggle="modal"><i class="fa fa-edit"></i> Edit</button>
+                            <button class="btn btn-danger btnDelete" data-id="@item.RoleId" data-name="@item.RoleName"><i class="fa fa-trash-o"></i> Delete</button>
+                        </p>
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<script src="~/Admin/js/role.js"></script>
