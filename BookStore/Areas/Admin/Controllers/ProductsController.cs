@@ -9,7 +9,6 @@ using BookStore.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using System.IO;
-using Microsoft.AspNetCore.Identity;
 
 namespace BookStore.Areas.Admin.Controllers
 {
