@@ -36,12 +36,14 @@ namespace BookStore
                         o.LoginPath = "/User/Login";
                         o.AccessDeniedPath = "/User/Access";
                         o.LogoutPath = "/User/Logout";
+                        o.ExpireTimeSpan = TimeSpan.FromMinutes(30);
                     })
                     .AddCookie("Admin", o =>
                     {
                         o.LoginPath = "/Admin/Login/Index";
                         o.AccessDeniedPath = "/Admin/Login/Access";
                         o.LogoutPath = "/Admin/Login/Logout";
+                        o.ExpireTimeSpan = TimeSpan.FromMinutes(30);
                     });
             services.AddDbContext<MyDBContext>(option => option.UseSqlServer(Configuration.GetConnectionString("MyDb")));
             services.AddAutoMapper(typeof(Startup));

@@ -4,17 +4,56 @@
 
 <div class="row container">
     <div class="col container">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="RoleId" />
             <div class="form-group">
-                <h2  class="control-label">Tên vai trò </h2>
-                <input asp-for="RoleName" class="form-control" />
-                <span asp-validation-for="RoleName" class="text-danger"></span>
+                <h3 class="control-label">Tên vai trò </h3>
+                <input asp-for="RoleName" id="roleName" class="form-control" />
+                <label id="errorName" style="color:red;display:none ">Vui lòng nhập tên vai trò</label>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
     </div>
 </div>
+<div class="modal-footer">
+    <button type="button" data-id="@Model.RoleId" class="btn btn-primary btnUpdate">Cập nhật</button>
+    <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+</div>
+<script>
+    $(".btnUpdate").click(function () {
+        let id = $(this).data("id");
+        let roleName = $("#roleName").val();
+        if (roleName.length > 0) {
+            $("#errorName").css("display", "none");
+            $.ajax({
+                url: "/Admin/Roles/Edit",
+                type: "POST",
+                data: {
+                    id: id,
+                    name: roleName
+                },
+                success: function (res) {
+                    $(".bodyContent").html("");
+                    $(".bodyContent").html(res);
+                    $("#modalDetail").modal("toggle");
+                    
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Thành công!',
+                        text: "Cập nhật thành công",
+                        showConfirmButton: false,
+                        timer: 2000
+                    });
+                },
+                error: function () {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Thất bại!',
+                        text: "Đã xảy ra lỗi. Xin vui lòng thử lại",
+                        showConfirmButton: false,
+                        timer: 2000
+                    });
+                }
+            });
+        }
+        else {
+            $("#errorName").css("display", "block");
+        }
+    })
+</script>

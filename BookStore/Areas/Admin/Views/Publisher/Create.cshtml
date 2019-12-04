@@ -29,6 +29,13 @@
                         </div>
                     </div>
                     <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">Url Friendly:</label>
+                        <div class="col-sm-8">
+                            <input asp-for="UrlFrienfly" id="pubUrl" readonly class="form-control">
+                            <label id="errorName" style="color:red;display:none ">Vui lòng nhập tên nhà xuất bản</label>
+                        </div>
+                    </div>
+                    <div class="form-group row">
                         <label class="col-sm-3 col-form-label">Địa chỉ: </label>
                         <div class="col-sm-8">
                             <input asp-for="Address" id="pubAddress" class="form-control">
@@ -64,7 +71,15 @@
     <button onclick="form_submit()" class="btn btn-primary">Thêm</button>
     <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
 </div>
+<script src="~/js/Tools/SlugString.js"></script>
+
 <script>
+    // Hàm nhập tên chuyển thành url freindly
+    $("#pubName").change(function () {
+        var string = $(this).val();
+        $("#pubUrl").val(ChangeStringToSlug(string));
+    });
+
     function form_submit() {
         if (document.getElementById("myFile").files.length == 0) {
             Swal.fire({
@@ -127,7 +142,7 @@
         }
         return isValid;
     }
-    $(".browse").click( function () {
+    $(".browse").click(function () {
         var file = $(this).parents().find(".file");
         file.trigger("click");
     });

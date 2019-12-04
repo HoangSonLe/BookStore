@@ -33,7 +33,7 @@ $('#tablePublishers tbody').on('click', '.btnDelete', function () {
                             .remove()
                             .draw();
                     }
-                    else {
+                    else if (data==0) {
                         Swal.fire({
                             icon: 'error',
                             title: 'Lỗi',

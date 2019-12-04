@@ -1,12 +1,41 @@
 ﻿var table = $('#tableRoles').DataTable();
 
-$(".delete-role").click(function (event) {
-    event.preventDefault();
+$(".btnAdd").click(function () {
+    $.ajax({
+        url: "/Admin/Roles/Create",
+        type: "GET",
+        
+        success: function (data) {
+            $("#modalBody").html("");
+            $("#modalBody").html(data);
+            //$("#modalBody").modal("show");
+        }
+    });
+})
+$('#tableRoles tbody').on('click', '.btnEdit', function () {
+    var idItem = $(this).data("id");
+    //var nameItem = $(this).data("name");
+    $.ajax({
+        url: "/Admin/Roles/Edit",
+        type: "GET",
+        data: {
+            id: idItem
+        },
+        success: function (data) {
+            $("#modalBody").html("");
+            $("#modalBody").html(data);
+            //$("#modalBody").modal("show");
+        }
+    });
+
+});
+
+$(".btnDelete").click(function () {
     let idItem = $(this).data("id");
     let item = $(this).parents('tr');
-
+    var roleName = $(this).data("name");
     Swal.fire({
-        html: '<h2>Bạn có chắn xóa <b>' + "</b>?</h2>",
+        html: '<h2>Bạn có chắc chắn muốn xóa vai trò <b>' + roleName + "</b>?</h2>",
         text: "Bạn không thể hoàn tác!",
         icon: 'warning',
         showCancelButton: true,
@@ -33,6 +62,15 @@ $(".delete-role").click(function (event) {
                             .row(item)
                             .remove()
                             .draw();
+                },
+                error: function () {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Thất bại!',
+                        text: "Đã xảy ra lỗi. Xin vui lòng thử lại",
+                        showConfirmButton: false,
+                        timer: 2000
+                    });
                 }
             });
         }

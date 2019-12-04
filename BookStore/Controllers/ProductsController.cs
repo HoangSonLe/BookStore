@@ -273,6 +273,45 @@ namespace BookStore.Controllers
 
             return string.Empty;
         }
+        [AllowAnonymous]
+        [Route("nha-xuat-ban/{urlfriendly}")]
+        public async Task<IActionResult> SelectByPublisher(string sortOrder, int? pageNumber, string urlfriendly)
+        {
+            ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            ViewData["ViewSortParm"] = sortOrder == "View" ? "view_desc" : "View";
+            ViewData["PriceSortParm"] = sortOrder == "Price" ? "price_desc" : "Price";
+
+            var myDBContext = _context.Product.Include(p => p.Category).Include(p => p.Publisher).Where(p => p.Publisher.UrlFrienfly == urlfriendly && p.Status == true).AsQueryable();
+            switch (sortOrder)
+            {
+                case "name_desc":
+                    myDBContext = myDBContext.OrderByDescending(s => s.ProductName);
+                    break;
+                case "View":
+                    myDBContext = myDBContext.OrderBy(s => s.ViewCounts);
+                    break;
+                case "view_desc":
+                    myDBContext = myDBContext.OrderByDescending(s => s.ViewCounts);
+                    break;
+                case "Price":
+                    myDBContext = myDBContext.OrderBy(s => s.Price);
+                    break;
+                case "price_desc":
+                    myDBContext = myDBContext.OrderByDescending(s => s.Price);
+                    break;
+                default:
+                    myDBContext = myDBContext.OrderBy(s => s.ProductName);
+                    break;
+            }
+            int pageSize = 12;
+            if (myDBContext == null)
+            {
+                ViewBag.Error = "Không có loại sách này!";
+                return View();
+            }
+            ViewData["Publisher"] = _context.Publishers.ToList();
+            return View("Index",await myDBContext.ToList().ToPagedListAsync(pageNumber ?? 1, pageSize));
+        }
 
     }
 }

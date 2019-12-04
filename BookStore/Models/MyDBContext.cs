@@ -402,6 +402,10 @@ namespace BookStore.Models
                 entity.Property(e => e.PublisherName)
                     .IsRequired()
                     .HasMaxLength(50);
+
+                entity.Property(e => e.UrlFrienfly)
+                    .HasMaxLength(250)
+                    .IsUnicode(false);
             });
 
             modelBuilder.Entity<Roles>(entity =>

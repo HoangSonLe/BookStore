@@ -1,33 +1,57 @@
-﻿@model BookStore.Models.Roles
+﻿
 
-@{
-    ViewData["Title"] = "Create new role";
-}
-
-
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            @*<div class="form-group">
-                <label asp-for="RoleId" class="control-label"></label>
-                <input asp-for="RoleId" class="form-control" />
-                <span asp-validation-for="RoleId" class="text-danger"></span>
-            </div>*@
-            <div class="form-group">
-                <label asp-for="RoleName" class="control-label"></label>
-                <input asp-for="RoleName" class="form-control" />
-                <span asp-validation-for="RoleName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-success" />
-            </div>
-        </form>
+<div class="row container">
+    <div class="col container">
+        <div class="form-group">
+            <h3 class="control-label">Tên vai trò </h3>
+            <input id="roleName" class="form-control" placeholder="Nhập tên vai trò..." />
+            <label id="errorName" style="color:red;display:none ">Vui lòng nhập tên vai trò</label>
+        </div>
     </div>
 </div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary btnSave">Lưu</button>
+    <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
 </div>
+<script>
+    $(".btnSave").click(function () {
+        let name = $("#roleName").val();
+        if (name.length > 0) {
+            $("#errorName").css("display", "none");
+            $.ajax({
+                url: "/Admin/Roles/Create",
+                type: "POST",
+                data: {
+                    RoleName: name
+                },
+                success: function (res) {
+                    $(".bodyContent").html("");
+                    $(".bodyContent").html(res);
+                    $("#modalDetail").modal("toggle");
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Thành công!',
+                        text: "Thêm thành công",
+                        showConfirmButton: false,
+                        timer: 2000
+                    });
+                },
+                error: function () {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Thất bại!',
+                        text: "Đã xảy ra lỗi. Xin vui lòng thử lại",
+                        showConfirmButton: false,
+                        timer: 2000
+                    });
+                }
+            });
+        }
+        else {
+            $("#errorName").css("display", "block");
+        }
+    })
+</script>
+
 

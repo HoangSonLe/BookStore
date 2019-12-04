@@ -38,16 +38,23 @@ namespace BookStore.Areas.Admin.Controllers
             var publisher = _ctx.Publishers.SingleOrDefault(p => p.PublisherId == id);
             if (publisher != null)
             {
-                _ctx.Publishers.Remove(publisher);
-                _ctx.SaveChanges();
-                //delete old logo
-                string logoBefore = publisher.Logo;
-                string fullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Image", "Publisher", logoBefore);
-                if (System.IO.File.Exists(fullPath))
+                try
                 {
-                    System.IO.File.Delete(fullPath);
+                    _ctx.Publishers.Remove(publisher);
+                    _ctx.SaveChanges();
+                    //delete old logo
+                    string logoBefore = publisher.Logo;
+                    string fullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Image", "Publisher", logoBefore);
+                    if (System.IO.File.Exists(fullPath))
+                    {
+                        System.IO.File.Delete(fullPath);
+                    }
+                    return 1;
                 }
-                return 1;
+                catch (Exception)
+                {
+                    return 0;
+                }
             }
             return 0;
 
@@ -85,6 +92,7 @@ namespace BookStore.Areas.Admin.Controllers
                     pub.Phone = publisher.Phone;
                     pub.Email = publisher.Email;
                     pub.Description = publisher.Description;
+                    pub.UrlFrienfly = publisher.UrlFrienfly;
                     _ctx.Publishers.Update(pub);
                 }
                 _ctx.SaveChanges();
