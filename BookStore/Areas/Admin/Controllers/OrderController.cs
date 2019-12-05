@@ -222,7 +222,9 @@ namespace BookStore.Areas.Admin.Controllers
             {
                 return NotFound();
             }
+
             order.Total = orderBefore.Total-(int)orderBefore.ShipCost;
+
             if (ModelState.IsValid)
             {
                 try
@@ -233,7 +235,7 @@ namespace BookStore.Areas.Admin.Controllers
                         {
                             try
                             {
-                                OrderDetail orderDetail = _context.OrderDetail.AsNoTracking().SingleOrDefault(p => p.ProductId == int.Parse(o.Trim()));
+                                OrderDetail orderDetail = _context.OrderDetail.AsNoTracking().SingleOrDefault(p => p.ProductId == int.Parse(o.Trim()) && p.OrderId == order.OrderId);
                                 order.Total -= orderDetail.Price * orderDetail.Quantity;
                                 _context.Remove(orderDetail);
                             }
@@ -250,7 +252,7 @@ namespace BookStore.Areas.Admin.Controllers
                         {
                             try
                             {
-                                OrderDetail orderDetail = _context.OrderDetail.SingleOrDefault(p => p.ProductId == int.Parse(arrEditItemId[i].Trim()));
+                                OrderDetail orderDetail = _context.OrderDetail.SingleOrDefault(p => p.ProductId == int.Parse(arrEditItemId[i].Trim()) && p.OrderId == order.OrderId);
                                 order.Total= order.Total - (orderDetail.Price * orderDetail.Quantity);
                                 orderDetail.Quantity = int.Parse(arrEditItemQuantity[i].Trim());
                                 _context.Update(orderDetail);
@@ -262,6 +264,22 @@ namespace BookStore.Areas.Admin.Controllers
                             }
                         }
 
+                    }
+                    if(order.Total == 0)
+                    {
+                        order.ShipCost = 0;
+                    }
+                    else if (order.Total < 100000)
+                    {
+                        order.ShipCost = 20000;
+                    }
+                    else if (order.Total < 500000)
+                    {
+                        order.ShipCost = 12000;
+                    }
+                    else
+                    {
+                        order.ShipCost = 0;
                     }
                     order.EmployeeId =emp.EmployeeId;
                     order.Total= order.Total+ (int)order.ShipCost;

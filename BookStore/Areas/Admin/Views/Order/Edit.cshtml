@@ -88,22 +88,22 @@
                                 </div>
                                 <div class="form-group">
                                     <h5>Phí Ship</h5>
-                                    <input asp-for="ShipCost" class="form-control" />
+                                    <input asp-for="ShipCost" value="@Model.ShipCost" class="form-control" />
                                     <span asp-validation-for="ShipCost" class="text-danger"></span>
                                 </div>
                                 <div class="form-group">
                                     <h5>Ghi chú</h5>
-                                    <input asp-for="Comment" class="form-control inputPrice" />
+                                    <input asp-for="Comment" value="@Model.Comment" class="form-control inputPrice" />
                                     <span asp-validation-for="Comment" class="text-danger"></span>
                                 </div>
                                 <div class="form-group">
                                     <h5>Ngày giao hàng dự kiến:</h5>
-                                    <input asp-for="ShipDate" type="date" class="form-control" />
+                                    <input asp-for="ShipDate" type="date" value="@Model.ShipDate?.ToString("yyyy-MM-dd")" class="form-control" />
                                     <span asp-validation-for="ShipDate" class="text-danger"></span>
                                 </div>
                                 <div class="form-group">
                                     <h5>Phương thức thanh toán</h5>
-                                    <input asp-for="PayMethod" class="form-control" readonly />
+                                    <input asp-for="PayMethod" value="@Model.PayMethod" class="form-control" readonly />
                                     <span asp-validation-for="PayMethod" class="text-danger"></span>
                                 </div>
                             </div>
@@ -248,7 +248,7 @@
         e.preventDefault();
         //form validation
         var emailCus = $("#CusEmail").val();
-            debugger
+            //debugger
         if (emailCus.length > 0) {
             if (validateEmail()) {
                 if (validate()) {
