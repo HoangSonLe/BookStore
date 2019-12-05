@@ -107,6 +107,11 @@ namespace EMarket.Services.OnePay
 
             }
 
+            if (!nameValueCollection.ContainsKey("vpc_Message"))
+            {
+                return "CANCEL";
+            }
+
             if (!nameValueCollection["vpc_TxnResponseCode"][0].Equals("0") && !String.IsNullOrEmpty(nameValueCollection["vpc_Message"][0]))
             {
                 if (!String.IsNullOrEmpty(nameValueCollection["vpc_SecureHash"][0]))

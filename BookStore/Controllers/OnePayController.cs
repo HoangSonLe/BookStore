@@ -122,6 +122,13 @@ namespace BookStore.Controllers
             // Xu ly tham so tra ve va kiem tra chuoi du lieu ma hoa
             var hashvalidateResult = conn.Process3PartyResponse(HttpContext.Request.Query);
             Orders order = _context.Orders.FirstOrDefault(o => o.OrderId == IdLasted);
+            if (hashvalidateResult == "CANCEL")
+            {
+                order.OrderStatus = (int?)0;
+                _context.SaveChanges();
+                return RedirectToAction("PaymentFailed", "Checkout");
+            }
+            
             if (hashvalidateResult == "CORRECTED" && vpc_TxnResponseCode.Trim() == "0")
             {
                 order.OrderStatus = (int?)1;
