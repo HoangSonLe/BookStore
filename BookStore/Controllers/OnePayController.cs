@@ -78,12 +78,12 @@ namespace BookStore.Controllers
                 order.CustomerId = info.CustomerId;
             }
             var amount = Cart.Sum(c => c.QuantityProduct * c.Price);
-            if (amount < 10000)
+            if (amount < 100000)
             {
                 order.ShipCost = 20000;
                 order.Total = amount + 20000;
             }
-            else if (amount < 50000)
+            else if (amount < 500000)
             {
                 order.ShipCost = (int?)12000;
                 order.Total = amount + 12000;
