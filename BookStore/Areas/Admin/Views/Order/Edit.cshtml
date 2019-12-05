@@ -22,6 +22,7 @@
                     <form asp-action="Edit" method="post" id="formOrder" enctype="multipart/form-data">
                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                         <input type="hidden" asp-for="OrderId" />
+                        <input type="hidden" asp-for="CustomerId" />
                         <div class="row">
                             <div class="col-lg-6">
                                 <input asp-for="EmployeeId" type="hidden" class="form-control" readonly />
