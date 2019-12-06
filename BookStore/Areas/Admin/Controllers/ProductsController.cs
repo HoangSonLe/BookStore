@@ -194,7 +194,7 @@ namespace BookStore.Areas.Admin.Controllers
             var ProductImages = new List<ProductImages>();
             ProductImages = _context.ProductImages.Where(p => p.ProductId == product.ProductId).ToList();
             ViewBag.ProductImages = ProductImages;
-            ViewData["CategoryId"] = new SelectList(_context.ProductCategory, "CategoryId", "CategoryId", product.CategoryId);
+            ViewData["CategoryId"] = new SelectList(_context.ProductCategory.Where(p => p.ParentId != null).ToList(), "CategoryId", "Name", product.CategoryId);
             ViewData["PublisherId"] = new SelectList(_context.Publishers, "PublisherId", "PublisherName", product.PublisherId);
             return View(product);
         }
