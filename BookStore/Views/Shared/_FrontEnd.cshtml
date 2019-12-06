@@ -3,16 +3,13 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>@ViewData["Title"] | mybookstore.somee.com | Book</title>
-    <meta name="description" content="@ViewData["Decsription"] Nhà Sách Koparion - 240 An Dương Vương Phường 9 Quận 5 Tp HCM Việt Nam - Nhà sách & Thư viện. " />
-    <meta name="keywords" content="mybookstore.somee.com, book, @ViewData["Title"]" />
-    <meta name="canonical" href="http://mybookstore.somee.com/@ViewData["canonical"]" />
+    <title>@ViewData["Title"]</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta property="og:url" content="http://mybookstore.somee.com" />
+    <meta property="og:url" content="http://mybookstore.somee.com/@ViewData["canonical"]" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Koparion Book Store" />
-    <meta property="og:description" content="Nhà sách của bạn" />
-    <meta property="og:image" content="~/img/logo/logo.png" />
+    <meta property="og:title" content="@ViewData["Title"]-Koparion Book Store" />
+    <meta property="og:description" content="@ViewData["Description"]" />
+    <meta property="og:image" content=" @ViewData["Image"]" />
     
     <!-- all css here -->
     <!-- bootstrap v3.3.6 css -->
@@ -92,10 +89,8 @@
         })();
     </script>
     <!--End of Tawk.to Script-->
-    <div class=”sharethis-inline-share-buttons”>
-        <script async src="https://platform-api.sharethis.com/js/sharethis.js#property=5dd8dd6fa9e8ed00126981a4&product=sticky-share-buttons"></script>
-    </div>
-    <!-- footer-area-end -->
+
+    <script type='text/javascript' src='https://platform-api.sharethis.com/js/sharethis.js#property=5dd8dd6fa9e8ed00126981a4&product=inline-share-buttons' async='async'></script>    <!-- footer-area-end -->
     <!-- all js here -->
     <!-- jquery latest version -->
     <script src="~/js/vendor/jquery-1.12.0.min.js"></script>

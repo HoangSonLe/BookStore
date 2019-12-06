@@ -2,8 +2,9 @@
 @using BookStore.Helpers;
 @{
     ViewData["Title"] = Model.ProductName;
-    ViewData["Decsription"] = Model.Description.Substring(0, 100);
+    ViewData["Description"] = Model.Description.Substring(0, 100);
     ViewData["canonical"] = Model.Category.UrlFriendly + "/" + Model.UrlFriendly;
+    ViewData["Image"] = "http://mybookstore.somee.com/Image/Product/" + Model.ImageCover;
 }
 <style>
     .flex-control-thumbs li img {
