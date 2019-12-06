@@ -73,7 +73,7 @@
                                     @{ 
                                         var ship = 0;
                                     }
-                                    @if (totalCart < 100000)
+                                    @if (totalCart < 100000 && totalCart!=0)
                                     {
                                         ship = 20000;
                                         <ul id="shipping_method">
@@ -82,7 +82,7 @@
                                             </li>
                                         </ul>
                                     }
-                                    else if (totalCart < 500000)
+                                    else if (totalCart < 500000 && totalCart != 0)
                                     {
                                         ship = 12000;
                                         <ul id="shipping_method">
