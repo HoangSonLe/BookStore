@@ -139,7 +139,7 @@ namespace BookStore.Controllers
                 RedirectUrls = new RedirectUrls()
                 {
                     CancelUrl = HttpContext.Request.Scheme + "://" + HttpContext.Request.Host + "/Paypal/Fail",
-                    ReturnUrl = HttpContext.Request.Scheme + "://" + HttpContext.Request.Host + "/Paypal/Success"
+                    ReturnUrl = HttpContext.Request.Scheme + "://" + HttpContext.Request.Host + "/Paypal/Execute"
                 },
                 Payer = new Payer()
                 {
@@ -201,6 +201,37 @@ namespace BookStore.Controllers
             order.OrderStatus = (int?)0;
             _context.SaveChanges();
             return RedirectToAction("PaymentFailed", "Checkout");
+        }
+        public async Task<IActionResult> Execute(string paymentId, string PayerId)
+        {
+            //SandboxEnvironment(clientId, clientSerect)
+            string clientId = "ATEyDHMWKozlcGDf5yNduG92WTeajJf9gqXc34Dd0AU7LbWgFvH3qY_8ImvFfZls5uZMzaoeZAdZBCrm";
+            string clientSecret = "EH1J-u4MfbsyBENy8zBoVHHOnU9DMsDRjGDaXwfZltNEVc3rv_t26ANZ_L2Z4eQlS12oRnUj_Zr8dizO";
+            var environment = new SandboxEnvironment(clientId, clientSecret);
+            var client = new PayPalHttpClient(environment);
+
+
+            PaymentExecuteRequest request = new PaymentExecuteRequest(paymentId);
+
+            request.RequestBody(new PaymentExecution()
+            {
+                PayerId = PayerId
+            });
+
+            try
+            {
+                HttpResponse response = await client.Execute(request);
+                var statusCode = response.StatusCode;
+                Payment result = response.Result<Payment>();
+                return RedirectToAction("Success");
+            }
+            catch (HttpException httpException)
+            {
+                var statusCode = httpException.StatusCode;
+                var debugId = httpException.Headers.GetValues("PayPal-Debug-Id").FirstOrDefault();
+                return RedirectToAction("Fail");
+            }
+
         }
     }
 }
